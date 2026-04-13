@@ -6,7 +6,7 @@ import com.inmohub.auth.service.exception.ResourceNotFoundException;
 import com.inmohub.auth.service.mapper.UserMapper;
 import com.inmohub.auth.service.model.User;
 import com.inmohub.auth.service.model.enums.UserRole;
-import com.inmohub.auth.service.repository.UserRepository;
+import com.inmohub.auth.service.repository.IUserRepository;
 import com.inmohub.auth.service.service.util.PasswordUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private final UserRepository repository;
+    private final IUserRepository repository;
     private final UserMapper mapper;
 
     /**
