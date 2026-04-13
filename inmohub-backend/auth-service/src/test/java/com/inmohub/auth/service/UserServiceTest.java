@@ -4,6 +4,7 @@ import com.inmohub.auth.service.dto.UserCreateDto;
 import com.inmohub.auth.service.dto.UserDto;
 import com.inmohub.auth.service.exception.ResourceNotFoundException;
 import com.inmohub.auth.service.mapper.UserMapper;
+import com.inmohub.auth.service.model.Role;
 import com.inmohub.auth.service.model.User;
 import com.inmohub.auth.service.model.enums.UserRole;
 import com.inmohub.auth.service.model.enums.UserStatus;
@@ -20,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,13 +53,13 @@ class UserServiceTest {
         mockUser = new User();
         mockUser.setId(userId);
         mockUser.setEmail("pepe.montana@gmail.com");
-        mockUser.setPassword(HASHED_PASSWORD);
-        mockUser.setRole(UserRole.AGENT);
+        mockUser.setPasswordHash(HASHED_PASSWORD);
+        mockUser.setRoles(Set.of());
         mockUser.setStatus(UserStatus.ACTIVE);
 
         mockUserDTO = new UserDto(
                 userId, "pepemontana", "pepe.montana@gmail.com", "Pepe", "Montana",
-                "600123456", "AGENT", UserStatus.ACTIVE, LocalDateTime.now(), LocalDateTime.now()
+                "600123456", Set.of("AGENT"), UserStatus.ACTIVE, LocalDateTime.now(), LocalDateTime.now()
         );
     }
 
@@ -108,7 +110,7 @@ class UserServiceTest {
     @DisplayName("Crear usuario encripta correctamente la contraseña")
     void createUser_Success() {
         UserCreateDto createDTO = new UserCreateDto(
-                "pepemontana", RAW_PASSWORD, "pepe.montana@gmail.com", "Pepe", "Montana", "600123456", "AGENT"
+                "pepemontana", RAW_PASSWORD, "pepe.montana@gmail.com", "Pepe", "Montana", "600123456", Set.of("AGENT")
         );
 
         when(userMapper.toEntity(createDTO)).thenReturn(mockUser);
