@@ -34,7 +34,7 @@ public class UserService {
     public UserDto createUser(UserCreateDto createDTO) {
         User user = mapper.toEntity(createDTO);
 
-        user.setPassword(PasswordUtil.hashPassword(createDTO.password()));
+        user.setPasswordHash(PasswordUtil.hashPassword(createDTO.password()));
         return mapper.toDTO(repository.save(user));
     }
 
@@ -105,7 +105,7 @@ public class UserService {
         User user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (!PasswordUtil.checkPassword(password, user.getPassword())) {
+        if (!PasswordUtil.checkPassword(password, user.getPasswordHash())) {
             throw new RuntimeException("Credenciales incorrectas");
         }
 
