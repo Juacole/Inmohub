@@ -1,6 +1,6 @@
-package com.inmohub.auth.service.repository;
+package com.inmohub.auth.service.repositories;
 
-import com.inmohub.auth.service.model.User;
+import com.inmohub.auth.service.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

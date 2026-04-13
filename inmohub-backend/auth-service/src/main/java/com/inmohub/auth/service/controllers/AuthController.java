@@ -1,9 +1,9 @@
-package com.inmohub.auth.service.controller;
+package com.inmohub.auth.service.controllers;
 
-import com.inmohub.auth.service.dto.LoginDto;
-import com.inmohub.auth.service.dto.UserCreateDto;
-import com.inmohub.auth.service.dto.UserDto;
-import com.inmohub.auth.service.service.UserService;
+import com.inmohub.auth.service.dtos.LoginDto;
+import com.inmohub.auth.service.dtos.UserCreateDto;
+import com.inmohub.auth.service.dtos.UserDto;
+import com.inmohub.auth.service.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.model;
+package com.inmohub.auth.service.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

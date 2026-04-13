@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.model.enums;
+package com.inmohub.auth.service.models.enums;
 
 /**
  * Estados posibles de una cuenta de usuario.

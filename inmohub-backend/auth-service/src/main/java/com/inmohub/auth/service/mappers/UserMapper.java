@@ -1,10 +1,10 @@
-package com.inmohub.auth.service.mapper;
+package com.inmohub.auth.service.mappers;
 
-import com.inmohub.auth.service.dto.UserCreateDto;
-import com.inmohub.auth.service.dto.UserDto;
-import com.inmohub.auth.service.model.Role;
-import com.inmohub.auth.service.model.User;
-import com.inmohub.auth.service.model.enums.UserStatus;
+import com.inmohub.auth.service.dtos.UserCreateDto;
+import com.inmohub.auth.service.dtos.UserDto;
+import com.inmohub.auth.service.models.Role;
+import com.inmohub.auth.service.models.User;
+import com.inmohub.auth.service.models.enums.UserStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

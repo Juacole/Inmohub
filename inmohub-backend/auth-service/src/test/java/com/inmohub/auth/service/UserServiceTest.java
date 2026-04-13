@@ -1,14 +1,14 @@
 package com.inmohub.auth.service;
 
-import com.inmohub.auth.service.dto.UserCreateDto;
-import com.inmohub.auth.service.dto.UserDto;
-import com.inmohub.auth.service.exception.ResourceNotFoundException;
-import com.inmohub.auth.service.mapper.UserMapper;
-import com.inmohub.auth.service.model.User;
-import com.inmohub.auth.service.model.enums.UserStatus;
-import com.inmohub.auth.service.repository.IUserRepository;
-import com.inmohub.auth.service.service.UserService;
-import com.inmohub.auth.service.service.util.PasswordUtil;
+import com.inmohub.auth.service.dtos.UserCreateDto;
+import com.inmohub.auth.service.dtos.UserDto;
+import com.inmohub.auth.service.exceptions.ResourceNotFoundException;
+import com.inmohub.auth.service.mappers.UserMapper;
+import com.inmohub.auth.service.models.User;
+import com.inmohub.auth.service.models.enums.UserStatus;
+import com.inmohub.auth.service.repositories.IUserRepository;
+import com.inmohub.auth.service.services.UserService;
+import com.inmohub.auth.service.services.util.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

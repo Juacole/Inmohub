@@ -1,6 +1,6 @@
-package com.inmohub.auth.service.model;
+package com.inmohub.auth.service.models;
 
-import com.inmohub.auth.service.model.enums.UserStatus;
+import com.inmohub.auth.service.models.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

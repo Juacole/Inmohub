@@ -1,6 +1,6 @@
-package com.inmohub.auth.service.dto;
+package com.inmohub.auth.service.dtos;
 
-import com.inmohub.auth.service.model.enums.UserStatus;
+import com.inmohub.auth.service.models.enums.UserStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.service.util;
+package com.inmohub.auth.service.services.util;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

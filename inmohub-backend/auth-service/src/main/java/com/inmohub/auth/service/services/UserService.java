@@ -1,15 +1,15 @@
-package com.inmohub.auth.service.service;
+package com.inmohub.auth.service.services;
 
-import com.inmohub.auth.service.dto.UserCreateDto;
-import com.inmohub.auth.service.dto.UserDto;
-import com.inmohub.auth.service.exception.ResourceNotFoundException;
-import com.inmohub.auth.service.mapper.UserMapper;
-import com.inmohub.auth.service.model.Role;
-import com.inmohub.auth.service.model.User;
-import com.inmohub.auth.service.model.enums.UserStatus;
-import com.inmohub.auth.service.repository.IRoleRepository;
-import com.inmohub.auth.service.repository.IUserRepository;
-import com.inmohub.auth.service.service.util.PasswordUtil;
+import com.inmohub.auth.service.dtos.UserCreateDto;
+import com.inmohub.auth.service.dtos.UserDto;
+import com.inmohub.auth.service.exceptions.ResourceNotFoundException;
+import com.inmohub.auth.service.mappers.UserMapper;
+import com.inmohub.auth.service.models.Role;
+import com.inmohub.auth.service.models.User;
+import com.inmohub.auth.service.models.enums.UserStatus;
+import com.inmohub.auth.service.repositories.IRoleRepository;
+import com.inmohub.auth.service.repositories.IUserRepository;
+import com.inmohub.auth.service.services.util.PasswordUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

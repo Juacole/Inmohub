@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.exception;
+package com.inmohub.auth.service.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.dto;
+package com.inmohub.auth.service.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

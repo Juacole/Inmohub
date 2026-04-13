@@ -1,7 +1,7 @@
-package com.inmohub.auth.service.config;
+package com.inmohub.auth.service.configs;
 
-import com.inmohub.auth.service.model.Role;
-import com.inmohub.auth.service.repository.IRoleRepository;
+import com.inmohub.auth.service.models.Role;
+import com.inmohub.auth.service.repositories.IRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
