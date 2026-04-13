@@ -6,7 +6,6 @@ import com.inmohub.auth.service.exception.ResourceNotFoundException;
 import com.inmohub.auth.service.mapper.UserMapper;
 import com.inmohub.auth.service.model.Role;
 import com.inmohub.auth.service.model.User;
-import com.inmohub.auth.service.model.enums.UserRole;
 import com.inmohub.auth.service.model.enums.UserStatus;
 import com.inmohub.auth.service.repository.IRoleRepository;
 import com.inmohub.auth.service.repository.IUserRepository;
@@ -136,7 +135,7 @@ public class UserService {
      * @throws IllegalArgumentException si el rol no existe en el Enum.
      */
     public List<UserDto> getByRole(String userRole) {
-        return repository.findByRole_Name(userRole)
+        return repository.findByRoles_Name(userRole)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();

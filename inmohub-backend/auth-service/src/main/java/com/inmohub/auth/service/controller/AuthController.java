@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor // Lombok: Mejor práctica que AllArgsConstructor para inyección de dependencias final
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para autenticación y administración de perfiles")
-public class UserController {
+public class AuthController {
     private final UserService service;
 
     @Operation(summary = "Registrar nuevo usuario", description = "Crea un usuario con rol específico (ADMIN, AGENT, CLIENT, OWNER).")
