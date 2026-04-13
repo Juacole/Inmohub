@@ -2,10 +2,16 @@ package com.inmohub.auth.service.mapper;
 
 import com.inmohub.auth.service.dto.UserCreateDto;
 import com.inmohub.auth.service.dto.UserDto;
+import com.inmohub.auth.service.model.Role;
 import com.inmohub.auth.service.model.User;
 import com.inmohub.auth.service.model.enums.UserStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,6 +30,7 @@ public interface UserMapper {
      * @param user Entidad de usuario.
      * @return DTO con datos públicos.
      */
+    @Mapping(target = "roles", source = "roles", qualifiedByName = "mapRolesToStrings")
     UserDto toDTO(User user);
 
     /**
@@ -42,5 +49,16 @@ public interface UserMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "status", constant = "ACTIVE") // Asignamos status por defecto
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "passwordHash", ignore = true)
     User toEntity(UserCreateDto userCreateDTO);
+
+    @Named("mapRolesToStrings")
+    default Set<String> mapRolesToStrings(Set<Role> roles) {
+        if (roles == null) return Collections.emptySet();
+
+        return roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+    }
 }
