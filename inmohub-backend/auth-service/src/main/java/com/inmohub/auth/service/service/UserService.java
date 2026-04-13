@@ -4,14 +4,18 @@ import com.inmohub.auth.service.dto.UserCreateDto;
 import com.inmohub.auth.service.dto.UserDto;
 import com.inmohub.auth.service.exception.ResourceNotFoundException;
 import com.inmohub.auth.service.mapper.UserMapper;
+import com.inmohub.auth.service.model.Role;
 import com.inmohub.auth.service.model.User;
 import com.inmohub.auth.service.model.enums.UserRole;
+import com.inmohub.auth.service.model.enums.UserStatus;
+import com.inmohub.auth.service.repository.IRoleRepository;
 import com.inmohub.auth.service.repository.IUserRepository;
 import com.inmohub.auth.service.service.util.PasswordUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -23,6 +27,7 @@ import java.util.UUID;
 public class UserService {
     private final IUserRepository repository;
     private final UserMapper mapper;
+    private final IRoleRepository roleRepository;
 
     /**
      * Crea y persiste un nuevo usuario en la base de datos.
@@ -34,7 +39,18 @@ public class UserService {
     public UserDto createUser(UserCreateDto createDTO) {
         User user = mapper.toEntity(createDTO);
 
-        user.setPasswordHash(PasswordUtil.hashPassword(createDTO.password()));
+        user.setPasswordHash(PasswordUtil.hashPassword(createDTO.password())); // Provisional
+
+        // Asignación por defecto - provisional
+        String defaultRoleName = (createDTO.roles() != null && !createDTO.roles().isEmpty())
+                ? createDTO.roles().iterator().next()
+                : "CLIENT";
+
+        Role role = roleRepository.findByName(defaultRoleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Rol " + defaultRoleName + " no encontrado en la base de datos."));
+
+        user.setRoles(Set.of(role));
+        user.setStatus(UserStatus.ACTIVE);
         return mapper.toDTO(repository.save(user));
     }
 
@@ -120,9 +136,7 @@ public class UserService {
      * @throws IllegalArgumentException si el rol no existe en el Enum.
      */
     public List<UserDto> getByRole(String userRole) {
-        String role = userRole; // Convierte String a Enum
-
-        return repository.findByRole_Name(role)
+        return repository.findByRole_Name(userRole)
                 .stream()
                 .map(mapper::toDTO)
                 .toList();
