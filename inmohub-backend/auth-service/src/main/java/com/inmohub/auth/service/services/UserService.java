@@ -38,6 +38,7 @@ public class UserService {
     public UserDto createUser(UserCreateDto createDTO) {
         User user = mapper.toEntity(createDTO);
 
+        // TODO: Reemplazar PasswordUtil manual por BCryptPasswordEncoder de Spring Security
         user.setPasswordHash(PasswordUtil.hashPassword(createDTO.password())); // Provisional
 
         // Asignación por defecto - provisional

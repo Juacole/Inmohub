@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Utilidad para el manejo de contraseñas.
  */
+// TODO: Eliminar esta clase para implementar BCryptPasswordEncoder. Esta implementación de SHA-256 es provisional
 public class PasswordUtil {
 
     /**
