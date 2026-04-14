@@ -1,4 +1,4 @@
-package com.inmohub.auth.service.config;
+package com.inmohub.auth.service.configs;
 
 import com.inmohub.auth.service.models.Role;
 import com.inmohub.auth.service.repositories.IRoleRepository;
