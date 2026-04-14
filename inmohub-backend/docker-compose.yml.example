@@ -1,3 +1,14 @@
+# Este es un fichero de ejemplo. NO USAR EN PRODUCCIÓN SIN MODIFICAR.
+# Para usarlo, renómbrelo a "docker-compose.yml" y cree un fichero ".env"
+# en la misma carpeta con las siguientes variables:
+#
+# MYSQL_USER=auth_user
+# MYSQL_PASSWORD=tu_contraseña_segura
+# MYSQL_ROOT_PASSWORD=tu_contraseña_root_segura
+# POSTGRES_USER=property_user
+# POSTGRES_PASSWORD=tu_otra_contraseña_segura
+#
+
 services:
   auth-db:
     image: mysql:8.0
@@ -5,9 +16,9 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: auth_db
-      MYSQL_USER: auth_user
-      MYSQL_PASSWORD: auth_password
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
@@ -26,8 +37,8 @@ services:
     restart: always
     environment:
       POSTGRES_DB: property_db
-      POSTGRES_USER: property_user
-      POSTGRES_PASSWORD: property_password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

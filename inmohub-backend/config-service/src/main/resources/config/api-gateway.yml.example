@@ -42,6 +42,10 @@ eureka:
     # (5 segundos para rapidez en el desarrollo)
     registry-fetch-interval-seconds: 5
 
+jwt:
+  secret: "TU_CLAVE_SECRETA_AQUI"
+  expiration: 86400000 # 1 día en milisegundos
+
 # Configuración específica para Docker
 ---
 spring:

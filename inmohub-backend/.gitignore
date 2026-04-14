@@ -32,4 +32,14 @@ build/
 ### VS Code ###
 .vscode/
 
+# Ficheros de configuración con secretos
+config-service/src/main/resources/config/api-gateway.yml
+config-service/src/main/resources/config/auth-service.yml
+config-service/src/main/resources/config/property-service.yml
+docker-compose.yml
+
+# Contexto para agentes
 RESUMEN_TECNICO.md
+
+# Variables de entorno
+.env
