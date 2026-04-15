@@ -9,10 +9,12 @@ import com.inmohub.auth.service.models.User;
 import com.inmohub.auth.service.models.enums.UserStatus;
 import com.inmohub.auth.service.repositories.IRoleRepository;
 import com.inmohub.auth.service.repositories.IUserRepository;
-import com.inmohub.auth.service.services.util.PasswordUtil;
-import lombok.AllArgsConstructor;
+import com.inmohub.auth.service.security.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -22,11 +24,14 @@ import java.util.UUID;
  * Encargado de la orquestación entre el controlador, el repositorio y las utilidades.
  */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
     private final IUserRepository repository;
     private final UserMapper mapper;
     private final IRoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     /**
      * Crea y persiste un nuevo usuario en la base de datos.
@@ -38,8 +43,7 @@ public class UserService {
     public UserDto createUser(UserCreateDto createDTO) {
         User user = mapper.toEntity(createDTO);
 
-        // TODO: Reemplazar PasswordUtil manual por BCryptPasswordEncoder de Spring Security
-        user.setPasswordHash(PasswordUtil.hashPassword(createDTO.password())); // Provisional
+        user.setPasswordHash(passwordEncoder.encode(createDTO.password()));
 
         // Asignación por defecto - provisional
         String defaultRoleName = (createDTO.roles() != null && !createDTO.roles().isEmpty())
@@ -111,21 +115,20 @@ public class UserService {
 
     /**
      * Realiza el proceso de login verificando email y contraseña.
+     * Genera un token resultante si el login es existoso.
      *
      * @param email Email del usuario.
      * @param password Contraseña en texto plano introducida por el usuario.
-     * @return UserDTO si las credenciales son correctas.
+     * @return token generado en formato de texto plano.
      * @throws RuntimeException si el usuario no existe o la contraseña no coincide.
      */
-    public UserDto login(String email, String password) {
-        User user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public String login(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        if (!PasswordUtil.checkPassword(password, user.getPasswordHash())) {
-            throw new RuntimeException("Credenciales incorrectas");
-        }
+        var user = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
-        return mapper.toDTO(user);
+        return jwtService.generateToken(user);
     }
 
     /**
