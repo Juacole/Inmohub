@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -124,8 +125,8 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Credenciales incorrectas o error interno", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody LoginDto loginDTO) {
-        return ResponseEntity.ok(service.login(loginDTO.email(), loginDTO.password()));
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDto loginDTO) {
+        return ResponseEntity.ok(Map.of("token", service.login(loginDTO.email(), loginDTO.password())));
     }
 
     @Operation(summary = "Listar usuarios por Rol", description = "Filtra y devuelve usuarios que tengan un rol específico (ADMIN, AGENT, OWNER, CLIENT).")
