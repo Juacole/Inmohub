@@ -27,7 +27,7 @@ public class GlobalHandlerException extends RuntimeException {
      * Construye una respuesta de error estructurada.
      *
      * @param message Mensaje descriptivo del error.
-     * @param status Código de estado HTTP.
+     * @param status  Código de estado HTTP.
      * @return ResponseEntity con el cuerpo del error (timestamp, mensaje, código).
      */
     private ResponseEntity<Map<String, Object>> buildResponse(String message, HttpStatus status) {
@@ -82,5 +82,14 @@ public class GlobalHandlerException extends RuntimeException {
         });
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    /**
+     * Maneja errores en referencia al refresh token.
+     */
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<Map<String, Object>> handleTokenRefreshException(RefreshTokenException e) {
+        log.warn("Intento de uso de token inválido: {}", e.getMessage());
+        return buildResponse(e.getMessage(), HttpStatus.FORBIDDEN);
     }
 }
