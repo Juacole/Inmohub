@@ -122,16 +122,18 @@ public class UserService {
      *
      * @param email Email del usuario.
      * @param password Contraseña en texto plano introducida por el usuario.
-     * @return token generado en formato de texto plano.
-     * @throws RuntimeException si el usuario no existe o la contraseña no coincide.
+     * @return Dto incluye nuevo JWT y Refresh Token.
+     * @throws RuntimeException si el usuario no existe.
      */
-    public String login(String email, String password) {
+    public AuthResponseDto login(String email, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-        var user = repository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
+        User user = repository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
-        return jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+        return new AuthResponseDto(jwt, refreshToken.getToken());
     }
 
     public AuthResponseDto refreshToken(String requestRefreshToken) {
