@@ -29,7 +29,13 @@ public class SecurityConfig {
         return http.
                 csrf(AbstractHttpConfigurer::disable) // Desactivada la proyección contra ataques csrf, el token ya protege de ello
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/users/login", "/api/v1/users/register", "/v3/api-docs/**", "/swagger-ui/**").permitAll() // Rutas públicas
+                        .requestMatchers(
+                                "/api/v1/users/login",
+                                "/api/v1/users/register",
+                                "/api/v1/users/refresh",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**"
+                        ).permitAll() // Rutas públicas
                         .anyRequest().authenticated() // Demás rutas necesitan un token
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // El servidor no guardara estado de la sesión, cada petición es independiente
