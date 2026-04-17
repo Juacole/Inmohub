@@ -1,9 +1,11 @@
 package com.inmohub.auth.service.services;
 
+import com.inmohub.auth.service.dtos.AuthResponseDto;
 import com.inmohub.auth.service.dtos.UserCreateDto;
 import com.inmohub.auth.service.dtos.UserDto;
 import com.inmohub.auth.service.exceptions.ResourceNotFoundException;
 import com.inmohub.auth.service.mappers.UserMapper;
+import com.inmohub.auth.service.models.RefreshToken;
 import com.inmohub.auth.service.models.Role;
 import com.inmohub.auth.service.models.User;
 import com.inmohub.auth.service.models.enums.UserStatus;
@@ -32,6 +34,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * Crea y persiste un nuevo usuario en la base de datos.
@@ -129,6 +132,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
         return jwtService.generateToken(user);
+    }
+
+    public AuthResponseDto refreshToken(String requestRefreshToken) {
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String newAccessToken = jwtService.generateToken(user);
+                    // Se devuelve un nuevo JWT y se mantiene el mismo refresh token
+                    return new AuthResponseDto(newAccessToken, requestRefreshToken);
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token no encontrado."));
     }
 
     /**
