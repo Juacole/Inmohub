@@ -2,7 +2,7 @@ package com.inmohub.auth.service.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RefreshTokenRequestsDto(
+public record RefreshTokenRequestDto(
         @NotBlank(message = "El refresh token es obligatorio")
         String refreshToken
 ) {}

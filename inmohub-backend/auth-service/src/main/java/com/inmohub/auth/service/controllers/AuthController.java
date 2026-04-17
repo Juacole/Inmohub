@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor // Lombok: Mejor práctica que AllArgsConstructor para inyección de dependencias final
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para autenticación y administración de perfiles")
 public class AuthController {
-    private final UserService service;
+    private final UserService userService;
 
     @Operation(summary = "Registrar nuevo usuario", description = "Crea un usuario con rol específico (ADMIN, AGENT, CLIENT, OWNER).")
     @ApiResponses(value = {
@@ -38,14 +38,14 @@ public class AuthController {
     })
     @PostMapping("/register")
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserCreateDto createDto) {
-        return ResponseEntity.ok(service.createUser(createDto));
+        return ResponseEntity.ok(userService.createUser(createDto));
     }
 
     @Operation(summary = "Listar todos los usuarios", description = "Devuelve un listado completo de los usuarios registrados.")
     @ApiResponse(responseCode = "200", description = "Operación exitosa")
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> getAll() {
-        return ResponseEntity.ok(service.getAllUsers());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @Operation(summary = "Obtener usuario por ID", description = "Busca un usuario específico por su UUID.")
@@ -56,7 +56,7 @@ public class AuthController {
     })
     @GetMapping("/search-by-id/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable(name = "id") UUID id) {
-        UserDto user = service.getById(id);
+        UserDto user = userService.getById(id);
 
         if(user != null) return ResponseEntity.ok(user);
 
@@ -72,7 +72,7 @@ public class AuthController {
     })
     @GetMapping("/exists-by-email/{email}")
     public ResponseEntity<Boolean> existsByEmail(@PathVariable(name = "email") String email) {
-        boolean existe = service.existsByEmail(email);
+        boolean existe = userService.existsByEmail(email);
         if(existe) return ResponseEntity.ok(existe);
 
         return ResponseEntity
@@ -87,7 +87,7 @@ public class AuthController {
     })
     @GetMapping("/exists-by-username/{username}")
     public ResponseEntity<Boolean> existsByUsername(@PathVariable(name = "username") String username) {
-        boolean existe = service.existsByUsername(username);
+        boolean existe = userService.existsByUsername(username);
 
         if(existe) return ResponseEntity.ok(existe);
 
@@ -103,7 +103,7 @@ public class AuthController {
     })
     @DeleteMapping("/delete-by-id/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
-        boolean eliminado = service.deleteById(id);
+        boolean eliminado = userService.deleteById(id);
 
         if (eliminado) {
             return ResponseEntity
@@ -123,21 +123,21 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Credenciales incorrectas o error interno", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDto loginDto) {
-        return ResponseEntity.ok(Map.of("token", service.login(loginDto.email(), loginDto.password())));
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(userService.login(loginDto.email(), loginDto.password()));
     }
 
     @Operation(summary = "Refrescar Token de Acceso", description = "Genera un nuevo JWT usando un Refresh Token válido.")
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestsDto requestDto) {
-        return ResponseEntity.ok(service.refreshToken(requestDto.refreshToken()));
+    public ResponseEntity<AuthResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto requestDto) {
+        return ResponseEntity.ok(userService.refreshToken(requestDto.refreshToken()));
     }
 
     @Operation(summary = "Listar usuarios por Rol", description = "Filtra y devuelve usuarios que tengan un rol específico (ADMIN, AGENT, OWNER, CLIENT).")
     @ApiResponse(responseCode = "200", description = "Listado obtenido (puede estar vacío)")
     @GetMapping("/role/{userRole}")
     public ResponseEntity<List<UserDto>> getByRole(@PathVariable String userRole) {
-        List<UserDto> users = service.getByRole(userRole);
+        List<UserDto> users = userService.getByRole(userRole);
 
         return ResponseEntity.ok(users);
     }
