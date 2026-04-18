@@ -1,4 +1,4 @@
-package com.inmohub.property.service.model.enums;
+package com.inmohub.property.service.models.enums;
 
 /**
  * Ciclo de vida de una propiedad en la plataforma.

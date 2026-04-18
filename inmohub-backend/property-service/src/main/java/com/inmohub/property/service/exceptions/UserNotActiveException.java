@@ -1,4 +1,4 @@
-package com.inmohub.property.service.exception;
+package com.inmohub.property.service.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

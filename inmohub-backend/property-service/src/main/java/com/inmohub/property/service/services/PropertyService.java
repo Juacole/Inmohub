@@ -1,14 +1,14 @@
-package com.inmohub.property.service.service;
+package com.inmohub.property.service.services;
 
-import com.inmohub.property.service.client.AuthClient;
-import com.inmohub.property.service.dto.PropertyCreateDTO;
-import com.inmohub.property.service.dto.PropertyDTO;
-import com.inmohub.property.service.dto.UserResponse;
-import com.inmohub.property.service.exception.ResourceNotFoundException;
-import com.inmohub.property.service.exception.UserNotActiveException;
-import com.inmohub.property.service.mapper.PropertyMapper;
-import com.inmohub.property.service.model.Property;
-import com.inmohub.property.service.repository.PropertyRepository;
+import com.inmohub.property.service.clients.AuthClient;
+import com.inmohub.property.service.dtos.PropertyCreateDto;
+import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.UserResponseDto;
+import com.inmohub.property.service.exceptions.ResourceNotFoundException;
+import com.inmohub.property.service.exceptions.UserNotActiveException;
+import com.inmohub.property.service.mappers.IPropertyMapper;
+import com.inmohub.property.service.models.Property;
+import com.inmohub.property.service.repositories.IPropertyRepository;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class PropertyService {
-    private final PropertyRepository repository;
-    private final PropertyMapper mapper;
+    private final IPropertyRepository repository;
+    private final IPropertyMapper mapper;
     private final AuthClient client; // Cliente Feign para comunicación síncrona con Auth-Service
 
 
@@ -48,14 +48,14 @@ public class PropertyService {
      * </ol>
      *
      * @param createDTO DTO con la información del inmueble a crear.
-     * @return {@link PropertyDTO} con los datos de la propiedad persistida, incluyendo su ID y fechas de auditoría.
+     * @return {@link PropertyDto} con los datos de la propiedad persistida, incluyendo su ID y fechas de auditoría.
      * @throws UserNotActiveException Si el propietario existe pero su cuenta no está activa.
      */
-    public PropertyDTO createProperty(PropertyCreateDTO createDTO) {
+    public PropertyDto createProperty(PropertyCreateDto createDTO) {
 
         try {
             // Si el usuario no existe, feing lanza una excepcion 404
-            UserResponse user = client.getUserById(createDTO.ownerId());
+            UserResponseDto user = client.getUserById(createDTO.ownerId());
 
             if(!"ACTIVE".equals(user.status())) {
                 throw new UserNotActiveException("El propietario no está activo y no puede publicar propiedades.");
@@ -72,9 +72,9 @@ public class PropertyService {
     /**
      * Recupera el listado completo de propiedades registradas en el sistema.
      *
-     * @return Una lista de objetos {@link PropertyDTO} con la información de todos los inmuebles.
+     * @return Una lista de objetos {@link PropertyDto} con la información de todos los inmuebles.
      */
-    public List<PropertyDTO> getAllProperties() {
+    public List<PropertyDto> getAllProperties() {
             return repository.findAll().stream()
                 .map(mapper::toDTO)
                 .toList();
@@ -84,10 +84,10 @@ public class PropertyService {
      * Busca una propiedad específica por su identificador único (UUID).
      *
      * @param uuid El identificador único de la propiedad a buscar.
-     * @return {@link PropertyDTO} con los detalles del inmueble encontrado.
+     * @return {@link PropertyDto} con los detalles del inmueble encontrado.
      * @throws ResourceNotFoundException Si no existe ninguna propiedad con el ID proporcionado en la base de datos.
      */
-    public PropertyDTO getPropertyById(UUID uuid) {
+    public PropertyDto getPropertyById(UUID uuid) {
         return repository.findById(uuid)
                 .map(mapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Propiedad no encontrada."));
@@ -97,9 +97,9 @@ public class PropertyService {
      * Filtra y recupera todas las propiedades asociadas a un propietario específico.
      *
      * @param ownerId El UUID del propietario (usuario) del cual se quieren listar los inmuebles.
-     * @return Una lista de {@link PropertyDTO} pertenecientes a ese propietario. Puede estar vacía si no tiene inmuebles.
+     * @return Una lista de {@link PropertyDto} pertenecientes a ese propietario. Puede estar vacía si no tiene inmuebles.
      */
-    public List<PropertyDTO> findByOwnerId(UUID ownerId) {
+    public List<PropertyDto> findByOwnerId(UUID ownerId) {
         return repository.findByOwnerId(ownerId).stream()
                 .map(mapper::toDTO)
                 .toList();

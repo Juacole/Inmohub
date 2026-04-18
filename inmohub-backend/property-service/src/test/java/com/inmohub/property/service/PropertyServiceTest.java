@@ -1,16 +1,16 @@
 package com.inmohub.property.service;
 
-import com.inmohub.property.service.client.AuthClient;
-import com.inmohub.property.service.dto.PropertyCreateDTO;
-import com.inmohub.property.service.dto.PropertyDTO;
-import com.inmohub.property.service.dto.UserResponse;
-import com.inmohub.property.service.exception.ResourceNotFoundException;
-import com.inmohub.property.service.exception.UserNotActiveException;
-import com.inmohub.property.service.mapper.PropertyMapper;
-import com.inmohub.property.service.model.Property;
-import com.inmohub.property.service.model.enums.PropertyStatus;
-import com.inmohub.property.service.repository.PropertyRepository;
-import com.inmohub.property.service.service.PropertyService;
+import com.inmohub.property.service.clients.AuthClient;
+import com.inmohub.property.service.dtos.PropertyCreateDto;
+import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.UserResponseDto;
+import com.inmohub.property.service.exceptions.ResourceNotFoundException;
+import com.inmohub.property.service.exceptions.UserNotActiveException;
+import com.inmohub.property.service.mappers.IPropertyMapper;
+import com.inmohub.property.service.models.Property;
+import com.inmohub.property.service.models.enums.PropertyStatus;
+import com.inmohub.property.service.repositories.IPropertyRepository;
+import com.inmohub.property.service.services.PropertyService;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,10 +33,10 @@ import static org.mockito.Mockito.*;
 class PropertyServiceTest {
 
     @Mock
-    private PropertyRepository repository;
+    private IPropertyRepository repository;
 
     @Mock
-    private PropertyMapper mapper;
+    private IPropertyMapper mapper;
 
     @Mock
     private AuthClient authClient;
@@ -44,9 +44,9 @@ class PropertyServiceTest {
     @InjectMocks
     private PropertyService propertyService;
 
-    private PropertyCreateDTO createDTO;
+    private PropertyCreateDto createDTO;
     private Property mockEntity;
-    private PropertyDTO mockDTO;
+    private PropertyDto mockDTO;
     private UUID ownerId;
     private UUID propertyId;
 
@@ -55,7 +55,7 @@ class PropertyServiceTest {
         ownerId = UUID.randomUUID();
         propertyId = UUID.randomUUID();
 
-        createDTO = new PropertyCreateDTO(
+        createDTO = new PropertyCreateDto(
                 "Chalet en Madrid", "Amplio chalet con piscina",
                 new BigDecimal("450000.00"), 250.5, "Calle Mayor 123", ownerId
         );
@@ -66,7 +66,7 @@ class PropertyServiceTest {
         mockEntity.setOwnerId(ownerId);
         mockEntity.setStatus(PropertyStatus.AVAILABLE);
 
-        mockDTO = new PropertyDTO(
+        mockDTO = new PropertyDto(
                 propertyId, "Chalet en Madrid", "Amplio chalet con piscina",
                 new BigDecimal("450000.00"), 250.5, "Calle Mayor 123",
                 PropertyStatus.AVAILABLE, ownerId, LocalDateTime.now(), LocalDateTime.now()
@@ -76,14 +76,14 @@ class PropertyServiceTest {
     @Test
     @DisplayName("Creación exitosa con usuario ACTIVE")
     void createProperty_Success_WhenUserIsActive() {
-        UserResponse activeUser = new UserResponse(ownerId, "pepe@gmail.com", "AGENT", "ACTIVE");
+        UserResponseDto activeUser = new UserResponseDto(ownerId, "pepe@gmail.com", "AGENT", "ACTIVE");
 
         when(authClient.getUserById(ownerId)).thenReturn(activeUser);
         when(mapper.toEntity(createDTO)).thenReturn(mockEntity);
         when(repository.save(any(Property.class))).thenReturn(mockEntity);
         when(mapper.toDTO(mockEntity)).thenReturn(mockDTO);
 
-        PropertyDTO result = propertyService.createProperty(createDTO);
+        PropertyDto result = propertyService.createProperty(createDTO);
 
         assertNotNull(result);
         assertEquals(PropertyStatus.AVAILABLE, result.status());
@@ -94,7 +94,7 @@ class PropertyServiceTest {
     @Test
     @DisplayName("Camino 2: Falla la creación porque el usuario no es ACTIVE")
     void createProperty_ThrowsException_WhenUserIsNotActive() {
-        UserResponse inactiveUser = new UserResponse(ownerId, "pepe@gmail.com", "AGENT", "BLOCKED");
+        UserResponseDto inactiveUser = new UserResponseDto(ownerId, "pepe@gmail.com", "AGENT", "BLOCKED");
         when(authClient.getUserById(ownerId)).thenReturn(inactiveUser);
 
         UserNotActiveException exception = assertThrows(UserNotActiveException.class, () -> {
@@ -117,7 +117,7 @@ class PropertyServiceTest {
         when(repository.save(any(Property.class))).thenReturn(mockEntity);
         when(mapper.toDTO(mockEntity)).thenReturn(mockDTO);
 
-        PropertyDTO result = propertyService.createProperty(createDTO);
+        PropertyDto result = propertyService.createProperty(createDTO);
 
         assertNotNull(result);
         verify(repository, times(1)).save(mockEntity);

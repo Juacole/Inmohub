@@ -1,6 +1,6 @@
-package com.inmohub.property.service.client;
+package com.inmohub.property.service.clients;
 
-import com.inmohub.property.service.dto.UserResponse;
+import com.inmohub.property.service.dtos.UserResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,5 +24,5 @@ public interface AuthClient {
      * @return DTO con la información básica del usuario (UserResponse).
      */
     @GetMapping("/api/v1/users/search-by-id/{id}")
-    UserResponse getUserById(@PathVariable(name = "id") UUID id);
+    UserResponseDto getUserById(@PathVariable(name = "id") UUID id);
 }

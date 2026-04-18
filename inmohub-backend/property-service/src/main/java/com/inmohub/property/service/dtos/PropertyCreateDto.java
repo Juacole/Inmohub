@@ -1,4 +1,4 @@
-package com.inmohub.property.service.dto;
+package com.inmohub.property.service.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Schema(description = "DTO para la creación de una nueva propiedad inmobiliaria")
-public record PropertyCreateDTO(
+public record PropertyCreateDto(
         @Schema(description = "Título del anuncio", example = "Chalet de lujo con vistas al mar")
         @NotBlank(message = "El título es obligatorio")
         String title,

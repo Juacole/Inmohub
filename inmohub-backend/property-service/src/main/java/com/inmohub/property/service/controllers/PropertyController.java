@@ -1,12 +1,9 @@
-package com.inmohub.property.service.controller;
+package com.inmohub.property.service.controllers;
 
-import com.inmohub.property.service.client.AuthClient;
-import com.inmohub.property.service.dto.PropertyCreateDTO;
-import com.inmohub.property.service.dto.PropertyDTO;
-import com.inmohub.property.service.dto.UserResponse;
-import com.inmohub.property.service.service.PropertyService;
+import com.inmohub.property.service.dtos.PropertyCreateDto;
+import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.services.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,31 +32,31 @@ public class PropertyController {
     @Operation(summary = "Publicar una nueva propiedad", description = "Crea un inmueble validando previamente que el propietario exista y esté activo en Auth-Service.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Propiedad creada exitosamente",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PropertyDTO.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PropertyDto.class))),
             @ApiResponse(responseCode = "400", description = "Datos inválidos o propietario no encontrado", content = @Content),
             @ApiResponse(responseCode = "409", description = "Conflicto: El propietario no tiene estado ACTIVE", content = @Content)
     })
     @PostMapping("/create")
-    public ResponseEntity<PropertyDTO> create(@Valid @RequestBody PropertyCreateDTO createDTO) {
+    public ResponseEntity<PropertyDto> create(@Valid @RequestBody PropertyCreateDto createDTO) {
         return ResponseEntity.ok(service.createProperty(createDTO));
     }
 
     @Operation(summary = "Listar todas las propiedades", description = "Recupera el listado completo de inmuebles disponibles en el sistema.")
     @ApiResponse(responseCode = "200", description = "Listado recuperado correctamente")
     @GetMapping("/all")
-    public ResponseEntity<List<PropertyDTO>> getAll() {
+    public ResponseEntity<List<PropertyDto>> getAll() {
         return ResponseEntity.ok(service.getAllProperties());
     }
 
     @Operation(summary = "Buscar propiedad por ID", description = "Obtiene los detalles de un inmueble específico.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Propiedad encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PropertyDTO.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PropertyDto.class))),
             @ApiResponse(responseCode = "404", description = "Propiedad no encontrada", content = @Content)
     })
     @GetMapping("/search-by-id/{id}")
-    public ResponseEntity<PropertyDTO> getById(@PathVariable(name = "id") UUID id) {
-        PropertyDTO p = service.getPropertyById(id);
+    public ResponseEntity<PropertyDto> getById(@PathVariable(name = "id") UUID id) {
+        PropertyDto p = service.getPropertyById(id);
 
         if(p != null) return ResponseEntity.ok(p);
 
@@ -71,7 +68,7 @@ public class PropertyController {
     @Operation(summary = "Listar propiedades de un propietario", description = "Devuelve todos los inmuebles asociados a un usuario específico.")
     @ApiResponse(responseCode = "200", description = "Listado recuperado (puede estar vacío)")
     @GetMapping("/search-by-owner-id/{id}")
-    public ResponseEntity<List<PropertyDTO>> getByOwnerId(@PathVariable(name = "id") UUID id) {
+    public ResponseEntity<List<PropertyDto>> getByOwnerId(@PathVariable(name = "id") UUID id) {
         return ResponseEntity.ok(service.findByOwnerId(id));
     }
 

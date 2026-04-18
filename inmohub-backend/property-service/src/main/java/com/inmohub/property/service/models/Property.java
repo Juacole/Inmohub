@@ -1,6 +1,6 @@
-package com.inmohub.property.service.model;
+package com.inmohub.property.service.models;
 
-import com.inmohub.property.service.model.enums.PropertyStatus;
+import com.inmohub.property.service.models.enums.PropertyStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

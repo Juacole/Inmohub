@@ -1,21 +1,21 @@
-package com.inmohub.property.service.mapper;
+package com.inmohub.property.service.mappers;
 
-import com.inmohub.property.service.dto.PropertyCreateDTO;
-import com.inmohub.property.service.dto.PropertyDTO;
-import com.inmohub.property.service.model.Property;
-import com.inmohub.property.service.model.enums.PropertyStatus;
+import com.inmohub.property.service.dtos.PropertyCreateDto;
+import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.models.Property;
+import com.inmohub.property.service.models.enums.PropertyStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", imports = PropertyStatus.class)
-public interface PropertyMapper {
+public interface IPropertyMapper {
     /**
      * Realiza la conversión de entidad "Property" a DTO "PropertyDTO".
      *
      * @param property Entidad JPA.
      * @return objeto DTO PropertyDTO.
      */
-    PropertyDTO toDTO(Property property);
+    PropertyDto toDTO(Property property);
 
     /**
      * Convierte DTO de creación a Entidad.
@@ -25,5 +25,5 @@ public interface PropertyMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "status", expression = "java(PropertyStatus.AVAILABLE)") // Por defecto se le asigna disponible
-    Property toEntity(PropertyCreateDTO createDTO);
+    Property toEntity(PropertyCreateDto createDTO);
 }
