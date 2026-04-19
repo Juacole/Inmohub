@@ -6,13 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,7 +22,10 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "properties")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class) // Activa la auditoría de fechas
 public class Property {
 
@@ -48,6 +53,15 @@ public class Property {
     @NotBlank(message = "La dirección es obligatoria")
     private String address;
 
+    @NotBlank
+    private String city;
+
+    @NotBlank
+    private String state;
+
+    @NotBlank
+    private String country;
+
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING) // Para convertir el enum a texto
     private PropertyStatus status;
@@ -58,6 +72,12 @@ public class Property {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyPhoto> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyFeature> features = new ArrayList<>();
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -65,4 +85,14 @@ public class Property {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void addPhoto(PropertyPhoto photo) {
+        photos.add(photo);
+        photo.setProperty(this);
+    }
+
+    public void addFeature(PropertyFeature feature) {
+        features.add(feature);
+        feature.setProperty(this);
+    }
 }
