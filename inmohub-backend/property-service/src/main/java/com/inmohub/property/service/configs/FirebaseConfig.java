@@ -18,7 +18,7 @@ public class FirebaseConfig {
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                ClassPathResource resource = new ClassPathResource("firebase-adminsdk.json");
+                ClassPathResource resource = new ClassPathResource("firebase-adminsdk.json.example");
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                         .setStorageBucket("") // TODO: Agregar bucket

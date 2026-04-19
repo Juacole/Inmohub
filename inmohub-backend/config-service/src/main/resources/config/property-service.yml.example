@@ -28,6 +28,11 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
 
+firebase:
+  storage:
+    bucket-name: id-proyecto.appspot.com
+    download-url-format: "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media"
+
 # Configuración específica para Docker
 ---
 spring:
