@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "DTO para la creación de una nueva propiedad inmobiliaria")
@@ -29,8 +30,12 @@ public record PropertyCreateDto(
         @NotBlank
         String address,
 
-        @Schema(description = "UUID del usuario propietario (debe existir en Auth-Service)", example = "550e8400-e29b-41d4-a716-446655440000")
-        @NotNull(message = "Debes especificar un propietario")
-        UUID ownerId
+        @NotBlank String city,
+
+        @NotBlank String state,
+
+        @NotBlank String country,
+
+        List<PropertyFeatureDto> features
 ) {
 }
