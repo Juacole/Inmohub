@@ -1,5 +1,6 @@
 package com.inmohub.property.service.clients;
 
+import com.inmohub.property.service.configs.FeignConfig;
 import com.inmohub.property.service.dtos.UserResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import java.util.UUID;
  * Esta interfaz actúa como un proxy. Cuando llamamos a sus métodos, Spring Cloud OpenFeign
  * genera una petición HTTP real hacia el servicio "auth-service" registrado en Eureka.
  */
-@FeignClient(name = "auth-service") // Nombre del servicio en Eureka al que queremos llamar
+@FeignClient(name = "auth-service", configuration = FeignConfig.class) // Nombre del servicio en Eureka al que queremos llamar
 public interface AuthClient {
 
     /**
