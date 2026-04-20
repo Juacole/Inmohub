@@ -4,8 +4,10 @@ import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.enums.PropertyStatus;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", imports = PropertyStatus.class)
 public interface IPropertyMapper {
@@ -27,4 +29,17 @@ public interface IPropertyMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "status", expression = "java(PropertyStatus.AVAILABLE)") //  Por defecto se le asigna disponible
     Property toEntity(PropertyCreateDto createDTO);
+
+    /**
+     * Se ejecuta automáticamente después de que el mapper
+     * termine de construir la entidad property.
+     * Se vincula cada característica "hija" con su propiedad "padre"
+     * para que Hibernate tenga el property_id al hacer el INSERT.
+     */
+    @AfterMapping
+    default void linkFeatures(@MappingTarget Property property) {
+        if (property.getFeatures() != null) {
+            property.getFeatures().forEach(feature -> feature.setProperty(property));
+        }
+    }
 }
