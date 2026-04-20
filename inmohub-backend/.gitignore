@@ -43,3 +43,6 @@ RESUMEN_TECNICO.md
 
 # Variables de entorno
 .env
+
+# Clave secreta para conexión con Firebase Storage
+property-service/src/main/resources/firebase-adminsdk.json
