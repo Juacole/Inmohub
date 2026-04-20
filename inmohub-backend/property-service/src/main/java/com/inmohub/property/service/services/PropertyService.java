@@ -42,20 +42,30 @@ public class PropertyService {
     private final FirebaseStorageService firebaseService;
 
     /**
-     * Crea y persiste una nueva propiedad en la base de datos tras validar al propietario.
+     * Orquesta la creación y persistencia de un nuevo inmueble, integrando validación delegada,
+     * almacenamiento multimedia en la nube y mapeo de relaciones estructurales.
      *
-     * Flujo de validación distribuida:
+     * <p>Esta operación es completamente transaccional ({@link org.springframework.transaction.annotation.Transactional}).
+     * Si ocurre algún fallo durante la persistencia en base de datos, se garantizará la consistencia de los datos locales.</p>
+     *
+     * <h3>Flujo de ejecución:</h3>
      * <ol>
-     * <li>El servicio recibe la petición de creación con el ID del propietario ("ownerId").</li>
-     * <li>Realiza una llamada HTTP síncrona, vía Feign Client, al microservicio {@code auth-service}.</li>
-     * <li>Verifica si el usuario existe y si su estado es {@code ACTIVE}.</li>
-     * <li>Si el usuario no está activo, se bloquea la operación lanzando {@link UserNotActiveException}.</li>
-     * <li>Si el usuario no existe (404), se captura la excepción y se loguea una advertencia, permitiendo la creación (según reglas de negocio actuales).</li>
+     * <li><b>Validación Distribuida:</b> Realiza una llamada HTTP síncrona al microservicio {@code auth-service} vía Feign Client.
+     * Verifica que el {@code ownerId} corresponda a un usuario existente y con estado {@code ACTIVE}.</li>
+     * <li><b>Mapeo y Características:</b> Transforma el DTO a entidad y establece las relaciones bidireccionales
+     * (1:N) con las características del inmueble ({@code PropertyFeature}).</li>
+     * <li><b>Procesamiento Multimedia:</b> Itera sobre las imágenes adjuntas, subiéndolas a Firebase Storage.
+     * La primera imagen de la lista se establece automáticamente como la foto principal del inmueble.</li>
+     * <li><b>Persistencia:</b> Guarda la entidad raíz en cascada y retorna el estado final.</li>
      * </ol>
      *
-     * @param dto DTO con la información del inmueble a crear.
-     * @return {@link PropertyDto} con los datos de la propiedad persistida, incluyendo su ID y fechas de auditoría.
-     * @throws UserNotActiveException Si el propietario existe pero su cuenta no está activa.
+     * @param dto     Objeto de transferencia con los metadatos principales del inmueble.
+     * @param photos  Lista de archivos multipart que contienen las imágenes de la propiedad. Puede ser nula o vacía.
+     * @param ownerId Identificador unívoco del propietario, inyectado desde el contexto de seguridad (Gateway/JWT).
+     * @return {@link PropertyDto} con la información del inmueble persistido, incluyendo IDs generados, URLs de Firebase y fechas de auditoría.
+     * @throws UserNotActiveException    Si el propietario existe en el ecosistema pero su cuenta está suspendida o inactiva.
+     * @throws ResourceNotFoundException Si el {@code auth-service} devuelve un 404 (el usuario no existe).
+     * @throws IOException               Si ocurre un error durante el procesamiento binario o la subida de archivos a Firebase Storage.
      */
     @Transactional
     public PropertyDto createProperty(PropertyCreateDto dto, List<MultipartFile> photos, UUID ownerId) throws IOException {
