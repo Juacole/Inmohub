@@ -23,7 +23,7 @@ public class CreateLeadUseCase {
         if(Email.isValidEmail(request.email()))
             return Result.error(new InvalidEmailFormat("El formato del email es incorrecto.", null));
 
-        Lead newLead = new Lead(
+        Lead newLead = Lead.create(
                 request.name(),
                 new Email(request.email()),
                 request.phone(),

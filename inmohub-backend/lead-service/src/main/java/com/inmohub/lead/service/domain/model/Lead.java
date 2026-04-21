@@ -7,6 +7,7 @@ import com.inmohub.lead.service.domain.model.enums.LeadStatus;
 import com.inmohub.lead.service.domain.valueobjetcs.Email;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Lead extends AuditableEntity<UUID> {
@@ -19,17 +20,35 @@ public class Lead extends AuditableEntity<UUID> {
     private LeadStatus status;
 
     // Constructor inicial
-    public Lead(String name, Email email, String phone, String message, LeadSource source, UUID propertyId) {
+    private Lead(String name, Email email, String phone, String message, LeadSource source, UUID propertyId) {
+        Objects.requireNonNull(email, "El email es obligatorio.");
+        Objects.requireNonNull(source, "La fuente del lead (source) es obligatoria.");
+        Objects.requireNonNull(propertyId, "El ID de la propiedad es obligatorio.");
+
+        if (name == null || name.isBlank()) {
+            throw new DomainException("El nombre del lead no puede estar vacío.");
+        }
+
+        if (phone == null || phone.isBlank()) {
+            throw new DomainException("El teléfono es obligatorio para contactar al lead.");
+        }
+
         this.id = UUID.randomUUID();
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.message = message;
+        this.message = (message == null) ? "" : message;
         this.source = source;
         this.propertyId = propertyId;
         this.status = LeadStatus.NEW;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
+
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    public static Lead create(String name, Email email, String phone, String message, LeadSource source, UUID propertyId) {
+        return new Lead(name, email, phone, message, source, propertyId);
     }
 
     public void contactLead() {
