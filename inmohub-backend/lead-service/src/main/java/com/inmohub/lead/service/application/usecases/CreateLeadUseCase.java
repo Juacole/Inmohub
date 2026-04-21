@@ -2,7 +2,6 @@ package com.inmohub.lead.service.application.usecases;
 
 import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadResponse;
-import com.inmohub.lead.service.application.usecases.errors.InvalidEmailFormat;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.model.Lead;
@@ -20,9 +19,6 @@ public class CreateLeadUseCase {
     }
 
     public Result<LeadResponse, Error> execute(CreateLeadRequest request) {
-        if(Email.isValidEmail(request.email()))
-            return Result.error(new InvalidEmailFormat("El formato del email es incorrecto.", null));
-
         Lead newLead = Lead.create(
                 request.name(),
                 new Email(request.email()),

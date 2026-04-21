@@ -15,7 +15,7 @@ public record Email(String value) {
         }
     }
 
-    public static boolean isValidEmail(String email) {
+    private static boolean isValidEmail(String email) {
         return EMAIL_PATTERN.matcher(email).matches();
     }
 }
