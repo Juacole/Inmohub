@@ -36,6 +36,7 @@
         <module>config-service</module>
         <module>property-service</module>
         <module>service-registry</module>
+        <module>lead-service</module>
     </modules>
 
 	<properties>

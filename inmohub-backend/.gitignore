@@ -36,6 +36,7 @@ build/
 config-service/src/main/resources/config/api-gateway.yml
 config-service/src/main/resources/config/auth-service.yml
 config-service/src/main/resources/config/property-service.yml
+config-service/src/main/resources/config/lead-service.yml
 docker-compose.yml
 
 # Contexto para agentes
