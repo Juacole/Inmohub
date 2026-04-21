@@ -1,4 +1,4 @@
-package com.inmohub.lead.service.infrastructure.adapters.web;
+package com.inmohub.lead.service.infrastructure.adapters.in.web;
 
 import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadResponse;
