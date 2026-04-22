@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Table(name = "leads")
 @EntityListeners(AuditingEntityListener.class)
 public class LeadJpaEntity {
