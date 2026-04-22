@@ -28,7 +28,7 @@ public class CreateLeadUseCase {
                 request.propertyId()
         );
 
-        Lead savedLead = leadRepository.save(newLead);
+        Lead savedLead = leadRepository.saveLead(newLead);
 
         eventPublisher.publishLeadCreatedEvent(savedLead);
 

@@ -16,7 +16,7 @@ public class LeadRepositoryImpl implements ILeadRepository {
     private final LeadMapper leadMapper;
 
     @Override
-    public Lead save(Lead lead) {
+    public Lead saveLead(Lead lead) {
         return leadMapper.toDomainEntity(
                 jpaRepository.save(
                         leadMapper.toJpaEntity(lead)
