@@ -11,12 +11,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Lead extends AuditableEntity<UUID> {
-    private String name;
-    private Email email;
-    private String phone;
-    private String message;
-    private LeadSource source;
-    private UUID propertyId;
+    private final String name;
+    private final Email email;
+    private final String phone;
+    private final String message;
+    private final LeadSource source;
+    private final UUID propertyId;
     private LeadStatus status;
 
     // Constructor inicial
@@ -47,7 +47,14 @@ public class Lead extends AuditableEntity<UUID> {
         this.updatedAt = now;
     }
 
-    public static Lead create(String name, Email email, String phone, String message, LeadSource source, UUID propertyId) {
+    public static Lead create(
+            String name,
+            Email email,
+            String phone,
+            String message,
+            LeadSource source,
+            UUID propertyId
+    ) {
         return new Lead(name, email, phone, message, source, propertyId);
     }
 
