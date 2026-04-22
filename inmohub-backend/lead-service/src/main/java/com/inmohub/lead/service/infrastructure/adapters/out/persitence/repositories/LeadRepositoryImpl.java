@@ -34,9 +34,7 @@ public class LeadRepositoryImpl implements ILeadRepository {
 
     @Override
     public Lead findById(UUID id) {
-        return leadMapper.toDomainEntity(
-                leadRepository.findById(id).get()
-        );
+        return leadRepository.findById(id).map(leadMapper::toDomainEntity).orElse(null);
     }
 
     @Override
