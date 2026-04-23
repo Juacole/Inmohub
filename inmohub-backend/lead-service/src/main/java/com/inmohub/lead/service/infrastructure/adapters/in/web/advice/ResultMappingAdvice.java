@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -49,6 +51,16 @@ public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
             }
         }
         return body;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, Object> handelAllException(Exception ex) {
+        return Map.of(
+                "status", 500,
+                "error", "Internal Server Error",
+                "message", "Ocurrio un error inesperadoo en el servidor."
+        );
     }
 
     /**
