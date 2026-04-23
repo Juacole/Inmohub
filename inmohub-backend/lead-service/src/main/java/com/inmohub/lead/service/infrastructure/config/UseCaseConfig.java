@@ -6,11 +6,13 @@ import com.inmohub.lead.service.domain.ports.ILeadEventPublisher;
 import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 public class UseCaseConfig {
 
     @Bean
+    @Transactional
     public CreateLeadUseCase createLeadUseCase(
             ILeadRepository leadRepository,
             ILeadEventPublisher leadEventPublisher
@@ -19,6 +21,7 @@ public class UseCaseConfig {
     }
 
     @Bean
+    @Transactional
     public AssignLeadUseCase assignLeadUseCase(ILeadRepository leadRepository) {
         return new AssignLeadUseCase(leadRepository);
     }
