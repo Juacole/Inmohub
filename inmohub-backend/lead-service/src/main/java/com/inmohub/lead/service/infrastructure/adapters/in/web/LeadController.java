@@ -9,6 +9,8 @@ import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,18 +33,93 @@ public class LeadController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crear un nuevo Lead", description = "Registra un interesado en una propiedad")
+    @Operation(
+            summary = "Crear un nuevo Lead",
+            description = "Registra un interesado en una propiedad"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Lead creado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = LeadResponse.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos o regla de negocio no cumplida",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 400, \"error\": \"Bad Request\", \"message\": \"El email no puede estar vacío\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 500, \"error\": \"Internal Server Error\", \"message\": \"Ocurrió un error inesperado en el servidor.\"}"
+                            )
+                    )
+            )
+    })
     public Result<LeadResponse, Error> createLead(@RequestBody CreateLeadRequest request) {
         return createLeadUseCase.execute(request);
     }
 
     @PostMapping("/{leadId}/assign")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Asignar un Lead a un Agente", description = "Cambia el estado del Lead a CONTACTED, registra la asignación y genera un log de auditoría.")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Asignar un Lead a un Agente",
+            description = "Cambia el estado del Lead a CONTACTED, registra la asignación y genera un log de auditoría."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Asignación exitosa"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Lead no encontrado")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Asignación exitosa",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = LeadAssignmentResponse.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos o el Lead no puede ser contactado (ej. ya está cerrado)",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 400, \"error\": \"Bad Request\", \"message\": \"No se puede contactar un lead cerrado o perdido.\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Lead no encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 404, \"error\": \"Not Found\", \"message\": \"Lead no encontrado\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 500, \"error\": \"Internal Server Error\", \"message\": \"Ocurrió un error inesperado en el servidor.\"}"
+                            )
+                    )
+            )
     })
     public Result<LeadAssignmentResponse, Error> assignLead(
             @PathVariable UUID leadId,
