@@ -1,0 +1,13 @@
+package com.inmohub.fsbo.ingestor.service;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class FsboIngestorServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(FsboIngestorServiceApplication.class, args);
+	}
+
+}

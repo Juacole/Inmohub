@@ -37,9 +37,8 @@ config-service/src/main/resources/config/api-gateway.yml
 config-service/src/main/resources/config/auth-service.yml
 config-service/src/main/resources/config/property-service.yml
 config-service/src/main/resources/config/lead-service.yml
+config-service/src/main/resources/config/fsbo-ingestor-service.yml
 docker-compose.yml
-
-RESUMEN_TECNICO.md
 
 # Variables de entorno
 .env

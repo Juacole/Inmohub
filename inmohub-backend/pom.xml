@@ -37,6 +37,7 @@
         <module>property-service</module>
         <module>service-registry</module>
         <module>lead-service</module>
+        <module>fsbo-ingestor-service</module>
     </modules>
 
 	<properties>
