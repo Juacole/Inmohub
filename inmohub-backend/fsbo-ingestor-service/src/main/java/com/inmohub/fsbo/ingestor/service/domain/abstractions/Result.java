@@ -3,7 +3,7 @@ package com.inmohub.fsbo.ingestor.service.domain.abstractions;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class Result<TValue, TError extends Error> {
+public final class Result<TValue, TError> {
     private final TValue value;
     private final TError error;
     private final boolean isSuccess;
@@ -14,12 +14,12 @@ public final class Result<TValue, TError extends Error> {
         this.isSuccess = isSuccess;
     }
 
-    public static <TValue, TError extends Error> Result<TValue, TError> success(TValue value) {
+    public static <TValue, TError> Result<TValue, TError> success(TValue value) {
         Objects.requireNonNull(value, "El valor de éxito no puede ser nulo.");
         return new Result<>(value, null, true);
     }
 
-    public static <TValue, TError extends Error> Result<TValue, TError> error(TError error) {
+    public static <TValue, TError> Result<TValue, TError> error(TError error) {
         Objects.requireNonNull(error, "El error no puede ser nulo");
         return new Result<>(null, error, false);
     }
@@ -30,7 +30,7 @@ public final class Result<TValue, TError extends Error> {
 
     public TValue getValue() {
         if (!isSuccess) {
-            throw new IllegalStateException("No se puede obtener el valor de un resultado fallido");
+            throw new IllegalStateException("No se puede obtener el valor de un resultado fallido.");
         }
         return value;
     }
