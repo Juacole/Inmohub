@@ -1,5 +1,6 @@
-package com.inmohub.fsbo.ingestor.service.domain.services;
+package com.inmohub.fsbo.ingestor.service.application.services;
 
+import com.inmohub.fsbo.ingestor.service.application.dtos.DeduplicationSummary;
 import com.inmohub.fsbo.ingestor.service.domain.models.PropertyRecord;
 import com.inmohub.fsbo.ingestor.service.domain.ports.IFsboRepository;
 
@@ -15,9 +16,12 @@ public class DeduplicationService {
         this.repository = repository;
     }
 
-    public void processPotentiallyDuplicated(List<PropertyRecord> properties) {
-        if (properties == null || properties.isEmpty()) return;
+    public DeduplicationSummary processPotentiallyDuplicated(List<PropertyRecord> properties) {
+        if (properties == null || properties.isEmpty()) {
+            return new DeduplicationSummary(0, 0);
+        }
 
+        int duplicatesFound = 0;
         Set<String> propertyKeysInCurrentBatch = new HashSet<>();
 
         for (PropertyRecord property : properties) {
@@ -25,18 +29,16 @@ public class DeduplicationService {
 
             String propertyKey = generatePropertyKey(property);
 
-            if (isDuplicatedInCurrentBatch(propertyKey, propertyKeysInCurrentBatch)) {
-                property.markAsError("Este inmueble ya aparece en el archivo de carga.");
-                continue;
-            }
-
-            if (existsInSystem(property)) {
-                property.markAsError("Este inmueble ya se encuentra registrado en el sistema.");
+            if (isDuplicatedInCurrentBatch(propertyKey, propertyKeysInCurrentBatch) || existsInSystem(property)) {
+                property.markAsError("Inmueble duplicado en archivo o sistema.");
+                duplicatesFound++;
                 continue;
             }
 
             propertyKeysInCurrentBatch.add(propertyKey);
         }
+
+        return new DeduplicationSummary(properties.size(), duplicatesFound);
     }
 
     private String generatePropertyKey(PropertyRecord property) {
