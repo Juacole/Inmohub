@@ -7,6 +7,7 @@ import com.inmohub.property.service.dtos.UserResponseDto;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
 import com.inmohub.property.service.exceptions.UserNotActiveException;
 import com.inmohub.property.service.mappers.IPropertyMapper;
+import com.inmohub.property.service.messaging.dtos.BulkPropertyEventDto;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.PropertyFeature;
 import com.inmohub.property.service.models.PropertyPhoto;
@@ -163,5 +164,42 @@ public class PropertyService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void processBulkProperties(BulkPropertyEventDto eventDto) {
+        log.info("Iniciando procesamiento de lote de propiedades para el owner: {}", eventDto.ownerId());
+
+        if (eventDto.properties() == null || eventDto.properties().isEmpty()) {
+            log.warn("El evento de bulk insert no contiene propiedades.");
+            return;
+        }
+
+        List<Property> propertiesToSave = eventDto.properties().stream().map(node -> {
+            Property property = new Property();
+            property.setOwnerId(node.ownerId());
+            property.setTitle(node.title());
+            property.setDescription(node.description());
+            property.setPrice(node.price());
+            property.setAreaM2(node.areaM2());
+            property.setAddress(node.address());
+            property.setCity(node.city());
+            property.setState(node.state());
+            property.setCountry(node.country());
+            property.setStatus(PropertyStatus.valueOf(node.status()));
+
+            if (node.features() != null) {
+                node.features().forEach(f -> {
+                    PropertyFeature feature = new PropertyFeature();
+                    feature.setFeatureName(f.featureName());
+                    feature.setFeatureValue(f.featureValue());
+                    property.addFeature(feature);
+                });
+            }
+            return property;
+        }).toList();
+
+        propertyRepository.saveAll(propertiesToSave);
+        log.info("Lote de {} propiedades guardado exitosamente.", propertiesToSave.size());
     }
 }
