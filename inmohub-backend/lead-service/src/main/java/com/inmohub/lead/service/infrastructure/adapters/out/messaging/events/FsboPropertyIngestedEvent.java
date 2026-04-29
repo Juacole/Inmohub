@@ -6,7 +6,8 @@ import java.util.UUID;
  * Representa evento exacto tal y como lo emitira el fsbo-service
  */
 public record FsboPropertyIngestedEvent(
-        UUID propertyId,
+        String eventType,
+        UUID ownerId,
         String ownerName,
         String ownerEmail,
         String ownerPhone,

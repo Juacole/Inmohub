@@ -1,5 +1,6 @@
 package com.inmohub.lead.service.infrastructure.adapters.out.messaging;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
@@ -11,33 +12,40 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class FsboIngestionConsumer {
 
     private final CreateLeadUseCase createLeadUseCase;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "fsbo.events", groupId = "lead-service-group")
+    public FsboIngestionConsumer(CreateLeadUseCase createLeadUseCase, ObjectMapper objectMapper) {
+        this.createLeadUseCase = createLeadUseCase;
+        this.objectMapper = objectMapper.copy().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    @KafkaListener(topics = "lead.events", groupId = "lead-service-group")
     public void consumeFsboEvent(String message) {
         try {
-            // Mapeo del mensaje enviado por fsbo-service
             FsboPropertyIngestedEvent event = objectMapper.readValue(message, FsboPropertyIngestedEvent.class);
+
+            if (!"FSBO_OWNER_BULK_UPLOAD".equals(event.eventType())) {
+                return;
+            }
 
             CreateLeadRequest leadRequest = new CreateLeadRequest(
                     event.ownerName(),
                     event.ownerEmail(),
                     event.ownerPhone(),
-                    "Lead generado automáticamente tras ingesta de propiedad FSBO: " + event.ingestionSource(),
+                    "Lead (Propietario) generado automáticamente tras carga masiva FSBO. ID Original: " + event.ownerId(),
                     LeadSource.FSBO,
-                    event.propertyId()
+                    null // en una carga masiva no hay IDS asignados a las propiedades
             );
 
             createLeadUseCase.execute(leadRequest);
 
-            log.info("Lead captado desde FSBO.");
+            log.info("Lead captado desde FSBO exitosamente. Email: {}", event.ownerEmail());
         } catch (Exception e) {
-            log.error("Error procesando evento FSBO: ", e);
+            log.error("Error crítico procesando evento FSBO: {}", message, e);
         }
     }
 }

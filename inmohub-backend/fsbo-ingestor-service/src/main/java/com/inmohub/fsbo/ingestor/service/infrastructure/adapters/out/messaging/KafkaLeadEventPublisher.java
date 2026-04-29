@@ -19,14 +19,14 @@ public class KafkaLeadEventPublisher implements ILeadEventPublisher {
     @Override
     public void publishOwnerAsLeadEvent(OwnerDetails ownerDetails) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("eventType", "FSBO_OWNER_BULK_UPLOAD");
-        payload.put("ownerId", ownerDetails.ownerId());
-        payload.put("name", ownerDetails.fullName());
-        payload.put("email", ownerDetails.email());
-        payload.put("phone", ownerDetails.phone());
-        payload.put("source", "FSBO");
-        payload.put("message", "El propietario ha realizado una carga masiva de inmuebles.");
 
-        kafkaTemplate.send(TOPIC_LEADS, ownerDetails.toString(), payload);
+        payload.put("eventType", "FSBO_OWNER_BULK_UPLOAD");
+        payload.put("ownerId", ownerDetails.ownerId().toString());
+        payload.put("ownerName", ownerDetails.fullName());
+        payload.put("ownerEmail", ownerDetails.email());
+        payload.put("ownerPhone", ownerDetails.phone());
+        payload.put("ingestionSource", "FSBO_BULK_UPLOAD");
+
+        kafkaTemplate.send(TOPIC_LEADS, ownerDetails.ownerId().toString(), payload);
     }
 }
