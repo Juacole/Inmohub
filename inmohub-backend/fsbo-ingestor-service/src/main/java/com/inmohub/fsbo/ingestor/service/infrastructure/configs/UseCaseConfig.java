@@ -17,10 +17,11 @@ public class UseCaseConfig {
     @Transactional
     public IngestFsboFileUseCase ingestFsboFileUseCase(
             ICsvParser csvParser,
+            DeduplicationService deduplicationService,
             IFsboRepository fsboRepository,
             ILeadEventPublisher leadEventPublisher,
             IPropertyEventPublisher propertyEventPublisher
     ) {
-        return new IngestFsboFileUseCase(csvParser, fsboRepository, leadEventPublisher, propertyEventPublisher);
+        return new IngestFsboFileUseCase(csvParser, deduplicationService, fsboRepository, leadEventPublisher, propertyEventPublisher);
     }
 }

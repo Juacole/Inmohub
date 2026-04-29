@@ -19,17 +19,20 @@ import java.util.UUID;
 public class IngestFsboFileUseCase {
 
     private final ICsvParser csvParser;
+    private final DeduplicationService deduplicationService;
     private final IFsboRepository repository;
     private final ILeadEventPublisher leadPublisher;
     private final IPropertyEventPublisher propertyPublisher;
 
     public IngestFsboFileUseCase(
             ICsvParser csvParser,
+            DeduplicationService deduplicationService,
             IFsboRepository repository,
             ILeadEventPublisher eventPublisher,
             IPropertyEventPublisher propertyPublisher
     ) {
         this.csvParser = csvParser;
+        this.deduplicationService = deduplicationService;
         this.repository = repository;
         this.leadPublisher = eventPublisher;
         this.propertyPublisher = propertyPublisher;
@@ -50,7 +53,7 @@ public class IngestFsboFileUseCase {
 
         FsboBatch batch = parseResult.getValue();
 
-        DeduplicationSummary summary = new DeduplicationService(repository).processPotentiallyDuplicated(batch.getProperties());
+        DeduplicationSummary summary = deduplicationService.processPotentiallyDuplicated(batch.getProperties());
 
         if (summary.isAllDuplicated()) {
             repository.saveBatch(batch);
