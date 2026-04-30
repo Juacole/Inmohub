@@ -12,16 +12,14 @@ import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface LeadMapper {
+
     default LeadJpaEntity toJpaEntity(Lead domain) {
-        if (domain == null) {
-            return null;
-        }
+        if (domain == null) return null;
 
         LeadJpaEntity entity = new LeadJpaEntity();
-
         entity.setId((UUID) domain.getId());
-        entity.setName(domain.getName());
         entity.setEmail(domain.getEmail() != null ? domain.getEmail().value() : null);
+        entity.setName(domain.getName());
         entity.setPhone(domain.getPhone());
         entity.setMessage(domain.getMessage());
         entity.setSource(domain.getSource());
@@ -32,17 +30,17 @@ public interface LeadMapper {
     }
 
     default Lead toDomainEntity(LeadJpaEntity entity) {
-        if (entity == null) {
-            return null;
-        }
+        if (entity == null) return null;
 
-        return Lead.create(
+        return Lead.reconstitute(
+                entity.getId(),
                 entity.getName(),
                 new Email(entity.getEmail()),
                 entity.getPhone(),
                 entity.getMessage(),
                 entity.getSource(),
-                entity.getPropertyId()
+                entity.getPropertyId(),
+                entity.getStatus()
         );
     }
 }

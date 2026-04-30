@@ -58,6 +58,22 @@ public class Lead extends AuditableEntity<UUID> {
         return new Lead(name, email, phone, message, source, propertyId);
     }
 
+    public static Lead reconstitute(
+            UUID id,
+            String name,
+            Email email,
+            String phone,
+            String message,
+            LeadSource source,
+            UUID propertyId,
+            LeadStatus status
+    ) {
+        Lead lead = new Lead(name, email, phone, message, source, propertyId);
+        lead.id = id;
+        lead.status = status;
+        return lead;
+    }
+
     public void contactLead() {
         if (this.status == LeadStatus.CLOSED || this.status == LeadStatus.LOST) {
             throw new DomainException("No se puede contactar un lead cerrado o perdido.");
