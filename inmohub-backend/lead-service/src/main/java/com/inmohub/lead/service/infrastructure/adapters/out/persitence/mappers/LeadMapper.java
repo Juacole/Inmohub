@@ -8,13 +8,30 @@ import com.inmohub.lead.service.infrastructure.adapters.out.persitence.entities.
 import org.mapstruct.Mapper;
 import org.mapstruct.ObjectFactory;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring")
 public interface LeadMapper {
-    LeadJpaEntity toJpaEntity(Lead domainLead);
-    Lead toDomainEntity(LeadJpaEntity jpaEntity);
+    default LeadJpaEntity toJpaEntity(Lead domain) {
+        if (domain == null) {
+            return null;
+        }
 
-    @ObjectFactory
-    default Lead createLeadFromEntity(LeadJpaEntity entity) {
+        LeadJpaEntity entity = new LeadJpaEntity();
+
+        entity.setId((UUID) domain.getId());
+        entity.setName(domain.getName());
+        entity.setEmail(domain.getEmail() != null ? domain.getEmail().value() : null);
+        entity.setPhone(domain.getPhone());
+        entity.setMessage(domain.getMessage());
+        entity.setSource(domain.getSource());
+        entity.setPropertyId(domain.getPropertyId());
+        entity.setStatus(domain.getStatus());
+
+        return entity;
+    }
+
+    default Lead toDomainEntity(LeadJpaEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -24,7 +41,7 @@ public interface LeadMapper {
                 new Email(entity.getEmail()),
                 entity.getPhone(),
                 entity.getMessage(),
-                LeadSource.valueOf(entity.getSource()),
+                entity.getSource(),
                 entity.getPropertyId()
         );
     }
