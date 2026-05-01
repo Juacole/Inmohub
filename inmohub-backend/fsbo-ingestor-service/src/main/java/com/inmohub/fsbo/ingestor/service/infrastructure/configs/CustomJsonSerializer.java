@@ -1,4 +1,4 @@
-package com.inmohub.lead.service.infrastructure.config;
+package com.inmohub.fsbo.ingestor.service.infrastructure.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,7 +22,7 @@ public class CustomJsonSerializer implements Serializer<Object> {
         try {
             return objectMapper.writeValueAsBytes(data);
         } catch (Exception e) {
-            throw new SerializationException("Error al serializar el objeto a JSON para Kafka.", e);
+            throw new SerializationException("Error al serializar objeto a JSON para evento Kafka.", e);
         }
     }
 }
