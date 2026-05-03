@@ -11,5 +11,6 @@ public record FsboPropertyIngestedEvent(
         String ownerName,
         String ownerEmail,
         String ownerPhone,
-        String ingestionSource
+        String ingestionSource,
+        UUID propertyId
 ) {}

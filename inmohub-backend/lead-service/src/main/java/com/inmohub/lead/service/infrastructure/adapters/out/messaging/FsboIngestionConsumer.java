@@ -35,7 +35,7 @@ public class FsboIngestionConsumer {
                     event.ownerPhone(),
                     "Lead (Propietario) generado automáticamente tras carga masiva FSBO. ID Original: " + event.ownerId(),
                     LeadSource.FSBO,
-                    UUID.randomUUID()
+                    event.propertyId()
             );
 
             createLeadUseCase.execute(leadRequest);
