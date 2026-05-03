@@ -1,6 +1,7 @@
 package com.inmohub.property.service.models;
 
 import com.inmohub.property.service.models.enums.PropertyStatus;
+import com.inmohub.property.service.models.utils.UseExistingOrGenerateId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +31,7 @@ import java.util.UUID;
 public class Property {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @UseExistingOrGenerateId
     private UUID id;
 
     @NotBlank(message = "El titulo es obligatorio")

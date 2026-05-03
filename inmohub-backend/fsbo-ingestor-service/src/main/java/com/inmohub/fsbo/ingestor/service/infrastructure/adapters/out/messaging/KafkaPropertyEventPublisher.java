@@ -1,21 +1,24 @@
 package com.inmohub.fsbo.ingestor.service.infrastructure.adapters.out.messaging;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.inmohub.fsbo.ingestor.service.domain.models.FsboBatch;
 import com.inmohub.fsbo.ingestor.service.domain.models.PropertyRecord;
 import com.inmohub.fsbo.ingestor.service.domain.ports.IPropertyEventPublisher;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaPropertyEventPublisher implements IPropertyEventPublisher {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
     private static final String TOPIC_PROPERTIES = "property.bulk.create";
 
     @Override
@@ -25,7 +28,7 @@ public class KafkaPropertyEventPublisher implements IPropertyEventPublisher {
         for (PropertyRecord record : batch.getValidProperties()) {
             Map<String, Object> propertyNode = new HashMap<>();
 
-            propertyNode.put("ownerId", batch.getOwnerDetails().ownerId());
+            propertyNode.put("ownerId", batch.getOwnerDetails().ownerId().toString());
             propertyNode.put("title", record.getTitle());
             propertyNode.put("description", record.getDescription());
             propertyNode.put("price", record.getPrice());
@@ -35,6 +38,7 @@ public class KafkaPropertyEventPublisher implements IPropertyEventPublisher {
             propertyNode.put("state", record.getState());
             propertyNode.put("country", record.getCountry());
             propertyNode.put("status", "AVAILABLE");
+            propertyNode.put("propertyId", record.getId().toString());
 
             List<Map<String, String>> featuresPayload = new ArrayList<>();
             record.getFeatures().forEach((key, value) -> {
@@ -54,6 +58,13 @@ public class KafkaPropertyEventPublisher implements IPropertyEventPublisher {
         bulkEvent.put("ownerId", batch.getOwnerDetails().toString());
         bulkEvent.put("properties", propertiesPayload);
 
-        kafkaTemplate.send(TOPIC_PROPERTIES, batch.getOwnerDetails().toString(), bulkEvent);
+        try {
+            String jsonPayload = objectMapper.writeValueAsString(bulkEvent);
+
+            kafkaTemplate.send(TOPIC_PROPERTIES, batch.getOwnerDetails().toString(), jsonPayload);
+            log.info("Lote de propiedades publicado con éxito en Kafka para ownerId: {}", batch.getOwnerDetails().ownerId());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record PropertyNodeDto(
+        UUID propertyId,
         UUID ownerId,
         String title,
         String description,

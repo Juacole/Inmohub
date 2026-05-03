@@ -1,7 +1,7 @@
 package com.inmohub.fsbo.ingestor.service.domain.ports;
 
-import com.inmohub.fsbo.ingestor.service.domain.models.OwnerDetails;
+import com.inmohub.fsbo.ingestor.service.domain.models.FsboBatch;
 
 public interface ILeadEventPublisher {
-    void publishOwnerAsLeadEvent(OwnerDetails ownerDetails);
+    void publishOwnerAsLeadEvent(FsboBatch batch);
 }

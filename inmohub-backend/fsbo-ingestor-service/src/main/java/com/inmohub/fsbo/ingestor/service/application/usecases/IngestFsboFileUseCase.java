@@ -70,7 +70,7 @@ public class IngestFsboFileUseCase {
 
         validProperties.forEach(PropertyRecord::markAsProcessed);
 
-        leadPublisher.publishOwnerAsLeadEvent(ownerDetails);
+        leadPublisher.publishOwnerAsLeadEvent(batch);
 
         propertyPublisher.publishBulkProperties(batch);
 

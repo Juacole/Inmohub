@@ -6,8 +6,10 @@ import com.inmohub.fsbo.ingestor.service.domain.models.enums.RecordStatus;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 public class PropertyRecord {
+    private final UUID id;
     private final String title;
     private final String description;
     private final BigDecimal price;
@@ -21,6 +23,7 @@ public class PropertyRecord {
     private String errorMessage;
 
     private PropertyRecord(
+            UUID id,
             String title,
             String description,
             BigDecimal price,
@@ -31,10 +34,11 @@ public class PropertyRecord {
             String country,
             Map<String, String> features
     ) {
-        this(title, description, price, areaM2, address, city, state, country, features, RecordStatus.PENDING, null);
+        this(id, title, description, price, areaM2, address, city, state, country, features, RecordStatus.PENDING, null);
     }
 
     private PropertyRecord(
+            UUID id,
             String title,
             String description,
             BigDecimal price,
@@ -46,10 +50,11 @@ public class PropertyRecord {
             Map<String, String> features,
             String errorMessage
     ) {
-        this(title, description, price, areaM2, address, city, state, country, features, RecordStatus.ERROR, errorMessage);
+        this(id, title, description, price, areaM2, address, city, state, country, features, RecordStatus.ERROR, errorMessage);
     }
 
     private PropertyRecord(
+            UUID id,
             String title,
             String description,
             BigDecimal price,
@@ -63,6 +68,7 @@ public class PropertyRecord {
             String errorMessage
     ) {
         if (status != RecordStatus.ERROR) {
+            if (id == null) throw new DomainException("El ID no puede ser nulo.");
             if (title == null || title.isBlank()) throw new DomainException("El título es obligatorio.");
             if (address == null || address.isBlank()) throw new DomainException("La dirección es obligatoria.");
             if (city == null || city.isBlank()) throw new DomainException("La ciudad es obligatoria.");
@@ -75,6 +81,7 @@ public class PropertyRecord {
             }
         }
 
+        this.id = id;
         this.title = (title != null) ? title : "";
         this.description = (description == null) ? "" : description;
         this.price = price;
@@ -91,7 +98,7 @@ public class PropertyRecord {
 
     public static PropertyRecord createInvalid(String errorMessage) {
         return new PropertyRecord(
-                null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null,
                 Map.of(), errorMessage
         );
     }
@@ -108,6 +115,7 @@ public class PropertyRecord {
             Map<String, String> features
     ) {
         return new PropertyRecord(
+                UUID.randomUUID(),
                 title,
                 description,
                 price,
@@ -132,6 +140,7 @@ public class PropertyRecord {
         this.status = RecordStatus.PROCESSED;
         this.errorMessage = null;
     }
+
     public boolean isValid() {
         return this.status == RecordStatus.PENDING;
     }
@@ -142,6 +151,10 @@ public class PropertyRecord {
 
     public Map<String, String> getFeatures() {
         return Collections.unmodifiableMap(features);
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getTitle() {
