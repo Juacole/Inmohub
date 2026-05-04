@@ -20,7 +20,7 @@ public class FsboIngestionConsumer {
     private final CreateLeadUseCase createLeadUseCase;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "lead.events", groupId = "lead-service-group")
+    @KafkaListener(topics = "lead.events", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeFsboEvent(String message) {
         try {
             FsboPropertyIngestedEvent event = objectMapper.readValue(message, FsboPropertyIngestedEvent.class);
