@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record PropertyNodeDto(
-        UUID propertyId,
-        UUID ownerId,
+        String propertyId,
+        String ownerId,
         String title,
         String description,
         BigDecimal price,

@@ -177,8 +177,8 @@ public class PropertyService {
 
         List<Property> propertiesToSave = eventDto.properties().stream().map(node -> {
             Property property = new Property();
-            property.setId(node.propertyId());
-            property.setOwnerId(node.ownerId());
+            property.setId(UUID.fromString(node.propertyId()));
+            property.setOwnerId(UUID.fromString(node.ownerId()));
             property.setTitle(node.title());
             property.setDescription(node.description());
             property.setPrice(node.price());

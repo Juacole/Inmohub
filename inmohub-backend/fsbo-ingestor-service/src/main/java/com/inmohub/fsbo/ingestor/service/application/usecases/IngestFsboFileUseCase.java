@@ -68,11 +68,10 @@ public class IngestFsboFileUseCase {
             return Result.error("El archivo fue procesado, pero no contiene propiedades válidas o todas resultaron estar duplicadas.");
         }
 
-        validProperties.forEach(PropertyRecord::markAsProcessed);
-
         leadPublisher.publishOwnerAsLeadEvent(batch);
-
         propertyPublisher.publishBulkProperties(batch);
+
+        validProperties.forEach(PropertyRecord::markAsProcessed);
 
         if (summary.hasDuplicates()) {
             return Result.success(

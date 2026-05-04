@@ -17,7 +17,7 @@ public class PropertyEventConsumer {
     private final PropertyService propertyService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "property.bulk.create", groupId = "property-group")
+    @KafkaListener(topics = "property.bulk.create", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeBulkProperties(String message) {
         log.info("Evento recibido en topic property.bulk.create");
 
