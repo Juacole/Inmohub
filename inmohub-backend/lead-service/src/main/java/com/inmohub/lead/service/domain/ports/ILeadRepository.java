@@ -14,4 +14,5 @@ public interface ILeadRepository {
     void saveAuditLog(LeadAuditLog auditLog);
     PaginatedResult<Lead> findAll(int page, int size);
     PaginatedResult<Lead> findByPropertyId(UUID propertyId, int page, int size);
+    PaginatedResult<Lead> findByAgentId(UUID agentId, int page, int size);
 }

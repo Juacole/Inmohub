@@ -5,6 +5,7 @@ import com.inmohub.lead.service.domain.model.LeadAssignment;
 import com.inmohub.lead.service.domain.model.LeadAuditLog;
 import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
+import com.inmohub.lead.service.infrastructure.adapters.out.persitence.entities.LeadAssignmentJpaEntity;
 import com.inmohub.lead.service.infrastructure.adapters.out.persitence.mappers.LeadAssignmentMapper;
 import com.inmohub.lead.service.infrastructure.adapters.out.persitence.mappers.LeadEventMapper;
 import com.inmohub.lead.service.infrastructure.adapters.out.persitence.mappers.LeadMapper;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -74,6 +76,27 @@ public class LeadRepositoryImpl implements ILeadRepository {
                 leadsPage.getNumber(),
                 leadsPage.getSize(),
                 leadsPage.getTotalElements()
+        );
+    }
+
+    @Override
+    public PaginatedResult<Lead> findByAgentId(UUID agentId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<LeadAssignmentJpaEntity> assignments = assignmentRepository.findByAgentId(agentId, pageRequest);
+
+        List<UUID> leadIds = assignments.getContent().stream()
+                .map(LeadAssignmentJpaEntity::getLeadId)
+                .toList();
+
+        List<Lead> leads = leadRepository.findAllById(leadIds).stream()
+                .map(leadMapper::toDomainEntity)
+                .toList();
+
+        return PaginatedResult.of(
+                leads,
+                assignments.getNumber(),
+                assignments.getSize(),
+                assignments.getTotalElements()
         );
     }
 }

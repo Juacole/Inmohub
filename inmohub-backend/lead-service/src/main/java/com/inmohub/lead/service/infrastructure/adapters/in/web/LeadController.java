@@ -7,6 +7,7 @@ import com.inmohub.lead.service.application.dto.LeadResponse;
 import com.inmohub.lead.service.application.usecases.AssignLeadUseCase;
 import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
 import com.inmohub.lead.service.application.usecases.GetAllLeadsUseCase;
+import com.inmohub.lead.service.application.usecases.GetLeadsByAgentIdUseCase;
 import com.inmohub.lead.service.application.usecases.GetLeadsByPropertyIdUseCase;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,7 @@ public class LeadController {
     private final AssignLeadUseCase assignLeadUseCase;
     private final GetAllLeadsUseCase getAllLeadsUseCase;
     private final GetLeadsByPropertyIdUseCase getLeadsByPropertyIdUseCase;
+    private final GetLeadsByAgentIdUseCase getLeadsByAgentIdUseCase;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -214,5 +217,65 @@ public class LeadController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return getLeadsByPropertyIdUseCase.execute(propertyId, page, size);
+    }
+
+    @GetMapping("/agent/{agentId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Obtener leads por ID de agente",
+            description = "Devuelve una lista paginada de los leads asignados a un agente específico."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Listado de leads del agente obtenido exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = PaginatedResult.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acceso denegado - El agente solo puede ver sus propios leads",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 403, \"error\": \"Forbidden\", \"message\": \"No puedes ver los leads de otro agente\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 500, \"error\": \"Internal Server Error\", \"message\": \"Ocurrió un error inesperado en el servidor.\"}"
+                            )
+                    )
+            )
+    })
+    public Result<PaginatedResult<LeadResponse>, Error> getLeadsByAgentId(
+            @PathVariable UUID agentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String currentUserIdStr = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse(null);
+
+        if (!"AGENT".equals(currentUserRole) && !"ADMIN".equals(currentUserRole)) {
+            return Result.error("Acceso denegado");
+        }
+
+        if ("AGENT".equals(currentUserRole) && currentUserIdStr != null && !agentId.toString().equals(currentUserIdStr)) {
+            return Result.error("No puedes ver los leads de otro agente");
+        }
+
+        return getLeadsByAgentIdUseCase.execute(agentId, page, size);
     }
 }
