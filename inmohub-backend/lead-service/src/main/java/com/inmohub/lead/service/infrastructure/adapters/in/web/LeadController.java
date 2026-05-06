@@ -75,7 +75,7 @@ public class LeadController {
         return createLeadUseCase.execute(request);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Obtener todos los leads paginados",
