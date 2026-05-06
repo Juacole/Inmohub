@@ -4,11 +4,9 @@ import com.inmohub.lead.service.application.dto.AssignLeadRequest;
 import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadAssignmentResponse;
 import com.inmohub.lead.service.application.dto.LeadResponse;
-import com.inmohub.lead.service.application.usecases.AssignLeadUseCase;
-import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
-import com.inmohub.lead.service.application.usecases.GetAllLeadsUseCase;
-import com.inmohub.lead.service.application.usecases.GetLeadsByAgentIdUseCase;
-import com.inmohub.lead.service.application.usecases.GetLeadsByPropertyIdUseCase;
+import com.inmohub.lead.service.application.usecases.*;
+import com.inmohub.lead.service.application.usecases.errors.AccessDeniedError;
+import com.inmohub.lead.service.application.usecases.errors.ForbiddenAgentLeadsError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
@@ -269,11 +267,11 @@ public class LeadController {
                 .orElse(null);
 
         if (!"AGENT".equals(currentUserRole) && !"ADMIN".equals(currentUserRole)) {
-            return Result.error("Acceso denegado");
+            return Result.error(new AccessDeniedError("Acceso denegado. Permisos insuficientes."));
         }
 
         if ("AGENT".equals(currentUserRole) && currentUserIdStr != null && !agentId.toString().equals(currentUserIdStr)) {
-            return Result.error("No puedes ver los leads de otro agente");
+            return Result.error(new ForbiddenAgentLeadsError("No puedes ver los leads de otro agente."));
         }
 
         return getLeadsByAgentIdUseCase.execute(agentId, page, size);

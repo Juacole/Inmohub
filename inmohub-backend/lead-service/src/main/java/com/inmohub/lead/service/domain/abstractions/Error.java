@@ -1,6 +1,24 @@
 package com.inmohub.lead.service.domain.abstractions;
 
-public interface Error {
-    String getMessage();
-    Exception getExcepcion();
+public abstract class Error {
+    protected final String message;
+    protected final Exception exception;
+
+    protected Error(String message) {
+        this.message = message;
+        this.exception = null;
+    }
+
+    protected Error(String message, Exception exception) {
+        this.message = message;
+        this.exception = exception;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Exception getExcepcion() {
+        return exception;
+    }
 }

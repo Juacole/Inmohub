@@ -23,7 +23,7 @@ public class AssignLeadUseCase {
     public Result<LeadAssignmentResponse, Error> execute(UUID leadId, AssignLeadRequest request, UUID actionUserId) {
         Lead lead = leadRepository.findById(leadId);
         if (lead == null)
-            return Result.error(new LeadNotFound("Lead no encontrado", null));
+            return Result.error(new LeadNotFound("Lead no encontrado o null."));
 
         var previousStatus = lead.getStatus();
 

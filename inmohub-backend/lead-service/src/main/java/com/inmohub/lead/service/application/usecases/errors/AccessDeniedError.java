@@ -2,13 +2,13 @@ package com.inmohub.lead.service.application.usecases.errors;
 
 import com.inmohub.lead.service.domain.abstractions.Error;
 
-public class LeadNotFound extends Error {
+public class AccessDeniedError extends Error {
 
-    public LeadNotFound(String message) {
+    public AccessDeniedError(String message) {
         super(message, null);
     }
 
-    public LeadNotFound(String message, Exception exception) {
+    public AccessDeniedError(String message, Exception exception) {
         super(message, exception);
     }
 }
