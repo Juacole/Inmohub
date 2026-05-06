@@ -13,4 +13,5 @@ public interface ILeadRepository {
     void saveAssignment(LeadAssignment assignment);
     void saveAuditLog(LeadAuditLog auditLog);
     PaginatedResult<Lead> findAll(int page, int size);
+    PaginatedResult<Lead> findByPropertyId(UUID propertyId, int page, int size);
 }

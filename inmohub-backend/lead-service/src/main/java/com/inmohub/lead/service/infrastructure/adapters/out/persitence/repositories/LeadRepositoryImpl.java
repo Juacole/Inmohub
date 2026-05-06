@@ -62,4 +62,18 @@ public class LeadRepositoryImpl implements ILeadRepository {
                 leadsPage.getTotalElements()
         );
     }
+
+    @Override
+    public PaginatedResult<Lead> findByPropertyId(UUID propertyId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Lead> leadsPage = leadRepository.findByPropertyId(propertyId, pageRequest)
+                .map(leadMapper::toDomainEntity);
+
+        return PaginatedResult.of(
+                leadsPage.getContent(),
+                leadsPage.getNumber(),
+                leadsPage.getSize(),
+                leadsPage.getTotalElements()
+        );
+    }
 }

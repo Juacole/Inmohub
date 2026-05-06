@@ -7,6 +7,7 @@ import com.inmohub.lead.service.application.dto.LeadResponse;
 import com.inmohub.lead.service.application.usecases.AssignLeadUseCase;
 import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
 import com.inmohub.lead.service.application.usecases.GetAllLeadsUseCase;
+import com.inmohub.lead.service.application.usecases.GetLeadsByPropertyIdUseCase;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
@@ -32,6 +33,7 @@ public class LeadController {
     private final CreateLeadUseCase createLeadUseCase;
     private final AssignLeadUseCase assignLeadUseCase;
     private final GetAllLeadsUseCase getAllLeadsUseCase;
+    private final GetLeadsByPropertyIdUseCase getLeadsByPropertyIdUseCase;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -166,5 +168,51 @@ public class LeadController {
         UUID actionUserId = currentUserIdStr != null ? UUID.fromString(currentUserIdStr) : null;
 
         return assignLeadUseCase.execute(leadId, request, actionUserId);
+    }
+
+    @GetMapping("/property/{propertyId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Obtener leads por ID de propiedad",
+            description = "Devuelve una lista paginada de todos los interesados en una propiedad específica."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Listado de leads para la propiedad obtenido exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = PaginatedResult.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Parámetros de paginación inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 400, \"error\": \"Bad Request\", \"message\": \"La página no puede ser negativa.\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 500, \"error\": \"Internal Server Error\", \"message\": \"Ocurrió un error inesperado en el servidor.\"}"
+                            )
+                    )
+            )
+    })
+    public Result<PaginatedResult<LeadResponse>, Error> getLeadsByPropertyId(
+            @PathVariable UUID propertyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return getLeadsByPropertyIdUseCase.execute(propertyId, page, size);
     }
 }
