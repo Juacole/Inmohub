@@ -1,0 +1,14 @@
+package com.inmohub.lead.service.application.usecases.errors;
+
+import com.inmohub.lead.service.domain.abstractions.Error;
+
+public class InvalidStatusError extends Error {
+
+    public InvalidStatusError(String message) {
+        super(message, null);
+    }
+
+    public InvalidStatusError(String message, Exception exception) {
+        super(message, exception);
+    }
+}

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -40,6 +41,13 @@ public class LeadRepositoryImpl implements ILeadRepository {
     @Override
     public Lead findById(UUID id) {
         return leadRepository.findById(id).map(leadMapper::toDomainEntity).orElse(null);
+    }
+
+    @Override
+    public List<LeadAssignment> findAssignmentsByLeadId(UUID leadId) {
+        return assignmentRepository.findByLeadId(leadId).stream()
+                .map(assignmentMapper::toDomainEntity)
+                .collect(Collectors.toList());
     }
 
     @Override

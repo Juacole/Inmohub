@@ -1,6 +1,6 @@
 package com.inmohub.lead.service.infrastructure.adapters.in.web.advice;
 
-import com.inmohub.lead.service.application.usecases.errors.LeadNotFound;
+import com.inmohub.lead.service.application.usecases.errors.*;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import org.springframework.core.MethodParameter;
@@ -69,9 +69,11 @@ public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
      * un HttpStatus.
      */
     private HttpStatus mapErrorToStatus(Error error) {
-        if (error instanceof LeadNotFound) {
-            return HttpStatus.NOT_FOUND;
-        }
+        if (error instanceof LeadNotFound) return HttpStatus.NOT_FOUND;
+        if (error instanceof ForbiddenError) return HttpStatus.FORBIDDEN;
+        if (error instanceof InvalidStatusError) return HttpStatus.BAD_REQUEST;
+        if (error instanceof AccessDeniedError) return HttpStatus.FORBIDDEN;
+        if (error instanceof ForbiddenAgentLeadsError) return HttpStatus.FORBIDDEN;
 
         return HttpStatus.BAD_REQUEST;
     }

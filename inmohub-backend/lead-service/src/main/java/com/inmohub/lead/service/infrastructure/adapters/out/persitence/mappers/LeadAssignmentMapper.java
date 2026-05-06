@@ -7,4 +7,15 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface LeadAssignmentMapper {
     LeadAssignmentJpaEntity toJpaEntity(LeadAssignment leadAssignment);
+
+    default LeadAssignment toDomainEntity(LeadAssignmentJpaEntity entity) {
+        if (entity == null) return null;
+        return LeadAssignment.reconstitute(
+                entity.getId(),
+                entity.getLeadId(),
+                entity.getAgentId(),
+                entity.getNotes(),
+                entity.getAssignedAt()
+        );
+    }
 }

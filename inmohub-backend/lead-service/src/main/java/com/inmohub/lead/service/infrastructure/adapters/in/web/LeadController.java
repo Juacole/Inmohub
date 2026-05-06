@@ -1,6 +1,7 @@
 package com.inmohub.lead.service.infrastructure.adapters.in.web;
 
 import com.inmohub.lead.service.application.dto.AssignLeadRequest;
+import com.inmohub.lead.service.application.dto.ChangeStatusRequest;
 import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadAssignmentResponse;
 import com.inmohub.lead.service.application.dto.LeadResponse;
@@ -35,6 +36,7 @@ public class LeadController {
     private final GetAllLeadsUseCase getAllLeadsUseCase;
     private final GetLeadsByPropertyIdUseCase getLeadsByPropertyIdUseCase;
     private final GetLeadsByAgentIdUseCase getLeadsByAgentIdUseCase;
+    private final ChangeLeadStatusUseCase changeLeadStatusUseCase;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -275,5 +277,62 @@ public class LeadController {
         }
 
         return getLeadsByAgentIdUseCase.execute(agentId, page, size);
+    }
+
+    @PatchMapping("/{leadId}/status")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Cambiar el estado de un lead",
+            description = "Actualiza el estado de un lead. Requiere ser ADMIN o el AGENT asignado."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estado actualizado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = LeadResponse.class
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acceso denegado - Solo el ADMIN o el AGENT asignado puede modificar el lead",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 403, \"error\": \"Forbidden\", \"message\": \"No tienes permisos para modificar este lead.\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Lead no encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 404, \"error\": \"Not Found\", \"message\": \"Lead no encontrado.\"}"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Estado inválido",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"status\": 400, \"error\": \"Bad Request\", \"message\": \"Estado inválido. Valores permitidos: NEW, CONTACTED, NEGOTIATION, CLOSED, LOST\"}"
+                            )
+                    )
+            )
+    })
+    public Result<LeadResponse, Error> changeLeadStatus(
+            @PathVariable UUID leadId,
+            @RequestBody ChangeStatusRequest request,
+            @RequestHeader("X-User-Id") UUID userId,
+            @RequestHeader("X-User-Role") String userRole
+    ) {
+        return changeLeadStatusUseCase.execute(leadId, request.status(), userId, userRole);
     }
 }

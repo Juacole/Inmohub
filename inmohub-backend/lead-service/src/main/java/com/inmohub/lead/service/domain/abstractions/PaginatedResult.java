@@ -11,8 +11,8 @@ public record PaginatedResult<T>(
         boolean last
 ) {
     public PaginatedResult {
-        if (page < 0) throw new IllegalArgumentException("La página no puede ser negativa.");
-        if (size < 1) throw new IllegalArgumentException("El tamaño debe ser mayor a 0.");
+        if (page < 0) throw new DomainException("La página no puede ser negativa.");
+        if (size < 1) throw new DomainException("El tamaño debe ser mayor a 0.");
     }
 
     public static <T> PaginatedResult<T> of(List<T> content, int page, int size, long totalElements) {

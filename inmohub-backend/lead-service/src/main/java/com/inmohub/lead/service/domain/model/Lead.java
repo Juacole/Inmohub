@@ -87,6 +87,12 @@ public class Lead extends AuditableEntity<UUID> {
         marksAsUpdated();
     }
 
+    public void updateStatus(LeadStatus newStatus) {
+        Objects.requireNonNull(newStatus, "El nuevo estado es obligatorio.");
+        this.status = newStatus;
+        marksAsUpdated();
+    }
+
     public String getName() {
         return name;
     }

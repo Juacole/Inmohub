@@ -1,6 +1,7 @@
 package com.inmohub.lead.service.infrastructure.config;
 
 import com.inmohub.lead.service.application.usecases.AssignLeadUseCase;
+import com.inmohub.lead.service.application.usecases.ChangeLeadStatusUseCase;
 import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
 import com.inmohub.lead.service.application.usecases.GetAllLeadsUseCase;
 import com.inmohub.lead.service.application.usecases.GetLeadsByAgentIdUseCase;
@@ -43,5 +44,11 @@ public class UseCaseConfig {
     @Transactional
     public GetLeadsByAgentIdUseCase getLeadsByAgentIdUseCase(ILeadRepository leadRepository) {
         return new GetLeadsByAgentIdUseCase(leadRepository);
+    }
+
+    @Bean
+    @Transactional
+    public ChangeLeadStatusUseCase changeLeadStatusUseCase(ILeadRepository leadRepository) {
+        return new ChangeLeadStatusUseCase(leadRepository);
     }
 }
