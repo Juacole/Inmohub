@@ -3,6 +3,7 @@ package com.inmohub.property.service.services;
 import com.inmohub.property.service.clients.AuthClient;
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.dtos.UserResponseDto;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
 import com.inmohub.property.service.exceptions.UserNotActiveException;
@@ -17,6 +18,8 @@ import feign.FeignException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -123,6 +126,12 @@ public class PropertyService {
             return propertyRepository.findAll().stream()
                 .map(propertyMapper::toDto)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PropertySummaryDto> getPropertiesSummary(Pageable pageable) {
+        return propertyRepository.findAll(pageable)
+                .map(propertyMapper::toSummaryDto);
     }
 
     /**

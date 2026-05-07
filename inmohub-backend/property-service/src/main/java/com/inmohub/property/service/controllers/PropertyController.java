@@ -2,6 +2,7 @@ package com.inmohub.property.service.controllers;
 
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.services.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -242,6 +245,37 @@ public class PropertyController {
             @Parameter(description = "Identificador único (UUID) del propietario", example = "550e8400-e29b-41d4-a716-446655440000")
             @PathVariable(name = "id") UUID id) {
         return ResponseEntity.ok(propertyService.findByOwnerId(id));
+    }
+
+    @GetMapping("/summary")
+    @Operation(
+            summary = "Catálogo optimizado de propiedades",
+            description = "Devuelve una lista paginada de inmuebles con información mínima y solo la foto principal para optimizar la carga del frontend."
+    )
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Catálogo de propiedades recuperado correctamente",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PropertySummaryDto.class)
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Error interno del servidor al recuperar el catálogo de propiedades.",
+                        content = @Content
+                )
+            }
+    )
+    public ResponseEntity<Page<PropertySummaryDto>> getPropertiesSummary(
+            @Parameter(
+                    description = "Parámetros de paginación: page (número de página, 0-based), size (tamaño de página), sort (ordenamiento)"
+            )
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(propertyService.getPropertiesSummary(pageable));
     }
 
     @DeleteMapping("/delete-by-id/{id}")
