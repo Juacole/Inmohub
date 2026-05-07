@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ public class FsboIngestorController {
     private final AuthServiceClient authServiceClient;
 
     @PostMapping(value = "/properties/bulk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @Operation(summary = "Sube un CSV con múltiples inmuebles vinculados al propietario autenticado")
     public ResponseEntity<?> uploadPropertiesBulk(@RequestPart("file") MultipartFile file) {
         try {
