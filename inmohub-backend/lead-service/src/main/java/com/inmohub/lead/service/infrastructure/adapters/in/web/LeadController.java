@@ -268,7 +268,7 @@ public class LeadController {
                 .findFirst()
                 .orElse(null);
 
-        if (!"AGENT".equals(currentUserRole) && !"ADMIN".equals(currentUserRole)) {
+        if (!"ROLE_AGENT".equals(currentUserRole) && !"ROLE_ADMIN".equals(currentUserRole)) {
             return Result.error(new AccessDeniedError("Acceso denegado. Permisos insuficientes."));
         }
 
