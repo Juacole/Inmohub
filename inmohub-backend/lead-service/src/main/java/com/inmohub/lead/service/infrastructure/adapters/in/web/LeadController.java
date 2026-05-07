@@ -272,7 +272,7 @@ public class LeadController {
             return Result.error(new AccessDeniedError("Acceso denegado. Permisos insuficientes."));
         }
 
-        if ("AGENT".equals(currentUserRole) && currentUserIdStr != null && !agentId.toString().equals(currentUserIdStr)) {
+        if ("ROLE_AGENT".equals(currentUserRole) && currentUserIdStr != null && !agentId.toString().equals(currentUserIdStr)) {
             return Result.error(new ForbiddenAgentLeadsError("No puedes ver los leads de otro agente."));
         }
 
@@ -329,10 +329,15 @@ public class LeadController {
     })
     public Result<LeadResponse, Error> changeLeadStatus(
             @PathVariable UUID leadId,
-            @RequestBody ChangeStatusRequest request,
-            @RequestHeader("X-User-Id") UUID userId,
-            @RequestHeader("X-User-Role") String userRole
+            @RequestBody ChangeStatusRequest request
     ) {
-        return changeLeadStatusUseCase.execute(leadId, request.status(), userId, userRole);
+        String currentUserIdStr = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID currentUserId = currentUserIdStr != null ? UUID.fromString(currentUserIdStr) : null;
+        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse(null);
+
+        return changeLeadStatusUseCase.execute(leadId, request.status(), currentUserId, currentUserRole);
     }
 }
