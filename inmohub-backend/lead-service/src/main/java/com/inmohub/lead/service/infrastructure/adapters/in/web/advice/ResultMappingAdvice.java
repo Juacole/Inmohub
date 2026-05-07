@@ -1,6 +1,13 @@
 package com.inmohub.lead.service.infrastructure.adapters.in.web.advice;
 
-import com.inmohub.lead.service.application.usecases.errors.*;
+import com.inmohub.lead.service.application.usecases.errors.AgentNotFoundError;
+import com.inmohub.lead.service.application.usecases.errors.ForbiddenError;
+import com.inmohub.lead.service.application.usecases.errors.InvalidStatusError;
+import com.inmohub.lead.service.application.usecases.errors.LeadAlreadyExistsError;
+import com.inmohub.lead.service.application.usecases.errors.LeadNotFound;
+import com.inmohub.lead.service.application.usecases.errors.PaginationError;
+import com.inmohub.lead.service.application.usecases.errors.PropertyNotFoundError;
+import com.inmohub.lead.service.application.usecases.errors.ValidationError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import org.springframework.core.MethodParameter;
@@ -71,10 +78,13 @@ public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
      */
     private HttpStatus mapErrorToStatus(Error error) {
         if (error instanceof LeadNotFound) return HttpStatus.NOT_FOUND;
+        if (error instanceof LeadAlreadyExistsError) return HttpStatus.CONFLICT;
         if (error instanceof ForbiddenError) return HttpStatus.FORBIDDEN;
         if (error instanceof InvalidStatusError) return HttpStatus.BAD_REQUEST;
-        if (error instanceof AccessDeniedError) return HttpStatus.FORBIDDEN;
-        if (error instanceof ForbiddenAgentLeadsError) return HttpStatus.FORBIDDEN;
+        if (error instanceof AgentNotFoundError) return HttpStatus.NOT_FOUND;
+        if (error instanceof PropertyNotFoundError) return HttpStatus.NOT_FOUND;
+        if (error instanceof PaginationError) return HttpStatus.BAD_REQUEST;
+        if (error instanceof ValidationError) return HttpStatus.BAD_REQUEST;
 
         return HttpStatus.BAD_REQUEST;
     }

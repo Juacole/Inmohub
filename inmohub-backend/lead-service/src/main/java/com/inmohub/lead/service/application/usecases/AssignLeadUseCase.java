@@ -3,6 +3,7 @@ package com.inmohub.lead.service.application.usecases;
 import com.inmohub.lead.service.application.dto.AssignLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadAssignmentResponse;
 import com.inmohub.lead.service.application.usecases.errors.LeadNotFound;
+import com.inmohub.lead.service.application.usecases.errors.ValidationError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.model.Lead;
@@ -21,9 +22,12 @@ public class AssignLeadUseCase {
     }
 
     public Result<LeadAssignmentResponse, Error> execute(UUID leadId, AssignLeadRequest request, UUID actionUserId) {
+        if (leadId == null) return Result.error(new ValidationError("El ID del lead no puede ser nulo."));
+        if (request == null) return Result.error(new ValidationError("La solicitud no puede ser nula."));
+        if (request.agentId() == null) return Result.error(new ValidationError("El ID del agente no puede ser nulo."));
+
         Lead lead = leadRepository.findById(leadId);
-        if (lead == null)
-            return Result.error(new LeadNotFound("Lead no encontrado o null."));
+        if (lead == null) return Result.error(new LeadNotFound("Lead no encontrado o null."));
 
         var previousStatus = lead.getStatus();
 

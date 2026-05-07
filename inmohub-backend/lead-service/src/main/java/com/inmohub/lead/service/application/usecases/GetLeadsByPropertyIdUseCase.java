@@ -1,6 +1,8 @@
 package com.inmohub.lead.service.application.usecases;
 
 import com.inmohub.lead.service.application.dto.LeadResponse;
+import com.inmohub.lead.service.application.usecases.errors.PaginationError;
+import com.inmohub.lead.service.application.usecases.errors.PropertyNotFoundError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
 import com.inmohub.lead.service.domain.abstractions.Result;
@@ -18,6 +20,11 @@ public class GetLeadsByPropertyIdUseCase {
     }
 
     public Result<PaginatedResult<LeadResponse>, Error> execute(UUID propertyId, int page, int size) {
+        if (propertyId == null) return Result.error(new PropertyNotFoundError("El ID de la propiedad no puede ser nulo."));
+        if (page < 0) return Result.error(new PaginationError("El número de página no puede ser negativo."));
+        if (size <= 0) return Result.error(new PaginationError("El tamaño de página debe ser mayor a cero."));
+        if (size > 100) return Result.error(new PaginationError("El tamaño de página no puede exceder 100."));
+
         PaginatedResult<Lead> leadsPage = leadRepository.findByPropertyId(propertyId, page, size);
 
         List<LeadResponse> content = leadsPage.content().stream()

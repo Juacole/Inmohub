@@ -2,13 +2,13 @@ package com.inmohub.lead.service.application.usecases.errors;
 
 import com.inmohub.lead.service.domain.abstractions.Error;
 
-public class AccessDeniedError extends Error {
+public class PaginationError extends Error {
 
-    public AccessDeniedError(String message) {
+    public PaginationError(String message) {
         super(message, null);
     }
 
-    public AccessDeniedError(String message, Exception exception) {
+    public PaginationError(String message, Exception exception) {
         super(message, exception);
     }
 }

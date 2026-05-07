@@ -6,8 +6,6 @@ import com.inmohub.lead.service.application.dto.CreateLeadRequest;
 import com.inmohub.lead.service.application.dto.LeadAssignmentResponse;
 import com.inmohub.lead.service.application.dto.LeadResponse;
 import com.inmohub.lead.service.application.usecases.*;
-import com.inmohub.lead.service.application.usecases.errors.AccessDeniedError;
-import com.inmohub.lead.service.application.usecases.errors.ForbiddenAgentLeadsError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;

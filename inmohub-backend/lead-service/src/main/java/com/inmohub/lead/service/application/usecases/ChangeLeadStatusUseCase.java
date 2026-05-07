@@ -4,6 +4,7 @@ import com.inmohub.lead.service.application.dto.LeadResponse;
 import com.inmohub.lead.service.application.usecases.errors.ForbiddenError;
 import com.inmohub.lead.service.application.usecases.errors.LeadNotFound;
 import com.inmohub.lead.service.application.usecases.errors.InvalidStatusError;
+import com.inmohub.lead.service.application.usecases.errors.ValidationError;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.model.Lead;
@@ -22,6 +23,11 @@ public class ChangeLeadStatusUseCase {
     }
 
     public Result<LeadResponse, Error> execute(UUID leadId, String newStatus, UUID requesterId, String requesterRole) {
+        if (leadId == null) return Result.error(new ValidationError("El ID del lead no puede ser nulo."));
+        if (newStatus == null || newStatus.isBlank()) return Result.error(new ValidationError("El nuevo estado no puede estar vacío."));
+        if (requesterId == null) return Result.error(new ValidationError("El ID del solicitante no puede ser nulo."));
+        if (requesterRole == null || requesterRole.isBlank()) return Result.error(new ValidationError("El rol del solicitante no puede estar vacío."));
+
         Lead lead = leadRepository.findById(leadId);
         if (lead == null) {
             return Result.error(new LeadNotFound("Lead no encontrado."));
