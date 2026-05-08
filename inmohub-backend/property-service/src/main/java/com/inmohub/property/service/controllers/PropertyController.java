@@ -2,6 +2,7 @@ package com.inmohub.property.service.controllers;
 
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.services.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -276,6 +278,49 @@ public class PropertyController {
             Pageable pageable
     ) {
         return ResponseEntity.ok(propertyService.getPropertiesSummary(pageable));
+    }
+
+    @GetMapping("/search")
+    @Operation(
+            summary = "Búsqueda dinámica de propiedades con filtros",
+            description = "Permite filtrar propiedades por ciudad (case-insensitive), rango de precios (minPrice/maxPrice) y estado. " +
+                    "Todos los filtros son opcionales y se combinan con AND. La paginación es obligatoria."
+    )
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Resultados de la búsqueda filtrada",
+                        content = @Content(
+                                mediaType = "application/json",
+                                schema = @Schema(implementation = PropertySummaryDto.class)
+                        )
+                ),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Error interno del servidor.",
+                        content = @Content
+                )
+            }
+    )
+    public ResponseEntity<Page<PropertySummaryDto>> searchProperties(
+            @Parameter(description = "Ciudad para filtrar (búsqueda case-insensitive, parcial)", example = "Madrid")
+            @RequestParam(required = false) String city,
+
+            @Parameter(description = "Precio mínimo", example = "100000.00")
+            @RequestParam(required = false) BigDecimal minPrice,
+
+            @Parameter(description = "Precio máximo", example = "500000.00")
+            @RequestParam(required = false) BigDecimal maxPrice,
+
+            @Parameter(description = "Estado de la propiedad: AVAILABLE, SOLD, RENTED, OFF_MARKET", example = "AVAILABLE")
+            @RequestParam(required = false) String status,
+
+            @Parameter(description = "Parámetros de paginación: page (0-based), size, sort")
+            Pageable pageable
+    ) {
+        PropertySearchCriteria criteria = new PropertySearchCriteria(city, minPrice, maxPrice, status);
+        return ResponseEntity.ok(propertyService.searchProperties(criteria, pageable));
     }
 
     @DeleteMapping("/delete-by-id/{id}")

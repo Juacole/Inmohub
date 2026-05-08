@@ -8,7 +8,9 @@ import com.inmohub.property.service.dtos.UserResponseDto;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
 import com.inmohub.property.service.exceptions.UserNotActiveException;
 import com.inmohub.property.service.mappers.IPropertyMapper;
+import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.messaging.dtos.BulkPropertyEventDto;
+import com.inmohub.property.service.specifications.PropertySpecifications;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.PropertyFeature;
 import com.inmohub.property.service.models.PropertyPhoto;
@@ -131,6 +133,18 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public Page<PropertySummaryDto> getPropertiesSummary(Pageable pageable) {
         return propertyRepository.findAll(pageable)
+                .map(propertyMapper::toSummaryDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PropertySummaryDto> searchProperties(PropertySearchCriteria criteria, Pageable pageable) {
+        var spec = PropertySpecifications.buildSpecification(
+                criteria.city(),
+                criteria.minPrice(),
+                criteria.maxPrice(),
+                criteria.status()
+        );
+        return propertyRepository.findAll(spec, pageable)
                 .map(propertyMapper::toSummaryDto);
     }
 
