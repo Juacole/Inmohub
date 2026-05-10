@@ -97,6 +97,7 @@ public class AuthController {
                             }
                     )
             )
+            @org.springframework.web.bind.annotation.RequestBody
             UserCreateDto createDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(createDto));
     }
@@ -395,6 +396,7 @@ public class AuthController {
                             }
                     )
             )
+            @org.springframework.web.bind.annotation.RequestBody
             LoginDto loginDto) {
         return ResponseEntity.ok(userService.login(loginDto.email(), loginDto.password()));
     }
@@ -445,6 +447,7 @@ public class AuthController {
                             }
                     )
             )
+            @org.springframework.web.bind.annotation.RequestBody
             RefreshTokenRequestDto requestDto) {
         return ResponseEntity.ok(userService.refreshToken(requestDto.refreshToken()));
     }
