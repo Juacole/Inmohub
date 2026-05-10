@@ -134,7 +134,7 @@ public class AuthController {
     }
 
     @GetMapping("/search-by-id/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'OWNER')")
     @Operation(
             summary = "Obtener usuario por ID",
             description = "Busca un usuario específico por su UUID. Solo accesible para ADMIN y AGENT.",
