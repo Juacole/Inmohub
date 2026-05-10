@@ -30,12 +30,12 @@ public final class PropertySummaryDto {
         this.primaryPhotoUrl = primaryPhotoUrl;
     }
 
-    public UUID id() { return id; }
-    public String title() { return title; }
-    public BigDecimal price() { return price; }
-    public String city() { return city; }
-    public String status() { return status; }
-    public String primaryPhotoUrl() { return primaryPhotoUrl; }
+    public UUID getId() { return id; }
+    public String getTitle() { return title; }
+    public BigDecimal getPrice() { return price; }
+    public String getCity() { return city; }
+    public String getStatus() { return status; }
+    public String getPrimaryPhotoUrl() { return primaryPhotoUrl; }
 
     public void setId(UUID id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
