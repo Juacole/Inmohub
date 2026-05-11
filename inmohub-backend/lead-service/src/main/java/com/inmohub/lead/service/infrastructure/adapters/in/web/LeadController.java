@@ -82,7 +82,7 @@ public class LeadController {
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
     @Operation(
             summary = "Obtener todos los leads paginados",
             description = "Devuelve una lista paginada de todos los leads existentes"
