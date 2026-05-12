@@ -42,7 +42,7 @@ import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.core.ui.InmoButton
 import com.inmohub.frontend.core.ui.InmoInput
 import com.inmohub.frontend.features.auth.data.AuthRepository
-import com.inmohub.frontend.features.auth.dtos.register.RegisterRequest
+import com.inmohub.frontend.features.auth.dtos.RegisterRequest
 import kotlinx.coroutines.launch
 
 class RegisterScreen : Screen {

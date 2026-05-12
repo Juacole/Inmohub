@@ -1,4 +1,4 @@
-package com.inmohub.frontend.features.auth.dtos.summary
+package com.inmohub.frontend.features.auth.dtos
 
 import kotlinx.serialization.Serializable
 

@@ -1,7 +1,7 @@
 package com.inmohub.frontend.features.auth.data
 
 import com.inmohub.frontend.core.network.NetworkClient
-import com.inmohub.frontend.features.auth.dtos.summary.UserSummary
+import com.inmohub.frontend.features.auth.dtos.UserSummary
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 

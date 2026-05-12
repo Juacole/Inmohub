@@ -1,4 +1,4 @@
-package com.inmohub.frontend.features.auth.dtos.summary
+package com.inmohub.frontend.features.auth.dtos
 
 data class UserSession(
     val id: String,

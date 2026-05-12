@@ -1,9 +1,9 @@
 package com.inmohub.frontend.features.auth.data
 
 import com.inmohub.frontend.core.network.NetworkClient
-import com.inmohub.frontend.features.auth.dtos.login.LoginRequest
-import com.inmohub.frontend.features.auth.dtos.login.LoginResponse
-import com.inmohub.frontend.features.auth.dtos.register.RegisterRequest
+import com.inmohub.frontend.features.auth.dtos.LoginRequest
+import com.inmohub.frontend.features.auth.dtos.LoginResponse
+import com.inmohub.frontend.features.auth.dtos.RegisterRequest
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
