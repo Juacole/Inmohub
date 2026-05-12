@@ -49,7 +49,7 @@ import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.auth.data.UserRepository
 import com.inmohub.frontend.features.auth.dtos.summary.UserSummary
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
-import com.inmohub.frontend.features.property.components.PropertyCard
+import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 
 class DashboardScreen(val agentUsername: String) : Screen {
 

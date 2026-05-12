@@ -1,4 +1,4 @@
-package com.inmohub.frontend.features.property.components
+package com.inmohub.frontend.features.property.presentation.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
