@@ -44,12 +44,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
-import com.inmohub.frontend.data.model.Property
-import com.inmohub.frontend.data.repository.PropertyRepository
+import com.inmohub.frontend.features.property.domain.Property
+import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.auth.data.UserRepository
 import com.inmohub.frontend.features.auth.dtos.summary.UserSummary
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
-import com.inmohub.frontend.ui.components.PropertyCard
+import com.inmohub.frontend.features.property.components.PropertyCard
 
 class DashboardScreen(val agentUsername: String) : Screen {
 

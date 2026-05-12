@@ -1,4 +1,4 @@
-package com.inmohub.frontend.ui.screens.mobile
+package com.inmohub.frontend.features.property.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,13 +19,13 @@ import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.inmohub.frontend.data.model.CreateProperty
-import com.inmohub.frontend.data.model.Property
+import com.inmohub.frontend.features.property.domain.CreateProperty
+import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.auth.domain.User
-import com.inmohub.frontend.data.repository.PropertyRepository
+import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.core.ui.InmoButton
 import com.inmohub.frontend.core.ui.InmoInput
-import com.inmohub.frontend.ui.components.PropertyCard
+import com.inmohub.frontend.features.property.components.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary

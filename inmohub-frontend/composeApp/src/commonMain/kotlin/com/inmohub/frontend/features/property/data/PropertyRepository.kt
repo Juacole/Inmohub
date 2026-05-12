@@ -1,8 +1,8 @@
-package com.inmohub.frontend.data.repository
+package com.inmohub.frontend.features.property.data
 
 import com.inmohub.frontend.core.network.NetworkClient
-import com.inmohub.frontend.data.model.CreateProperty
-import com.inmohub.frontend.data.model.Property
+import com.inmohub.frontend.features.property.domain.Property
+import com.inmohub.frontend.features.property.dtos.CreateProperty
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
