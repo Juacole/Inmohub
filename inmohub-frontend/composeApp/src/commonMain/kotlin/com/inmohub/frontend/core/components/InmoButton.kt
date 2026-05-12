@@ -1,4 +1,4 @@
-package com.inmohub.frontend.core.ui
+package com.inmohub.frontend.core.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

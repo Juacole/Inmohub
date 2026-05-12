@@ -39,8 +39,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TextLightGray
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
-import com.inmohub.frontend.core.ui.InmoButton
-import com.inmohub.frontend.core.ui.InmoInput
+import com.inmohub.frontend.core.components.InmoButton
+import com.inmohub.frontend.core.components.InmoInput
 import com.inmohub.frontend.features.auth.data.AuthRepository
 import com.inmohub.frontend.features.auth.dtos.RegisterRequest
 import kotlinx.coroutines.launch

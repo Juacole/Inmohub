@@ -22,8 +22,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.auth.domain.User
 import com.inmohub.frontend.features.property.data.PropertyRepository
-import com.inmohub.frontend.core.ui.InmoButton
-import com.inmohub.frontend.core.ui.InmoInput
+import com.inmohub.frontend.core.components.InmoButton
+import com.inmohub.frontend.core.components.InmoInput
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.themes.NavyBluePrimary
