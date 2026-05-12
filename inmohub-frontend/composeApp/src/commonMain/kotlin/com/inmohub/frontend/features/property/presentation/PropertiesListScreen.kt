@@ -19,7 +19,6 @@ import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.inmohub.frontend.features.property.domain.CreateProperty
 import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.auth.domain.User
 import com.inmohub.frontend.features.property.data.PropertyRepository
@@ -29,6 +28,7 @@ import com.inmohub.frontend.features.property.components.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
+import com.inmohub.frontend.features.property.dtos.CreateProperty
 import kotlinx.coroutines.launch
 
 data class PropertiesListScreen(val user: User) : Screen {
