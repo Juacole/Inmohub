@@ -17,12 +17,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.data.model.UserSession
 import com.inmohub.frontend.data.repository.AuthRepository
-import com.inmohub.frontend.ui.components.InmoButton
-import com.inmohub.frontend.ui.components.InmoInput
+import com.inmohub.frontend.core.ui.InmoButton
+import com.inmohub.frontend.core.ui.InmoInput
 import com.inmohub.frontend.ui.screens.desktop.DashboardScreen
 import com.inmohub.frontend.ui.screens.mobile.PropertiesListScreen
-import com.inmohub.frontend.ui.theme.NavyBluePrimary
-import com.inmohub.frontend.ui.theme.TextLightGray
+import com.inmohub.frontend.core.themes.NavyBluePrimary
+import com.inmohub.frontend.core.themes.TextLightGray
 import kotlinx.coroutines.launch
 
 class LoginScreen : Screen {

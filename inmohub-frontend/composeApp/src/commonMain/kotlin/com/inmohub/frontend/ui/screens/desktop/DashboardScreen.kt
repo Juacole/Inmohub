@@ -23,8 +23,8 @@ import com.inmohub.frontend.data.repository.UserRepository
 import com.inmohub.frontend.data.repository.UserSummary
 import com.inmohub.frontend.ui.components.PropertyCard
 import com.inmohub.frontend.ui.screens.login.LoginScreen
-import com.inmohub.frontend.ui.theme.NavyBluePrimary
-import com.inmohub.frontend.ui.theme.TileOrangeSecondary
+import com.inmohub.frontend.core.themes.NavyBluePrimary
+import com.inmohub.frontend.core.themes.TileOrangeSecondary
 
 class DashboardScreen(val agentUsername: String) : Screen {
 

@@ -1,4 +1,4 @@
-package com.inmohub.frontend.ui.theme
+package com.inmohub.frontend.core.themes
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

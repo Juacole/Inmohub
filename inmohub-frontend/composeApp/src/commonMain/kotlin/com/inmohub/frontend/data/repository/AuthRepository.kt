@@ -1,6 +1,6 @@
 package com.inmohub.frontend.data.repository
 
-import com.inmohub.frontend.data.NetworkClient
+import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.data.model.User
 import io.ktor.client.call.body
 import io.ktor.client.request.post

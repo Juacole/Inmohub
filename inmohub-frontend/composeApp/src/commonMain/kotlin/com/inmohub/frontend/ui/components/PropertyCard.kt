@@ -12,9 +12,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inmohub.frontend.data.model.Property
-import com.inmohub.frontend.ui.theme.NavyBluePrimary
-import com.inmohub.frontend.ui.theme.SuccessGreen
-import com.inmohub.frontend.ui.theme.TileOrangeSecondary
+import com.inmohub.frontend.core.themes.NavyBluePrimary
+import com.inmohub.frontend.core.themes.SuccessGreen
+import com.inmohub.frontend.core.themes.TileOrangeSecondary
 
 @Composable
 fun PropertyCard(property: Property) {

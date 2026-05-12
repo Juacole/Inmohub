@@ -20,11 +20,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.data.repository.AuthRepository
 import com.inmohub.frontend.data.repository.RegisterRequest
-import com.inmohub.frontend.ui.components.InmoButton
-import com.inmohub.frontend.ui.components.InmoInput
-import com.inmohub.frontend.ui.theme.NavyBluePrimary
-import com.inmohub.frontend.ui.theme.TextLightGray
-import com.inmohub.frontend.ui.theme.TileOrangeSecondary
+import com.inmohub.frontend.core.ui.InmoButton
+import com.inmohub.frontend.core.ui.InmoInput
+import com.inmohub.frontend.core.themes.NavyBluePrimary
+import com.inmohub.frontend.core.themes.TextLightGray
+import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import kotlinx.coroutines.launch
 
 class RegisterScreen : Screen {

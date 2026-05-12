@@ -1,4 +1,4 @@
-package com.inmohub.frontend.ui.theme
+package com.inmohub.frontend.core.themes
 
 import androidx.compose.ui.graphics.Color
 
