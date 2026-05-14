@@ -1,6 +1,5 @@
 package com.inmohub.frontend.features.property.dtos
 
-import androidx.datastore.preferences.protobuf.LazyStringArrayList.emptyList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,5 +14,5 @@ data class PropertyDto(
     val status: String,
     val ownerId: String,
     val photos: List<String> = emptyList(),
-    val features: List<PropertyFeatureDto> = emptyList()
+    val features: List<PropertyFeatureDto> = listOf()
 )
