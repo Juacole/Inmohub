@@ -14,5 +14,5 @@ data class PropertyDto(
     val status: String,
     val ownerId: String,
     val photos: List<String> = emptyList(),
-    val features: List<PropertyFeatureDto> = listOf()
+    val features: List<PropertyFeatureDto> = emptyList()
 )

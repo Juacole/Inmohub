@@ -3,8 +3,12 @@ package com.inmohub.frontend.features.property.data
 import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.property.dtos.CreateProperty
+import com.inmohub.frontend.features.property.dtos.PagedListResponse
+import com.inmohub.frontend.features.property.dtos.PropertyDto
+import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -20,7 +24,7 @@ object PropertyRepository {
                 emptyList()
             }
         } catch (e: Exception) {
-            println("Error fetching properties: ${e.message}")
+            println("Error al consultar listado de propiedades: ${e.message}")
             emptyList()
         }
     }
@@ -31,10 +35,11 @@ object PropertyRepository {
             if (response.status.value == 200) {
                 response.body()
             } else {
-                getMockProperties()
+                emptyList()
             }
         } catch (e: Exception) {
-            getMockProperties()
+            println("Error al consultar listado de propiedades: ${e.message}")
+            emptyList()
         }
     }
 
@@ -47,21 +52,51 @@ object PropertyRepository {
             if (response.status.value == 200) {
                 response.body()
             } else {
-                println("Error creación: ${response.status}")
+                println("La propiedad no pudo crearse: ${response.status}")
                 null
             }
         } catch (e: Exception) {
-            println("Excepción al crear propiedad: ${e.message}")
+            println("Error al crear propiedad: ${e.message}")
             null
         }
     }
 
-    fun getMockProperties(): List<Property> {
-        return listOf(
-//            Property(null, "Ático en Madrid", "Precioso ático centro", 350000.0, "Calle Mayor 1", 95.0, "AVAILABLE", ""),
-//            Property(null, "Villa en la Costa", "Vistas al mar", 850000.0, "Marbella", 250.0, "AVAILABLE", ""),
-//            Property(null, "Piso de Estudiantes", "Cerca universidad", 120000.0, "Valencia", 80.0, "RENTED", ""),
-//            Property(null, "Casa Rural", "Perfecta para desconectar", 180000.0, "Asturias", 150.0, "AVAILABLE", "")
-        )
+    suspend fun searchProperties(
+        page: Int = 0,
+        size: Int = 10,
+        city: String? = null,
+        minPrice: Double? = null,
+        maxPrice: Double? = null,
+        status: String? = null
+    ): PagedListResponse<PropertySummaryDto>? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/properties/search") {
+                parameter("page", page)
+                parameter("size", size)
+                city?.let { parameter("city", it) }
+                minPrice?.let { parameter("minPrice", it) }
+                maxPrice?.let { parameter("maxPrice", it) }
+                status?.let { parameter("status", it) }
+            }
+
+            if (response.status.value == 200) {
+                response.body()
+            } else null
+        } catch (e: Exception) {
+            println("Error buscando propiedades: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getPropertyById(id: String): PropertyDto? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/properties/search-by-id/$id")
+            if (response.status.value == 200) {
+                response.body()
+            } else null
+        } catch (e: Exception) {
+            println("Error buscando una propiedad: ${e.message}")
+            null
+        }
     }
 }
