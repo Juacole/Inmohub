@@ -47,6 +47,9 @@ kotlin {
 
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.ktor.client.auth)
+
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
