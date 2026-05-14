@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PropertySummaryDto(
     val id: String,
-    val tittle: String,
+    val title: String,
     val price: Double,
     val city: String,
     val status: String,
