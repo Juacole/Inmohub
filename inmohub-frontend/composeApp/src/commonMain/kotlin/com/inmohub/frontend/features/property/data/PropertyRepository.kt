@@ -24,7 +24,7 @@ object PropertyRepository {
                 emptyList()
             }
         } catch (e: Exception) {
-            println("Error al consultar listado de propiedades: ${e.message}")
+            println("Error al consultar listado de propiedades relacionadas a un ownerId: ${e.message}")
             emptyList()
         }
     }
@@ -83,7 +83,7 @@ object PropertyRepository {
                 response.body()
             } else null
         } catch (e: Exception) {
-            println("Error buscando propiedades: ${e.message}")
+            println("Error buscando propiedades por filtros especificos: ${e.message}")
             null
         }
     }
@@ -95,7 +95,25 @@ object PropertyRepository {
                 response.body()
             } else null
         } catch (e: Exception) {
-            println("Error buscando una propiedad: ${e.message}")
+            println("Error buscando una propiedad por su ID: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getPropertySummary(
+        page: Int = 0,
+        size: Int = 10
+    ): PagedListResponse<PropertySummaryDto>? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/properties/summary") {
+                parameter("page", page)
+                parameter("size", size)
+            }
+            if (response.status.value == 200) {
+                response.body()
+            } else null
+        } catch (e: Exception) {
+            println("Error obteniendo catálogo resumido: ${e.message}")
             null
         }
     }
