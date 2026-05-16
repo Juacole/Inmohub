@@ -32,10 +32,11 @@ import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TextLightGray
 import com.inmohub.frontend.core.components.InmoButton
 import com.inmohub.frontend.core.components.InmoInput
+import com.inmohub.frontend.core.network.NetworkClient
+import com.inmohub.frontend.core.utils.JwtUtils
 import com.inmohub.frontend.features.auth.data.AuthRepository
-import com.inmohub.frontend.features.auth.dtos.UserSession
 import com.inmohub.frontend.features.lead.presentation.desktop.DashboardScreen
-import com.inmohub.frontend.features.property.presentation.PropertiesListScreen
+import com.inmohub.frontend.features.property.presentation.mobile.HomeScreen
 import kotlinx.coroutines.launch
 
 class LoginScreen : Screen {
@@ -108,21 +109,25 @@ class LoginScreen : Screen {
                             isLoading = true
                             errorMessage = null
 
-                            val response = AuthRepository.login(email, password)
+                            val authResponse = AuthRepository.login(email, password)
 
-                            if (response != null) {
-                                val user = response.toUser()
-
-                                val userSession = UserSession(
-                                    id = response.toUser().id.toString(),
-                                    username = response.username,
-                                    role = response.role,
-                                    token = "token_dummy"
+                            if (authResponse != null) {
+                                NetworkClient.sessionManager?.saveTokens(
+                                    authResponse.accessToken,
+                                    authResponse.refreshToken
                                 )
-                                when (user.role) {
-                                    "AGENT", "ADMIN" -> navigator.push(DashboardScreen(userSession.username))
 
-                                    else -> navigator.push(PropertiesListScreen(user))
+                                val role = JwtUtils.getUserRoleFromToken(authResponse.accessToken)
+
+                                when (role) {
+                                    "AGENT", "ADMIN" -> {
+                                        // TODO: Provisional
+                                        val userId = JwtUtils.getUserId(authResponse.accessToken)
+                                        navigator.replaceAll(DashboardScreen(userId ?: "Empleado"))
+                                    }
+                                    else -> {
+                                        navigator.replaceAll(HomeScreen()) // replaceAll evita guardar estado de forma que el usuario pueda retroceder hasta el login
+                                    }
                                 }
                             } else {
                                 errorMessage = "Credenciales incorrectas"
@@ -137,7 +142,7 @@ class LoginScreen : Screen {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("¿No tienes una cuenta? ", color = TextLightGray)
                     Text(
-                        "Registrate",
+                        "Regístrate",
                         color = NavyBluePrimary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
