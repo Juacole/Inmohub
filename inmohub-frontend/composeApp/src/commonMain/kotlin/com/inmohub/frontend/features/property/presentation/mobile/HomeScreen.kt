@@ -21,6 +21,7 @@ import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
+import com.inmohub.frontend.features.property.presentation.shared.FilterBottomSheet
 import kotlinx.coroutines.launch
 
 class HomeScreen : Screen {
@@ -34,14 +35,39 @@ class HomeScreen : Screen {
         var properties by remember { mutableStateOf<List<PropertySummaryDto>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
 
-        LaunchedEffect(Unit) {
+        // Estado para modal de filtros
+        var showFilterSheet by remember { mutableStateOf(false) }
+
+        // Estados para recordar los filtros aplicados
+        var currentCity by remember { mutableStateOf<String?>(null) }
+        var currentMinPrice by remember { mutableStateOf<Double?>(null) }
+        var currentMaxPrice by remember { mutableStateOf<Double?>(null) }
+        var currentStatus by remember { mutableStateOf<String?>(null) }
+        var isFiltered by remember { mutableStateOf(false) }
+
+        fun loadProperties() {
             coroutineScope.launch {
                 isLoading = true
-                // Se solicita la primera página del endpoint
-                val result = PropertyRepository.getPropertySummary(page = 0, size = 20)
-                properties = result?.content ?: emptyList()
+                if (isFiltered) {
+                    val result = PropertyRepository.searchProperties(
+                        page = 0,
+                        size = 20,
+                        city = currentCity,
+                        minPrice = currentMinPrice,
+                        maxPrice = currentMaxPrice,
+                        status = currentStatus
+                    )
+                    properties = result?.content ?: emptyList()
+                } else {
+                    val result = PropertyRepository.getPropertySummary(page = 0, size = 20)
+                    properties = result?.content ?: emptyList()
+                }
                 isLoading = false
             }
+        }
+
+        LaunchedEffect(Unit) {
+            loadProperties()
         }
 
         Scaffold(
@@ -51,6 +77,13 @@ class HomeScreen : Screen {
                         Text("InmoHub", fontWeight = FontWeight.Bold, color = NavyBluePrimary)
                     },
                     actions = {
+                        TextButton(onClick = { showFilterSheet = true }) {
+                            Text(
+                                "Filtros",
+                                color = NavyBluePrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                         TextButton(onClick = { navigator.push(LoginScreen()) }) {
                             Text(
                                 "Acceder",
@@ -78,10 +111,28 @@ class HomeScreen : Screen {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Explora nuestro catálogo de propiedades exclusivas",
+                        text = if (isFiltered) "Mostrando resultados filtrados" else "Explora nuestro catálogo de propiedades exclusivas",
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = if (isFiltered) TileOrangeSecondary else Color.Gray,
+                        fontWeight = if (isFiltered) FontWeight.Bold else FontWeight.Normal
                     )
+
+                    if (isFiltered) {
+                        TextButton(
+                            onClick = {
+                                currentCity = null
+                                currentMinPrice = null
+                                currentMaxPrice = null
+                                currentStatus = null
+                                isFiltered = false
+                                loadProperties()
+                            },
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier.height(30.dp)
+                        ) {
+                            Text("Limpiar filtros", color = Color.Red, fontSize = 12.sp)
+                        }
+                    }
                 }
 
                 if (isLoading) {
@@ -91,7 +142,7 @@ class HomeScreen : Screen {
                 } else if (properties.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
                         Text(
-                            text = "No hay propiedades disponibles en este momento.",
+                            text = "No se encontraron propiedades con estos criterios.",
                             color = Color.Gray
                         )
                     }
@@ -104,7 +155,7 @@ class HomeScreen : Screen {
                         items(properties) { property ->
                             PropertyCard(
                                 property = property,
-                                onClick = { // Con un click entramos a los detalles del inmueble
+                                onClick = {
                                     navigator.push(PropertyDetailScreen(property.id))
                                 }
                             )
@@ -112,6 +163,24 @@ class HomeScreen : Screen {
                     }
                 }
             }
+        }
+
+        if (showFilterSheet) {
+            FilterBottomSheet(
+                onDismiss = { showFilterSheet = false },
+                onApplyFilters = { city, minPrice, maxPrice, status ->
+                    currentCity = city
+                    currentMinPrice = minPrice
+                    currentMaxPrice = maxPrice
+                    currentStatus = status
+
+                    isFiltered = city != null || minPrice != null || maxPrice != null || status != null
+
+                    showFilterSheet = false
+
+                    loadProperties()
+                }
+            )
         }
     }
 }
