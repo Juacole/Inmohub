@@ -1,9 +1,9 @@
-package com.inmohub.frontend.features.auth.dtos
+package com.inmohub.frontend.features.auth.responses
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthResponseDto(
+data class LoginResponse(
     val accessToken: String,
     val refreshToken: String
 ) {}

@@ -1,8 +1,8 @@
 package com.inmohub.frontend.core.network
 
 import com.inmohub.frontend.features.auth.data.local.SessionManager
-import com.inmohub.frontend.features.auth.dtos.AuthResponseDto
-import com.inmohub.frontend.features.auth.dtos.RefreshTokenRequestDto
+import com.inmohub.frontend.features.auth.responses.LoginResponse
+import com.inmohub.frontend.features.auth.requests.RefreshTokenRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
@@ -57,11 +57,11 @@ object NetworkClient { // singleton
                             // Se lanza petición post para refresh token
                             val response = refreshClient.post("$BASE_URL/users/refresh") {
                                 contentType(ContentType.Application.Json)
-                                setBody(RefreshTokenRequestDto(refreshToken = currentRefreshToken))
+                                setBody(RefreshTokenRequest(refreshToken = currentRefreshToken))
                             }
 
                             if(response.status.value == 200) {
-                                val tokens = response.body<AuthResponseDto>()
+                                val tokens = response.body<LoginResponse>()
                                 sessionManager.saveTokens(tokens.accessToken, tokens.refreshToken)
                                 BearerTokens(tokens.accessToken, tokens.accessToken)
                             } else {

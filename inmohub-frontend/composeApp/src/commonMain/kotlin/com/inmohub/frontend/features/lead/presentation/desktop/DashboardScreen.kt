@@ -47,7 +47,7 @@ import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.features.auth.data.AuthRepository
 import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.property.data.PropertyRepository
-import com.inmohub.frontend.features.auth.dtos.UserSummary
+import com.inmohub.frontend.features.auth.responses.UserSummaryResponse
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
@@ -62,8 +62,8 @@ class DashboardScreen(val agentUsername: String) : Screen {
         var selectedTabIndex by remember { mutableStateOf(0) }
         val tabs = listOf("Clientes", "Propietarios", "Propiedades")
 
-        var clients by remember { mutableStateOf<List<UserSummary>>(emptyList()) }
-        var owners by remember { mutableStateOf<List<UserSummary>>(emptyList()) }
+        var clients by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
+        var owners by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
         var properties by remember { mutableStateOf<List<Property>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
 
@@ -145,7 +145,7 @@ class DashboardScreen(val agentUsername: String) : Screen {
     }
 
     @Composable
-    fun UserList(users: List<UserSummary>, title: String, cardColor: Color) {
+    fun UserList(users: List<UserSummaryResponse>, title: String, cardColor: Color) {
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)

@@ -1,10 +1,10 @@
 package com.inmohub.frontend.features.auth.data
 
 import com.inmohub.frontend.core.network.NetworkClient
-import com.inmohub.frontend.features.auth.responses.AuthResponse
-import com.inmohub.frontend.features.auth.dtos.LoginRequest
-import com.inmohub.frontend.features.auth.dtos.RegisterRequest
-import com.inmohub.frontend.features.auth.dtos.UserSummary
+import com.inmohub.frontend.features.auth.responses.LoginResponse
+import com.inmohub.frontend.features.auth.requests.LoginRequest
+import com.inmohub.frontend.features.auth.requests.RegisterRequest
+import com.inmohub.frontend.features.auth.responses.UserSummaryResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -28,14 +28,14 @@ object AuthRepository {
         }
     }
 
-    suspend fun login(email: String, password: String): AuthResponse? {
+    suspend fun login(email: String, password: String): LoginResponse? {
         return try {
             val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/users/login") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginRequest(email, password))
             }
             if (response.status.value == 200) {
-                val tokens = response.body<AuthResponse>()
+                val tokens = response.body<LoginResponse>()
                 sessionManager.saveTokens(tokens.accessToken, tokens.refreshToken)
                 tokens
             } else {
@@ -49,7 +49,7 @@ object AuthRepository {
         }
     }
 
-    suspend fun getUsersByRole(role: String): List<UserSummary> {
+    suspend fun getUsersByRole(role: String): List<UserSummaryResponse> {
         return try {
             val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/users/role/$role")
             if (response.status.value == 200) {

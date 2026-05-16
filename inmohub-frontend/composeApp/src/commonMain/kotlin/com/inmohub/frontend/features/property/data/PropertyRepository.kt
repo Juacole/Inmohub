@@ -3,7 +3,7 @@ package com.inmohub.frontend.features.property.data
 import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.property.dtos.CreateProperty
-import com.inmohub.frontend.features.property.dtos.PagedListResponse
+import com.inmohub.frontend.features.property.responses.PagedListResponse
 import com.inmohub.frontend.features.property.dtos.PropertyDto
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import io.ktor.client.call.body

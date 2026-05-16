@@ -1,4 +1,4 @@
-package com.inmohub.frontend.features.property.dtos
+package com.inmohub.frontend.features.property.responses
 
 import kotlinx.serialization.Serializable
 

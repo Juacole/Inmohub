@@ -1,9 +1,9 @@
-package com.inmohub.frontend.features.auth.dtos
+package com.inmohub.frontend.features.auth.responses
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserSummary(
+data class UserSummaryResponse(
     val id: String,
     val username: String,
     val email: String,
