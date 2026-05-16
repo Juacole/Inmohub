@@ -10,7 +10,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 object JwtUtils {
 
     @OptIn(ExperimentalEncodingApi::class)
-    fun getJsonPayload(token: String) : JsonObject? {
+    private fun getJsonPayload(token: String) : JsonObject? {
         return try {
             val parts = token.split(".")
             if (parts.size != 3) return null
