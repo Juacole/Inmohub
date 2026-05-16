@@ -17,11 +17,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
+import com.inmohub.frontend.features.property.presentation.shared.FilterBottomSheet
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
-import com.inmohub.frontend.features.property.presentation.shared.FilterBottomSheet
 import kotlinx.coroutines.launch
 
 class HomeScreen : Screen {
@@ -35,6 +35,11 @@ class HomeScreen : Screen {
         var properties by remember { mutableStateOf<List<PropertySummaryDto>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
 
+        // Estados de la paginación
+        var currentPage by remember { mutableStateOf(0) }
+        var canLoadMore by remember { mutableStateOf(true) }
+        var isPaginating by remember { mutableStateOf(false) }
+
         // Estado para modal de filtros
         var showFilterSheet by remember { mutableStateOf(false) }
 
@@ -45,27 +50,52 @@ class HomeScreen : Screen {
         var currentStatus by remember { mutableStateOf<String?>(null) }
         var isFiltered by remember { mutableStateOf(false) }
 
-        fun loadProperties() {
+        fun loadProperties(isNextPage: Boolean = false) {
             coroutineScope.launch {
-                isLoading = true
-                if (isFiltered) {
-                    val result = PropertyRepository.searchProperties(
-                        page = 0,
-                        size = 20,
+                if (isNextPage) {
+                    if (isPaginating || !canLoadMore) return@launch
+                    isPaginating = true
+                } else {
+                    isLoading = true
+                    currentPage = 0
+                    canLoadMore = true
+                }
+
+                val pageToLoad = if (isNextPage) currentPage + 1 else 0
+
+                val result = if (isFiltered) {
+                    PropertyRepository.searchProperties(
+                        page = pageToLoad,
+                        size = 10,
                         city = currentCity,
                         minPrice = currentMinPrice,
                         maxPrice = currentMaxPrice,
                         status = currentStatus
                     )
-                    properties = result?.content ?: emptyList()
                 } else {
-                    val result = PropertyRepository.getPropertySummary(page = 0, size = 20)
-                    properties = result?.content ?: emptyList()
+                    PropertyRepository.getPropertySummary(page = pageToLoad, size = 10)
                 }
+
+                if (result != null) {
+                    if (isNextPage) {
+                        properties = properties + result.content
+                        currentPage = pageToLoad
+                    } else {
+                        properties = result.content
+                    }
+
+                    canLoadMore = result.number < result.totalPages - 1
+                } else {
+                    if (!isNextPage) properties = emptyList()
+                    canLoadMore = false
+                }
+
                 isLoading = false
+                isPaginating = false
             }
         }
 
+        // Carga inicial al dibujarse la pantalla
         LaunchedEffect(Unit) {
             loadProperties()
         }
@@ -78,18 +108,10 @@ class HomeScreen : Screen {
                     },
                     actions = {
                         TextButton(onClick = { showFilterSheet = true }) {
-                            Text(
-                                "Filtros",
-                                color = NavyBluePrimary,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("Filtros", color = NavyBluePrimary, fontWeight = FontWeight.Bold)
                         }
                         TextButton(onClick = { navigator.push(LoginScreen()) }) {
-                            Text(
-                                "Acceder",
-                                color = TileOrangeSecondary,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("Acceder", color = TileOrangeSecondary, fontWeight = FontWeight.Bold)
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
@@ -130,7 +152,7 @@ class HomeScreen : Screen {
                             contentPadding = PaddingValues(0.dp),
                             modifier = Modifier.height(30.dp)
                         ) {
-                            Text("Limpiar filtros", color = Color.Red, fontSize = 12.sp)
+                            Text("Limpiar filtros ✖", color = Color.Red, fontSize = 12.sp)
                         }
                     }
                 }
@@ -142,7 +164,7 @@ class HomeScreen : Screen {
                 } else if (properties.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
                         Text(
-                            text = "No se encontraron propiedades con estos criterios.",
+                            text = "No se encontraron propiedades.",
                             color = Color.Gray
                         )
                     }
@@ -160,6 +182,25 @@ class HomeScreen : Screen {
                                 }
                             )
                         }
+
+                        if (canLoadMore) {
+                            item {
+                                LaunchedEffect(Unit) {
+                                    loadProperties(isNextPage = true)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        color = TileOrangeSecondary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -173,11 +214,10 @@ class HomeScreen : Screen {
                     currentMinPrice = minPrice
                     currentMaxPrice = maxPrice
                     currentStatus = status
-
                     isFiltered = city != null || minPrice != null || maxPrice != null || status != null
-
                     showFilterSheet = false
 
+                    // Al aplicar un filtro se reinicia la lista a la primera pagina
                     loadProperties()
                 }
             )
