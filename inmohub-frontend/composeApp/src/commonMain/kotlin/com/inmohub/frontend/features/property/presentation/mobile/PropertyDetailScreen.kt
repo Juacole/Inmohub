@@ -13,16 +13,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
+import com.inmohub.frontend.core.components.InmoButton
+import com.inmohub.frontend.core.components.InmoInput
+import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.property.dtos.PropertyDto
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
+import com.inmohub.frontend.features.auth.presentation.LoginScreen
+import com.inmohub.frontend.features.lead.data.LeadRepository
+import com.inmohub.frontend.features.lead.requests.CreateLeadRequest
 import kotlinx.coroutines.launch
 
 data class PropertyDetailScreen(val propertyId: String) : Screen {
@@ -34,6 +41,16 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
         val coroutineScope = rememberCoroutineScope()
         var property by remember { mutableStateOf<PropertyDto?>(null) }
         var isLoading by remember { mutableStateOf(true) }
+
+        var leadName by remember { mutableStateOf("") }
+        var leadEmail by remember { mutableStateOf("") }
+        var leadPhone by remember { mutableStateOf("") }
+        var leadMessage by remember { mutableStateOf("") }
+        var isSendingLead by remember { mutableStateOf(false) }
+        var leadSuccess by remember { mutableStateOf(false) }
+        var leadError by remember { mutableStateOf<String?>(null) }
+
+        val hasSession by NetworkClient.sessionManager.isSessionActive.collectAsState(initial = false)
 
         LaunchedEffect(propertyId) {
             coroutineScope.launch {
@@ -155,6 +172,102 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                                 lineHeight = 24.sp
                             )
                             Spacer(modifier = Modifier.height(32.dp))
+                        }
+                    }
+
+                    // Formulario dinámico para creación de leads
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp).padding(bottom = 32.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(20.dp)) {
+                                if (!hasSession) {
+                                    Text(
+                                        text = "¿Te interesa esta propiedad?",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp,
+                                        color = NavyBluePrimary,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "Inicia sesión o regístrate para contactar con el agente y solicitar una visita.",
+                                        fontSize = 14.sp,
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    InmoButton(
+                                        text = "Acceder para contactar",
+                                        onClick = { navigator.push(LoginScreen()) },
+                                        isSecondary = true
+                                    )
+                                } else {
+                                    if (leadSuccess) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                                            Text("¡Mensaje enviado!", fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50), fontSize = 18.sp)
+                                            Text("El agente se pondrá en contacto contigo pronto.", color = Color.Gray, fontSize = 14.sp, textAlign = TextAlign.Center)
+                                        }
+                                    } else {
+                                        Text(
+                                            text = "Contactar al Agente",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 18.sp,
+                                            color = NavyBluePrimary
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        InmoInput(value = leadName, onValueChange = { leadName = it }, label = "Tu Nombre")
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        InmoInput(value = leadEmail, onValueChange = { leadEmail = it }, label = "Tu Email")
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        InmoInput(value = leadPhone, onValueChange = { leadPhone = it }, label = "Tu Teléfono")
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        InmoInput(value = leadMessage, onValueChange = { leadMessage = it }, label = "Mensaje (Opcional)")
+
+                                        if (leadError != null) {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Text(text = leadError!!, color = Color.Red, fontSize = 14.sp)
+                                        }
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        InmoButton(
+                                            text = if (isSendingLead) "ENVIANDO..." else "ENVIAR MENSAJE",
+                                            onClick = {
+                                                if (leadName.isBlank() || leadEmail.isBlank()) {
+                                                    leadError = "El nombre y el email son obligatorios."
+                                                    return@InmoButton
+                                                }
+
+                                                coroutineScope.launch {
+                                                    isSendingLead = true
+                                                    leadError = null
+                                                    val request = CreateLeadRequest(
+                                                        name = leadName,
+                                                        email = leadEmail,
+                                                        phone = leadPhone.takeIf { it.isNotBlank() },
+                                                        message = leadMessage.takeIf { it.isNotBlank() },
+                                                        source = "WEB",
+                                                        propertyId = propertyId
+                                                    )
+                                                    val success = LeadRepository.createLead(request)
+                                                    if (success) {
+                                                        leadSuccess = true
+                                                    } else {
+                                                        leadError = "Hubo un error al enviar tu solicitud. Inténtalo de nuevo."
+                                                    }
+                                                    isSendingLead = false
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
