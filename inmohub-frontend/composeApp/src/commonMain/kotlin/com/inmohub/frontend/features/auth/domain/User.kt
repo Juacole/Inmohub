@@ -9,8 +9,10 @@ data class User(
     val email: String,
     val firstName: String,
     val lastName: String,
-    val role: String,
+    val role: Set<String>,
     val phone: String,
     val token: String? = null,
-    val status: String
+    val status: String,
+    val createdAt: String,
+    val updatedAt: String? = null
 )

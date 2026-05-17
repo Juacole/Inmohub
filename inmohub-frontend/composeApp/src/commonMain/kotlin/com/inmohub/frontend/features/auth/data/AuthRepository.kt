@@ -1,6 +1,7 @@
 package com.inmohub.frontend.features.auth.data
 
 import com.inmohub.frontend.core.network.NetworkClient
+import com.inmohub.frontend.features.auth.domain.User
 import com.inmohub.frontend.features.auth.responses.LoginResponse
 import com.inmohub.frontend.features.auth.requests.LoginRequest
 import com.inmohub.frontend.features.auth.requests.RegisterRequest
@@ -60,6 +61,19 @@ object AuthRepository {
         } catch (e: Exception) {
             println("Error al recuperar usuarios con rol ${role}: ${e.message}")
             emptyList()
+        }
+    }
+
+    suspend fun getUserById(userId: String): User? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/search-by-id/$userId")
+            if (response.status.value == 200) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }
