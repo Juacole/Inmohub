@@ -51,8 +51,9 @@ import com.inmohub.frontend.features.auth.responses.UserSummaryResponse
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
+import com.inmohub.frontend.features.lead.presentation.desktop.components.LeadsBagTab
 
-class DashboardScreen(val agentUsername: String) : Screen {
+class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -60,7 +61,7 @@ class DashboardScreen(val agentUsername: String) : Screen {
         val navigator = LocalNavigator.currentOrThrow
 
         var selectedTabIndex by remember { mutableStateOf(0) }
-        val tabs = listOf("Clientes", "Propietarios", "Propiedades")
+        val tabs = listOf("Clientes", "Propietarios", "Propiedades", "Bolsa de Leads")
 
         var clients by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
         var owners by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
@@ -138,6 +139,7 @@ class DashboardScreen(val agentUsername: String) : Screen {
                         0 -> UserList(clients, "Clientes Activos", Color(0xFFE3F2FD))
                         1 -> UserList(owners, "Propietarios Registrados", Color(0xFFFFF3E0))
                         2 -> PropertyList(properties)
+                        3 -> LeadsBagTab(agentId = agentId)
                     }
                 }
             }
@@ -216,7 +218,7 @@ class DashboardScreen(val agentUsername: String) : Screen {
                 )
             }
             items(properties) { property ->
-                property.id?.let { // TODO: Provisional
+                property.id?.let {
                     PropertyCard(
                         property = PropertySummaryDto(
                             it,
