@@ -41,8 +41,12 @@ import com.inmohub.frontend.core.themes.TextLightGray
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.core.components.InmoButton
 import com.inmohub.frontend.core.components.InmoInput
+import com.inmohub.frontend.core.network.NetworkClient
+import com.inmohub.frontend.core.utils.JwtUtils
 import com.inmohub.frontend.features.auth.data.AuthRepository
 import com.inmohub.frontend.features.auth.requests.RegisterRequest
+import com.inmohub.frontend.features.lead.presentation.desktop.DashboardScreen
+import com.inmohub.frontend.features.property.presentation.mobile.HomeScreen
 import kotlinx.coroutines.launch
 
 class RegisterScreen : Screen {
@@ -190,7 +194,23 @@ class RegisterScreen : Screen {
 
                             val success = AuthRepository.register(request)
                             if (success) {
-                                navigator.pop()
+                                val authResponse = AuthRepository.login(email, password)
+
+                                if (authResponse != null) {
+                                    NetworkClient.sessionManager?.saveTokens(authResponse.accessToken, authResponse.refreshToken)
+
+                                    val roleFrommToken = JwtUtils.getUserRoleFromToken(authResponse.accessToken)
+                                    when(roleFrommToken) {
+                                        "AGENT", "ADMIN" -> {
+                                            // TODO: Provisional
+                                            val userId = JwtUtils.getUserId(authResponse.accessToken)
+                                            navigator.replaceAll(DashboardScreen(userId ?: "Agente"))
+                                        }
+                                        else -> navigator.replaceAll(HomeScreen())
+                                    }
+                                } else {
+                                    navigator.pop()
+                                }
                             } else {
                                 errorMessage = "Error al registrar. Revisa los datos o el servidor."
                             }
