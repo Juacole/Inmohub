@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
@@ -12,6 +13,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.core.themes.inmohubColorScheme
 import com.inmohub.frontend.core.utils.JwtUtils
+import com.inmohub.frontend.features.auth.data.AuthRepository
 import com.inmohub.frontend.features.auth.data.local.SessionManager
 import com.inmohub.frontend.features.auth.data.local.createDataStore
 import com.inmohub.frontend.features.lead.presentation.desktop.DashboardScreen
@@ -43,9 +45,15 @@ fun App() {
                 initialScreen = HomeScreen()
             } else {
                 val role = JwtUtils.getUserRoleFromToken(token)
-                initialScreen = when (role) {
-                    "ADMIN", "AGENT" -> DashboardScreen("Agente")
-                    else -> HomeScreen()
+                if (role == "ADMIN" || role == "AGENT") {
+                    val userId = JwtUtils.getUserId(token) ?: ""
+                    val user = AuthRepository.getUserById(userId)
+                    initialScreen = DashboardScreen(
+                        user?.firstName + " " + user?.lastName,
+                        userId
+                    )
+                } else {
+                    initialScreen = HomeScreen()
                 }
             }
         }

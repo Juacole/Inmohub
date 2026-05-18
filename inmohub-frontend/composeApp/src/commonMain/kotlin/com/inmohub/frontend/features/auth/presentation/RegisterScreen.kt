@@ -202,9 +202,14 @@ class RegisterScreen : Screen {
                                     val roleFrommToken = JwtUtils.getUserRoleFromToken(authResponse.accessToken)
                                     when(roleFrommToken) {
                                         "AGENT", "ADMIN" -> {
-                                            // TODO: Provisional
-                                            val userId = JwtUtils.getUserId(authResponse.accessToken)
-                                            navigator.replaceAll(DashboardScreen(userId ?: "Agente"))
+                                            val userId = JwtUtils.getUserId(authResponse.accessToken) ?: ""
+                                            val user = AuthRepository.getUserById(userId)
+                                            navigator.replaceAll(
+                                                DashboardScreen(
+                                                    user?.firstName + " " + user?.lastName,
+                                                    userId
+                                                )
+                                            )
                                         }
                                         else -> navigator.replaceAll(HomeScreen())
                                     }
