@@ -49,15 +49,20 @@ fun LeadDetailDialog(
     lead: LeadDetailDto,
     agentId: String,
     onDismiss: () -> Unit,
-    onAssignSuccess: () -> Unit
+    onAssignSuccess: () -> Unit,
+    onStatusChangeSuccess: (String) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    
+
     var property by remember { mutableStateOf<PropertyDto?>(null) }
     var isLoadingProperty by remember { mutableStateOf(true) }
     var isAssigning by remember { mutableStateOf(false) }
     var assignSuccess by remember { mutableStateOf(false) }
     var assignError by remember { mutableStateOf<String?>(null) }
+
+    var currentStatus by remember { mutableStateOf(lead.status) }
+    var isChangingStatus by remember { mutableStateOf(false) }
+    var statusChangeError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(lead.propertyId) {
         isLoadingProperty = true
@@ -94,7 +99,32 @@ fun LeadDetailDialog(
                         fontWeight = FontWeight.Bold,
                         color = NavyBluePrimary
                     )
-                    StatusBadge(status = lead.status)
+                    StatusDropdown(
+                        currentStatus = currentStatus,
+                        onStatusChange = { newStatus ->
+                            scope.launch {
+                                isChangingStatus = true
+                                statusChangeError = null
+                                val success = LeadRepository.changeLeadStatus(lead.id, newStatus)
+                                isChangingStatus = false
+                                if (success) {
+                                    currentStatus = newStatus
+                                    onStatusChangeSuccess(newStatus)
+                                } else {
+                                    statusChangeError = "Error al cambiar el estado del lead"
+                                }
+                            }
+                        },
+                        isLoading = isChangingStatus
+                    )
+                }
+
+                if (statusChangeError != null) {
+                    Text(
+                        text = statusChangeError!!,
+                        color = Color(0xFFF44336),
+                        fontSize = 14.sp
+                    )
                 }
 
                 HorizontalDivider()
@@ -118,7 +148,7 @@ fun LeadDetailDialog(
                         InfoRow("Email", lead.email)
                         InfoRow("Teléfono", lead.phone ?: "No disponible")
                         InfoRow("Fuente", lead.source)
-                        
+
                         if (!lead.message.isNullOrBlank()) {
                             InfoRow("Mensaje", lead.message)
                         }

@@ -29,7 +29,10 @@ import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.features.lead.data.LeadRepository
+import com.inmohub.frontend.features.lead.dtos.LeadSummaryDto
 import com.inmohub.frontend.features.lead.requests.CreateLeadRequest
+import com.inmohub.frontend.core.utils.JwtUtils
+import com.inmohub.frontend.features.property.presentation.mobile.components.LeadInterestCard
 import kotlinx.coroutines.launch
 
 data class PropertyDetailScreen(val propertyId: String) : Screen {
@@ -52,11 +55,36 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
 
         val hasSession by NetworkClient.sessionManager.isSessionActive.collectAsState(initial = false)
 
+        var userRole by remember { mutableStateOf<String?>(null) }
+        var userId by remember { mutableStateOf<String?>(null) }
+        var leadsForProperty by remember { mutableStateOf<List<LeadSummaryDto>>(emptyList()) }
+        var isLoadingLeads by remember { mutableStateOf(false) }
+
         LaunchedEffect(propertyId) {
             coroutineScope.launch {
                 isLoading = true
                 property = PropertyRepository.getPropertyById(propertyId)
                 isLoading = false
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            val token = NetworkClient.sessionManager.getAccessToken()
+            if (token != null) {
+                userId = JwtUtils.getUserId(token)
+                userRole = JwtUtils.getUserRoleFromToken(token)
+            }
+        }
+
+        LaunchedEffect(property, userRole, userId) {
+            val isAgentOrAdmin = userRole == "AGENT" || userRole == "ADMIN"
+            val isOwner = userRole == "OWNER" && property?.ownerId == userId
+
+            if (property != null && (isAgentOrAdmin || isOwner)) {
+                isLoadingLeads = true
+                val result = LeadRepository.getLeadsByPropertyId(propertyId)
+                leadsForProperty = result?.content ?: emptyList()
+                isLoadingLeads = false
             }
         }
 
@@ -265,6 +293,46 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                                                 }
                                             }
                                         )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (leadsForProperty.isNotEmpty() && (userRole == "AGENT" || userRole == "ADMIN" || (userRole == "OWNER" && currentProperty.ownerId == userId))) {
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                                    .padding(bottom = 32.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    if (isLoadingLeads) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(32.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(color = NavyBluePrimary)
+                                        }
+                                    } else {
+                                        Text(
+                                            "Leads Interesados",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 18.sp,
+                                            color = NavyBluePrimary
+                                        )
+                                        Spacer(modifier = Modifier.height(12.dp))
+
+                                        leadsForProperty.forEach { lead ->
+                                            LeadInterestCard(lead = lead)
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                        }
                                     }
                                 }
                             }

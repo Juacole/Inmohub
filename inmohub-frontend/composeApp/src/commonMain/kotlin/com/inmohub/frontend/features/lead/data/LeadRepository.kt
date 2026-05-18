@@ -2,6 +2,7 @@ package com.inmohub.frontend.features.lead.data
 
 import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.features.lead.requests.AssignLeadRequest
+import com.inmohub.frontend.features.lead.requests.ChangeLeadStatusRequest
 import com.inmohub.frontend.features.lead.requests.CreateLeadRequest
 import com.inmohub.frontend.features.lead.responses.LeadAssignmentResponse
 import com.inmohub.frontend.features.lead.dtos.LeadSummaryDto
@@ -9,6 +10,7 @@ import com.inmohub.frontend.features.property.responses.PagedListResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -70,6 +72,67 @@ object LeadRepository {
             }
         } catch (e: Exception) {
             println("Error al asignar lead: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getLeadsByAgentId(
+        agentId: String,
+        page: Int = 0,
+        size: Int = 20
+    ): PagedListResponse<LeadSummaryDto>? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/leads/agent/$agentId") {
+                parameter("page", page)
+                parameter("size", size)
+            }
+            if (response.status.value == 200) {
+                response.body()
+            } else {
+                println("Error al obtener leads del agente ${agentId}: ${response.status}")
+                null
+            }
+        } catch (e: Exception) {
+            println("Error al obtener leads del agente: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun changeLeadStatus(
+        leadId: String,
+        status: String
+    ): Boolean {
+        return try {
+            val request = ChangeLeadStatusRequest(status = status)
+            val response = NetworkClient.client.patch("${NetworkClient.BASE_URL}/leads/$leadId/status") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            response.status.value in 200..299
+        } catch (e: Exception) {
+            println("Error al cambiar estado del lead: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun getLeadsByPropertyId(
+        propertyId: String,
+        page: Int = 0,
+        size: Int = 20
+    ): PagedListResponse<LeadSummaryDto>? {
+        return try {
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/leads/property/$propertyId") {
+                parameter("page", page)
+                parameter("size", size)
+            }
+            if (response.status.value == 200) {
+                response.body()
+            } else {
+                println("Error al obtener leads de la propiedad ${propertyId}: ${response.status}")
+                null
+            }
+        } catch (e: Exception) {
+            println("Error al obtener leads de la propiedad: ${e.message}")
             null
         }
     }

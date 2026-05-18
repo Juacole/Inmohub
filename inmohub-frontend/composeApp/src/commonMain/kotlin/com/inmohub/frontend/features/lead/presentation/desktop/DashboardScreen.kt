@@ -52,6 +52,7 @@ import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.lead.presentation.desktop.components.LeadsBagTab
+import com.inmohub.frontend.features.lead.presentation.desktop.components.MyLeadsTab
 
 class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
 
@@ -61,7 +62,7 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
         val navigator = LocalNavigator.currentOrThrow
 
         var selectedTabIndex by remember { mutableStateOf(0) }
-        val tabs = listOf("Clientes", "Propietarios", "Propiedades", "Bolsa de Leads")
+        val tabs = listOf("Clientes", "Propietarios", "Propiedades", "Bolsa de Leads", "Mis Leads")
 
         var clients by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
         var owners by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
@@ -140,6 +141,7 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
                         1 -> UserList(owners, "Propietarios Registrados", Color(0xFFFFF3E0))
                         2 -> PropertyList(properties)
                         3 -> LeadsBagTab(agentId = agentId)
+                        4 -> MyLeadsTab(agentId = agentId)
                     }
                 }
             }
