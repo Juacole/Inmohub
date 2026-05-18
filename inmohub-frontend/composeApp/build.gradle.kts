@@ -23,8 +23,6 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-            implementation("io.ktor:ktor-client-okhttp:2.3.7")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -38,12 +36,17 @@ kotlin {
 
             val voyagerVersion = "1.0.0"
             implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
-            implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion") // Animaciones opcionales
+            implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
 
-            val ktorVersion = "2.3.7"
+            val ktorVersion = "3.0.0"
             implementation("io.ktor:ktor-client-core:$ktorVersion")
+            implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+            implementation("io.ktor:ktor-client-encoding:$ktorVersion")
+            implementation("io.ktor:ktor-client-logging:$ktorVersion")
+            implementation("io.ktor:ktor-client-websockets:$ktorVersion")
             implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+            implementation("io.ktor:ktor-utils:$ktorVersion")
 
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.ktor.client.auth)
@@ -53,13 +56,11 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation("io.ktor:ktor-client-mock:2.3.7")
+            implementation("io.ktor:ktor-client-mock:3.0.0")
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-
-            implementation("io.ktor:ktor-client-cio:2.3.7")
         }
     }
 }
