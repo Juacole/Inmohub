@@ -155,7 +155,7 @@ public class PropertyController {
     }
 
     @GetMapping("/search-by-id/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'OWNER', 'CLIENT')")
     @Operation(
             summary = "Buscar propiedad por ID",
             description = "Obtiene los detalles completos de un inmueble específico mediante su identificador único (UUID). " +
