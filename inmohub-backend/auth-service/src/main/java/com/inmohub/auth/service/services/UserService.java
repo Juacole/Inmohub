@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Servicio de lógica de negocio para la gestión de usuarios.
@@ -50,15 +51,23 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(createDTO.password()));
 
-        // Asignación por defecto - provisional
-        String defaultRoleName = (createDTO.roles() != null && !createDTO.roles().isEmpty())
-                ? createDTO.roles().iterator().next()
-                : "CLIENT";
-
-        Role role = roleRepository.findByName(defaultRoleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Rol " + defaultRoleName + " no encontrado en la base de datos."));
-
-        user.setRoles(Set.of(role));
+        Set<Role> roles;
+        if (createDTO.roles() != null && !createDTO.roles().isEmpty()) {
+            roles = createDTO.roles().stream()
+                    .map(roleName -> roleRepository.findByName(roleName)
+                            .orElseThrow(
+                                    () -> new ResourceNotFoundException("Rol " + roleName + " no encontrado en base de datos.")
+                            )
+                    )
+                    .collect(Collectors.toSet());
+        } else {
+            Role defaultRole = roleRepository.findByName("CLIENT")
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Rol CLIENT no encontrado en la base de datos.")
+                    );
+            roles = Set.of(defaultRole);
+        }
+        user.setRoles(roles);
         user.setStatus(UserStatus.ACTIVE);
         return mapper.toDTO(repository.save(user));
     }
