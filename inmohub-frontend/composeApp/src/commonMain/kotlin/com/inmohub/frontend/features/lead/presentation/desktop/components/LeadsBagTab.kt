@@ -172,7 +172,7 @@ fun LeadsBagTab(
                                 email = lead.email,
                                 phone = lead.phone,
                                 status = lead.status,
-                                source = lead.source,
+                                source = lead.source ?: "",
                                 propertyId = lead.propertyId,
                                 senderParticipantId = lead.senderParticipantId,
                                 createdAt = lead.createdAt

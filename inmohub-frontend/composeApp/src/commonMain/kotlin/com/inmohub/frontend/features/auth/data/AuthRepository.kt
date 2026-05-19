@@ -66,7 +66,7 @@ object AuthRepository {
 
     suspend fun getUserById(userId: String): User? {
         return try {
-            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/search-by-id/$userId")
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/users/search-by-id/$userId")
             if (response.status.value == 200) {
                 response.body()
             } else {

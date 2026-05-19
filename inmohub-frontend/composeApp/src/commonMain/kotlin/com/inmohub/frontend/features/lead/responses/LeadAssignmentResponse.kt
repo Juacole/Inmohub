@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class LeadAssignmentResponse(
     val leadId: String,
     val agentId: String,
-    val assignedAt: String
+    val assignedAt: String? = ""
 )

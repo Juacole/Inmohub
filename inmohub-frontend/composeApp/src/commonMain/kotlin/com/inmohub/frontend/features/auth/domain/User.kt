@@ -9,7 +9,7 @@ data class User(
     val email: String,
     val firstName: String,
     val lastName: String,
-    val role: Set<String>,
+    val roles: Set<String>,
     val phone: String,
     val token: String? = null,
     val status: String,

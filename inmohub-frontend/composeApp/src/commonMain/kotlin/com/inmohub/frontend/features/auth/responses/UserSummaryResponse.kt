@@ -7,6 +7,6 @@ data class UserSummaryResponse(
     val id: String,
     val username: String,
     val email: String,
-    val role: String,
+    val roles: Set<String>,
     val phone: String
 )

@@ -95,7 +95,7 @@ fun LeadCard(
             ) {
                 StatusBadge(status = lead.status)
                 Text(
-                    text = lead.source,
+                    text = lead.source ?: "",
                     fontSize = 11.sp,
                     color = Color.Gray
                 )

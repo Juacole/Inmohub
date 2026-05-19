@@ -9,7 +9,7 @@ data class LeadSummaryDto(
     val email: String,
     val phone: String? = null,
     val status: String,
-    val source: String,
+    val source: String? = "",
     val propertyId: String,
     val senderParticipantId: String? = null,
     val createdAt: String? = null
