@@ -1,7 +1,6 @@
 package com.inmohub.frontend.features.property.data
 
 import com.inmohub.frontend.core.network.NetworkClient
-import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.property.dtos.CreateProperty
 import com.inmohub.frontend.features.property.responses.PagedListResponse
 import com.inmohub.frontend.features.property.dtos.PropertyDto
@@ -15,7 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
 object PropertyRepository {
-    suspend fun getPropertiesByOwner(ownerId: String): List<Property> {
+    suspend fun getPropertiesByOwner(ownerId: String): List<PropertyDto> {
         return try {
             val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/properties/search-by-owner-id/$ownerId")
             if (response.status.value == 200) {
@@ -29,7 +28,7 @@ object PropertyRepository {
         }
     }
 
-    suspend fun getAllProperties(): List<Property> {
+    suspend fun getAllProperties(): List<PropertyDto> {
         return try {
             val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/properties/all")
             if (response.status.value == 200) {
@@ -43,7 +42,7 @@ object PropertyRepository {
         }
     }
 
-    suspend fun createProperty(datos: CreateProperty): Property? {
+    suspend fun createProperty(datos: CreateProperty): PropertyDto? {
         return try {
             val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/properties/create") {
                 contentType(ContentType.Application.Json)

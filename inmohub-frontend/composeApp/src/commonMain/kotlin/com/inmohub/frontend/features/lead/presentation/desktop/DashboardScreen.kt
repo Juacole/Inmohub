@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.features.auth.data.AuthRepository
-import com.inmohub.frontend.features.property.domain.Property
 import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.auth.responses.UserSummaryResponse
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
@@ -53,6 +53,8 @@ import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.lead.presentation.desktop.components.LeadsBagTab
 import com.inmohub.frontend.features.lead.presentation.desktop.components.MyLeadsTab
+import com.inmohub.frontend.features.property.dtos.PropertyDto
+import com.inmohub.frontend.features.property.presentation.mobile.PropertyDetailScreen
 
 class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
 
@@ -66,7 +68,7 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
 
         var clients by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
         var owners by remember { mutableStateOf<List<UserSummaryResponse>>(emptyList()) }
-        var properties by remember { mutableStateOf<List<Property>>(emptyList()) }
+        var properties by remember { mutableStateOf<List<PropertyDto>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
 
         LaunchedEffect(Unit) {
@@ -139,7 +141,7 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
                     when (selectedTabIndex) {
                         0 -> UserList(clients, "Clientes Activos", Color(0xFFE3F2FD))
                         1 -> UserList(owners, "Propietarios Registrados", Color(0xFFFFF3E0))
-                        2 -> PropertyList(properties)
+                        2 -> PropertyList(properties, navigator)
                         3 -> LeadsBagTab(agentId = agentId)
                         4 -> MyLeadsTab(agentId = agentId)
                     }
@@ -205,7 +207,7 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
     }
 
     @Composable
-    fun PropertyList(properties: List<Property>) {
+    fun PropertyList(properties: List<PropertyDto>, navigator: Navigator) {
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -220,17 +222,19 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
                 )
             }
             items(properties) { property ->
-                property.id?.let {
+                property.id.let {
                     PropertyCard(
                         property = PropertySummaryDto(
-                            it,
-                            property.title,
-                            property.price,
-                            property.address,
-                            property.status,
-                            ""
+                            id = property.id,
+                            title = property.title,
+                            price = property.price,
+                            city = property.city,                        // dato real
+                            status = property.status,
+                            primaryPhotoUrl = property.photos.firstOrNull()?.photoUrl  // foto real
                         ),
-                        onClick = {}
+                        onClick = {
+                            navigator.push(PropertyDetailScreen(property.id))
+                        }
                     )
                 }
             }
