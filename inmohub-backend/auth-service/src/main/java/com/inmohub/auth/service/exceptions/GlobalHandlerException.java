@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @RestControllerAdvice
 @Slf4j
-public class GlobalHandlerException extends RuntimeException {
+public class GlobalHandlerException {
 
     /**
      * Construye una respuesta de error estructurada.
