@@ -20,6 +20,7 @@ import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.FilterBottomSheet
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
+import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import kotlinx.coroutines.launch
@@ -31,6 +32,10 @@ class HomeScreen : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val coroutineScope = rememberCoroutineScope()
+
+        // Session Manager desde NetworkClient (singleton)
+        val sessionManager = NetworkClient.sessionManager
+        val hasSession by sessionManager.isSessionActive.collectAsState(initial = false)
 
         var properties by remember { mutableStateOf<List<PropertySummaryDto>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
@@ -104,14 +109,29 @@ class HomeScreen : Screen {
             topBar = {
                 TopAppBar(
                     title = {
-                        Text("InmoHub", fontWeight = FontWeight.Bold, color = NavyBluePrimary)
+                        TextButton(onClick = {
+                            navigator.popUntilRoot()
+                        }) {
+                            Text("InmoHub", fontWeight = FontWeight.Bold, color = NavyBluePrimary)
+                        }
                     },
                     actions = {
                         TextButton(onClick = { showFilterSheet = true }) {
                             Text("Filtros", color = NavyBluePrimary, fontWeight = FontWeight.Bold)
                         }
-                        TextButton(onClick = { navigator.push(LoginScreen()) }) {
-                            Text("Acceder", color = TileOrangeSecondary, fontWeight = FontWeight.Bold)
+                        if (hasSession) {
+                            TextButton(onClick = {
+                                coroutineScope.launch {
+                                    sessionManager.clearSession()
+                                    navigator.popUntilRoot()
+                                }
+                            }) {
+                                Text("Salir", color = TileOrangeSecondary, fontWeight = FontWeight.Bold)
+                            }
+                        } else {
+                            TextButton(onClick = { navigator.push(LoginScreen()) }) {
+                                Text("Acceder", color = TileOrangeSecondary, fontWeight = FontWeight.Bold)
+                            }
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
