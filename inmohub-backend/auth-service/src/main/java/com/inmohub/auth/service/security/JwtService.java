@@ -30,7 +30,7 @@ public class JwtService {
                 .claim("roles", roles)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSingInKey(), Jwts.SIG.HS256) // firma del token con algoritmo HS256
+                .signWith(getSignInKey(), Jwts.SIG.HS256) // firma del token con algoritmo HS256
                 .compact();
     }
 
@@ -38,7 +38,7 @@ public class JwtService {
      * Transforma la clave secreta en una llave criptográfica.
      * Esta llave se utilizara para firmar los tokens generados.
      */
-    private SecretKey getSingInKey() {
+    private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 
         return Keys.hmacShaKeyFor(keyBytes);
