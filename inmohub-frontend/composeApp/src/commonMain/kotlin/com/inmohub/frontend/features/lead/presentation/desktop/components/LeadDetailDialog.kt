@@ -283,9 +283,9 @@ fun PropertyPreviewCard(property: PropertyDto) {
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (!property.photos.isNullOrEmpty() && property.photos.isNotEmpty()) {
+            if (property.photos.isNotEmpty()) {
                 AsyncImage(
-                    model = property.photos.first(),
+                    model = property.photos.first().photoUrl,
                     contentDescription = "Foto de propiedad",
                     modifier = Modifier
                         .fillMaxWidth()

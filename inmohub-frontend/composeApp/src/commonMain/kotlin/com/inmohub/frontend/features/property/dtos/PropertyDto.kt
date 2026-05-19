@@ -13,6 +13,6 @@ data class PropertyDto(
     val city: String,
     val status: String,
     val ownerId: String,
-    val photos: List<String> = emptyList(),
+    val photos: List<PropertyPhotoDto> = emptyList(),
     val features: List<PropertyFeatureDto> = emptyList()
 )

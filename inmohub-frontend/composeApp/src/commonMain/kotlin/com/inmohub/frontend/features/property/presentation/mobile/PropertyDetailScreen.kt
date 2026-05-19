@@ -123,7 +123,7 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                                 modifier = Modifier.fillMaxWidth().height(250.dp)
                             ) { page ->
                                 AsyncImage(
-                                    model = currentProperty.photos[page],
+                                    model = currentProperty.photos[page].photoUrl,
                                     contentDescription = "Imagen $page",
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier.fillMaxSize()
