@@ -10,16 +10,20 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 object JwtUtils {
 
     @OptIn(ExperimentalEncodingApi::class)
-    private fun getJsonPayload(token: String) : JsonObject? {
+    private fun getJsonPayload(token: String): JsonObject? {
         return try {
-            val parts = token.split(".")
+            val parts = token.trim().split(".")
             if (parts.size != 3) return null
 
-            val payload = String(Base64.UrlSafe.decode(parts[1]))
+            val decoder = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT)
+            val payload = String(decoder.decode(parts[1]))
+
+            println("JWT Payload decodificado: $payload")
 
             Json.decodeFromString<JsonObject>(payload)
         } catch (ex: Exception) {
-            return null
+            println("Error decodificando JWT: ${ex.message}")
+            null
         }
     }
 
@@ -38,8 +42,13 @@ object JwtUtils {
 
         return try {
             val rolesList = jsonObject["roles"]?.jsonArray
-            rolesList?.firstOrNull()?.jsonPrimitive?.content
+            val rawRole = rolesList?.firstOrNull()?.jsonPrimitive?.content
+
+            println("Rol crudo extraído: $rawRole")
+
+            rawRole?.replace("ROLE_", "")
         } catch (ex: Exception) {
+            println("Error extrayendo rol: ${ex.message}")
             null
         }
     }
