@@ -85,7 +85,7 @@ Para probar la integración entre microservicios, seguiremos este flujo:
 #### Paso 1: Crear Usuario (Propietario)
 
 * **Método:** `POST`
-* **URL:** `http://localhost:8080/api/v1/users/create`
+* **URL:** `http://localhost:8080/api/v1/auth/register`
 * **Body (JSON):**
 
 ```json
@@ -124,7 +124,7 @@ Una vez tengas el **ID** del usuario creado en el paso anterior, úsalo para asi
 
 * **Login de Usuario:**
     * **Método:** `POST`
-    * **URL:** `http://localhost:8080/api/v1/users/login`
+    * **URL:** `http://localhost:8080/api/v1/auth/login`
     * **Body:**
       ```json
       {"email": "elena.gomez@inmohub.com", "password": "password123"}

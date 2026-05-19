@@ -32,9 +32,9 @@ public class SecurityConfig {
                 csrf(AbstractHttpConfigurer::disable) // Desactivada la proyección contra ataques csrf, el token ya protege de ello
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/v1/users/login",
-                                "/api/v1/users/register",
-                                "/api/v1/users/refresh",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/refresh",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**"
                         ).permitAll() // Rutas públicas

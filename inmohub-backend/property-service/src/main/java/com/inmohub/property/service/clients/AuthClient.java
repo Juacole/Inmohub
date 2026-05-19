@@ -24,6 +24,6 @@ public interface AuthClient {
      * @param id UUID del usuario a buscar.
      * @return DTO con la información básica del usuario (UserResponse).
      */
-    @GetMapping("/api/v1/users/search-by-id/{id}")
+    @GetMapping("/api/v1/auth/search-by-id/{id}")
     UserResponseDto getUserById(@PathVariable(name = "id") UUID id);
 }

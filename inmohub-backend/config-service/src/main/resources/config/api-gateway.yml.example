@@ -20,8 +20,8 @@ spring:
               # "AUTH-SERVICE" y balancea la carga entre ellas si hubiera más de una instancia.
               uri: lb://AUTH-SERVICE
               predicates:
-                # Cualquier petición que empieza por /api/v1/users/ se envía a este microservicio
-                - Path=/api/v1/users/**
+                # Cualquier petición que empieza por /api/v1/auth/ se envía a este microservicio
+                - Path=/api/v1/auth/**
 
             # --- PROPERTY-SERVICE
             - id: property-service

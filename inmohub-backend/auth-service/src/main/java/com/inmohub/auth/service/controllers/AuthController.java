@@ -28,7 +28,7 @@ import java.util.UUID;
  * Provee endpoints para registro, login y consulta de perfiles.
  */
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor // Lombok: Mejor práctica que AllArgsConstructor para inyección de dependencias final
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para autenticación y administración de perfiles")
 public class AuthController {

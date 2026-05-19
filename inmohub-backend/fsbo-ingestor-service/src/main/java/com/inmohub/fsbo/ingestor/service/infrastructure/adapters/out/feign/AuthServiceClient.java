@@ -10,6 +10,6 @@ import java.util.UUID;
 @FeignClient(name = "auth-service", configuration = FeignAuthInterceptor.class)
 public interface AuthServiceClient {
 
-    @GetMapping("/api/v1/users/search-by-id/{id}")
+    @GetMapping("/api/v1/auth/search-by-id/{id}")
     UserProfileResponse getUserById(@PathVariable("id") UUID id);
 }
