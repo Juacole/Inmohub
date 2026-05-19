@@ -186,11 +186,7 @@ public class AuthController {
             @PathVariable(name = "id") UUID id) {
         UserDto user = userService.getById(id);
 
-        if(user != null) return ResponseEntity.ok(user);
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .build();
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/exists-by-email/{email}")
