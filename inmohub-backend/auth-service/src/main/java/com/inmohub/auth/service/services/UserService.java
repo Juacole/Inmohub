@@ -1,6 +1,7 @@
 package com.inmohub.auth.service.services;
 
 import com.inmohub.auth.service.dtos.AuthResponseDto;
+import com.inmohub.auth.service.dtos.UpdateUserProfileRequest;
 import com.inmohub.auth.service.dtos.UserCreateDto;
 import com.inmohub.auth.service.dtos.UserDto;
 import com.inmohub.auth.service.exceptions.ResourceNotFoundException;
@@ -129,6 +130,34 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Actualiza los datos personales básicos del perfil de un usuario.
+     * Solo los campos no nulos y no vacíos del request serán modificados.
+     *
+     * @param userId  UUID del usuario autenticado.
+     * @param request Datos parciales a actualizar (firstName, lastName, phone).
+     * @return UserDto con los datos actualizados.
+     * @throws ResourceNotFoundException si el usuario no existe.
+     */
+    public UserDto updateProfile(UUID userId, UpdateUserProfileRequest request) {
+        User user = repository.findById(userId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Usuario no encontrado.")
+                );
+
+        if (request.firstName() != null && !request.firstName().isBlank()) {
+            user.setFirstName(request.firstName());
+        }
+        if (request.lastName() != null && !request.lastName().isBlank()) {
+            user.setLastName(request.lastName());
+        }
+        if (request.phone() != null && !request.phone().isBlank()) {
+            user.setPhone(request.phone());
+        }
+
+        return mapper.toDTO(repository.save(user));
     }
 
     /**

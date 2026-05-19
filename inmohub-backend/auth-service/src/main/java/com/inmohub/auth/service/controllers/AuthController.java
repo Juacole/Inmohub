@@ -2,6 +2,7 @@ package com.inmohub.auth.service.controllers;
 
 import com.inmohub.auth.service.dtos.*;
 import com.inmohub.auth.service.services.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -332,6 +333,61 @@ public class AuthController {
                     .notFound()
                     .build();
         }
+    }
+
+    @PatchMapping("/profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'OWNER', 'CLIENT')")
+    @Operation(
+            summary = "Actualizar perfil de usuario",
+            description = "Actualiza los datos personales básicos del usuario autenticado (nombre, apellidos, teléfono). Solo los campos proporcionados serán modificados.",
+            security = @SecurityRequirement(name = "Bearer")
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Perfil actualizado correctamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Datos de entrada inválidos - Validación fallida"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "No autorizado - Token JWT inválido o ausente"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Prohibido - El usuario no tiene el rol requerido"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Usuario no encontrado"
+                    )
+            }
+    )
+    public ResponseEntity<UserDto> updateProfile(
+            @Valid
+            @RequestBody(
+                    description = "Campos a actualizar del perfil (todos opcionales)",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = UpdateUserProfileRequest.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Actualización de perfil",
+                                            value = "{\"firstName\":\"Juan\",\"lastName\":\"Pérez\",\"phone\":\"600123456\"}"
+                                    )
+                            }
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody UpdateUserProfileRequest request) {
+        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity.ok(userService.updateProfile(userId, request));
     }
 
     @PostMapping("/login")
