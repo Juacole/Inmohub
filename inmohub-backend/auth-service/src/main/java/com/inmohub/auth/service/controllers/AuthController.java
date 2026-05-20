@@ -1,7 +1,7 @@
 package com.inmohub.auth.service.controllers;
 
 import com.inmohub.auth.service.dtos.*;
-import com.inmohub.auth.service.services.UserService;
+import com.inmohub.auth.service.services.AuthService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor // Lombok: Mejor práctica que AllArgsConstructor para inyección de dependencias final
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para autenticación y administración de perfiles")
 public class AuthController {
-    private final UserService userService;
+    private final AuthService userService;
 
     @PostMapping("/register")
     @Operation(

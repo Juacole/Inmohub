@@ -7,7 +7,7 @@ import com.inmohub.auth.service.mappers.UserMapper;
 import com.inmohub.auth.service.models.User;
 import com.inmohub.auth.service.models.enums.UserStatus;
 import com.inmohub.auth.service.repositories.IUserRepository;
-import com.inmohub.auth.service.services.UserService;
+import com.inmohub.auth.service.services.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class UserServiceTest {
     private UserMapper userMapper;
 
     @InjectMocks
-    private UserService userService;
+    private AuthService userService;
 
     private User mockUser;
     private UserDto mockUserDTO;

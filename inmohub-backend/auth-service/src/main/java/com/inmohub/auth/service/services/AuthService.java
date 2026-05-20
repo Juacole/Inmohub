@@ -4,6 +4,8 @@ import com.inmohub.auth.service.dtos.AuthResponseDto;
 import com.inmohub.auth.service.dtos.UpdateUserProfileRequest;
 import com.inmohub.auth.service.dtos.UserCreateDto;
 import com.inmohub.auth.service.dtos.UserDto;
+import com.inmohub.auth.service.events.UserDeletedEvent;
+import com.inmohub.auth.service.events.KafkaUserEventPublisher;
 import com.inmohub.auth.service.exceptions.ResourceNotFoundException;
 import com.inmohub.auth.service.mappers.UserMapper;
 import com.inmohub.auth.service.models.RefreshToken;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
     private final IUserRepository repository;
     private final UserMapper mapper;
     private final IRoleRepository roleRepository;
@@ -39,6 +41,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final KafkaUserEventPublisher userEventPublisher;
 
     /**
      * Crea y persiste un nuevo usuario en la base de datos.
@@ -127,6 +130,7 @@ public class UserService {
     public boolean deleteById(UUID id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
+            userEventPublisher.publishUserDeleted(UserDeletedEvent.of(id));
             return true;
         }
         return false;
