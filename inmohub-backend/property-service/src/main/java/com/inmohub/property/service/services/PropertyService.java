@@ -3,6 +3,7 @@ package com.inmohub.property.service.services;
 import com.inmohub.property.service.clients.AuthClient;
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertyPatchDto;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.dtos.UserResponseDto;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
@@ -206,6 +207,54 @@ public class PropertyService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public PropertyDto patchProperty(UUID propertyId, PropertyPatchDto dto) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Propiedad no encontrada."));
+
+        if (dto.title() != null && !dto.title().isBlank()) {
+            property.setTitle(dto.title());
+        }
+        if (dto.description() != null && !dto.description().isBlank()) {
+            property.setDescription(dto.description());
+        }
+        if (dto.price() != null) {
+            property.setPrice(dto.price());
+        }
+        if (dto.areaM2() != null) {
+            property.setAreaM2(dto.areaM2());
+        }
+        if (dto.address() != null && !dto.address().isBlank()) {
+            property.setAddress(dto.address());
+        }
+        if (dto.city() != null && !dto.city().isBlank()) {
+            property.setCity(dto.city());
+        }
+        if (dto.state() != null && !dto.state().isBlank()) {
+            property.setState(dto.state());
+        }
+        if (dto.country() != null && !dto.country().isBlank()) {
+            property.setCountry(dto.country());
+        }
+        if (dto.status() != null) {
+            property.setStatus(dto.status());
+        }
+
+        if (dto.features() != null) {
+            property.getFeatures().clear();
+            dto.features().forEach(f -> {
+                PropertyFeature feature = new PropertyFeature();
+                feature.setFeatureName(f.featureName());
+                feature.setFeatureValue(f.featureValue());
+                property.addFeature(feature);
+            });
+        }
+
+        PropertyDto patchedProperty = propertyMapper.toDto(propertyRepository.save(property));
+        log.info("Propiedad actualizada parcialmente con éxito: ID {}", patchedProperty.id());
+        return patchedProperty;
     }
 
     @Transactional

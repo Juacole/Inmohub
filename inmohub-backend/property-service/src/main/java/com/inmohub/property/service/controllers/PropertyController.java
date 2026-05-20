@@ -2,6 +2,7 @@ package com.inmohub.property.service.controllers;
 
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertyPatchDto;
 import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.services.PropertyService;
@@ -26,6 +27,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -197,7 +199,10 @@ public class PropertyController {
             }
     )
     public ResponseEntity<PropertyDto> getById(
-            @Parameter(description = "Identificador único (UUID) de la propiedad", example = "550e8400-e29b-41d4-a716-446655440000")
+            @Parameter(
+                    description = "Identificador único (UUID) de la propiedad",
+                    example = "550e8400-e29b-41d4-a716-446655440000"
+            )
             @PathVariable(name = "id") UUID id) {
         PropertyDto p = propertyService.getPropertyById(id);
 
@@ -321,6 +326,79 @@ public class PropertyController {
     ) {
         PropertySearchCriteria criteria = new PropertySearchCriteria(city, minPrice, maxPrice, status);
         return ResponseEntity.ok(propertyService.searchProperties(criteria, pageable));
+    }
+
+    @PatchMapping("/update/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'AGENT')")
+    @Operation(
+            summary = "Actualizar propiedad parcialmente",
+            description = "Actualiza los datos de un inmueble existente. Solo los campos proporcionados en el body serán modificados. " +
+                    "Solo el propietario original, ADMIN o AGENT pueden modificar. " +
+                    "Si se incluye el array 'features', las características se reemplazan por completo.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Propiedad actualizada correctamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PropertyDto.class),
+                                    examples = @ExampleObject(
+                                            name = "Propiedad actualizada",
+                                            value = "{\"id\":\"550e8400-e29b-41d4-a716-446655440000\",\"title\":\"Chalet renovado\",\"description\":\"Propiedad completamente reformada\",\"price\":480000.00,\"areaM2\":250.5,\"address\":\"Calle Mayor 123\",\"city\":\"Madrid\",\"state\":\"Comunidad de Madrid\",\"country\":\"España\",\"status\":\"AVAILABLE\",\"ownerId\":\"660e8400-e29b-41d4-a716-446655440000\",\"photos\":[],\"features\":[{\"featureName\":\"Habitaciones\",\"featureValue\":\"5\"}],\"createdAt\":\"2024-01-15T10:30:00\",\"updatedAt\":\"2024-03-20T14:45:00\"}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Datos de entrada inválidos",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            value = "{\"errors\":{\"price\":\"El precio debe ser positivo\"}}"
+                                    ))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "No autenticado. Token JWT no proporcionado o inválido.",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No autorizado. Solo el propietario original, ADMIN o AGENT pueden modificar.",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Propiedad no encontrada con el ID especificado.",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            value = "{\"error\":\"Propiedad no encontrada con ID: 550e8400-e29b-41d4-a716-446655440000\"}"
+                                    ))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Error interno del servidor.",
+                            content = @Content
+                    )
+            }
+    )
+    public ResponseEntity<PropertyDto> updateProperty(
+            @Parameter(description = "Identificador único (UUID) de la propiedad a actualizar", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable UUID id,
+            @RequestBody(
+                    description = "Campos a actualizar de la propiedad (todos opcionales). Solo los campos enviados serán modificados.",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = PropertyPatchDto.class),
+                            examples = @ExampleObject(
+                                    value = "{\"title\":\"Chalet renovado\",\"description\":\"Nueva descripción\",\"price\":480000.00,\"status\":\"RESERVED\",\"features\":[{\"featureName\":\"Habitaciones\",\"featureValue\":\"5\"}]}"
+                            )
+                    )
+            )
+            PropertyPatchDto dto) {
+        return ResponseEntity.ok(propertyService.patchProperty(id, dto));
     }
 
     @DeleteMapping("/delete-by-id/{id}")
