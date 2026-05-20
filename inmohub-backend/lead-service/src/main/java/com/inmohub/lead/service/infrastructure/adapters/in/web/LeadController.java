@@ -36,6 +36,7 @@ public class LeadController {
     private final GetLeadsByPropertyIdUseCase getLeadsByPropertyIdUseCase;
     private final GetLeadsByAgentIdUseCase getLeadsByAgentIdUseCase;
     private final ChangeLeadStatusUseCase changeLeadStatusUseCase;
+    private final DeleteLeadsByPropertyIdUseCase deleteLeadsByPropertyIdUseCase;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -267,6 +268,42 @@ public class LeadController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return getLeadsByAgentIdUseCase.execute(agentId, page, size);
+    }
+
+    @DeleteMapping("/property/{propertyId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    @Operation(
+            summary = "Eliminar leads por propiedad",
+            description = "Elimina físicamente todos los leads asociados a una propiedad. " +
+                    "Requiere rol ADMIN o llamada inter-servicio con privilegios de administrador."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Leads eliminados correctamente (o no existían)",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "No autenticado. Token JWT no proporcionado o inválido.",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "No autorizado - Se requiere rol ADMIN",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content
+            )
+    })
+    public Result<Void, Error> deleteLeadsByProperty(
+            @PathVariable UUID propertyId
+    ) {
+        return deleteLeadsByPropertyIdUseCase.execute(propertyId);
     }
 
     @PatchMapping("/{leadId}/status")

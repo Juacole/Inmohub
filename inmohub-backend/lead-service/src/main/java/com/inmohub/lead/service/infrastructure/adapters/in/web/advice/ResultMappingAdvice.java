@@ -44,7 +44,12 @@ public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
     ) {
         if (body instanceof Result<?, ?> result) {
             if (result.isSuccess()) { // Si la respuesta es exitosa se devuelve el valor de Result
-                return result.getValue();
+                Object value = result.getValue();
+                if (value == null) {
+                    response.setStatusCode(HttpStatus.NO_CONTENT);
+                    return null;
+                }
+                return value;
             } else { // En ccaso contrario se mapea al status code correspondiente
                 Error error = (Error) result.getErrorValue().orElse(null);
                 HttpStatus status = mapErrorToStatus(error);

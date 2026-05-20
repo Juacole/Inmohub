@@ -88,6 +88,11 @@ public class LeadRepositoryImpl implements ILeadRepository {
     }
 
     @Override
+    public void deleteByPropertyId(UUID propertyId) {
+        leadRepository.deleteByPropertyId(propertyId);
+    }
+
+    @Override
     public PaginatedResult<Lead> findByAgentId(UUID agentId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<LeadAssignmentJpaEntity> assignments = assignmentRepository.findByAgentId(agentId, pageRequest);

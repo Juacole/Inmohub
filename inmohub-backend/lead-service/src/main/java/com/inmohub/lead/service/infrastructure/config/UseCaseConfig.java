@@ -3,6 +3,7 @@ package com.inmohub.lead.service.infrastructure.config;
 import com.inmohub.lead.service.application.usecases.AssignLeadUseCase;
 import com.inmohub.lead.service.application.usecases.ChangeLeadStatusUseCase;
 import com.inmohub.lead.service.application.usecases.CreateLeadUseCase;
+import com.inmohub.lead.service.application.usecases.DeleteLeadsByPropertyIdUseCase;
 import com.inmohub.lead.service.application.usecases.GetAllLeadsUseCase;
 import com.inmohub.lead.service.application.usecases.GetLeadsByAgentIdUseCase;
 import com.inmohub.lead.service.application.usecases.GetLeadsByPropertyIdUseCase;
@@ -50,5 +51,11 @@ public class UseCaseConfig {
     @Transactional
     public ChangeLeadStatusUseCase changeLeadStatusUseCase(ILeadRepository leadRepository) {
         return new ChangeLeadStatusUseCase(leadRepository);
+    }
+
+    @Bean
+    @Transactional
+    public DeleteLeadsByPropertyIdUseCase deleteLeadsByPropertyIdUseCase(ILeadRepository leadRepository) {
+        return new DeleteLeadsByPropertyIdUseCase(leadRepository);
     }
 }

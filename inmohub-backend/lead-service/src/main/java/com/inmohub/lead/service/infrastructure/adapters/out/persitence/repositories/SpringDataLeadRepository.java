@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface SpringDataLeadRepository extends JpaRepository<LeadJpaEntity, UUID> {
     Page<LeadJpaEntity> findByPropertyId(UUID propertyId, Pageable pageable);
+    void deleteByPropertyId(UUID propertyId);
 }
