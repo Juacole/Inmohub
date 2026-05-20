@@ -4,6 +4,7 @@ import com.inmohub.property.service.clients.AuthClient;
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
 import com.inmohub.property.service.dtos.PropertyPatchDto;
+import com.inmohub.property.service.dtos.PropertyPhotoDto;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.dtos.UserResponseDto;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
@@ -209,6 +210,13 @@ public class PropertyService {
         return false;
     }
 
+    @Transactional(readOnly = true)
+    public boolean isOwner(UUID propertyId, String userId) {
+        return propertyRepository.findById(propertyId)
+                .map(p -> p.getOwnerId().equals(UUID.fromString(userId)))
+                .orElse(false);
+    }
+
     @Transactional
     public PropertyDto patchProperty(UUID propertyId, PropertyPatchDto dto) {
         Property property = propertyRepository.findById(propertyId)
@@ -255,6 +263,30 @@ public class PropertyService {
         PropertyDto patchedProperty = propertyMapper.toDto(propertyRepository.save(property));
         log.info("Propiedad actualizada parcialmente con éxito: ID {}", patchedProperty.id());
         return patchedProperty;
+    }
+
+    @Transactional
+    public List<PropertyPhotoDto> addImages(UUID propertyId, List<MultipartFile> photos) throws IOException {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Propiedad no encontrada."));
+
+        boolean firstPhotoIsPrimary = property.getPhotos().isEmpty();
+
+        for (MultipartFile photoFile : photos) {
+            String url = firebaseService.uploadPhoto(photoFile);
+            PropertyPhoto photo = new PropertyPhoto();
+            photo.setPhotoUrl(url);
+            photo.setIsPrimary(firstPhotoIsPrimary);
+            property.addPhoto(photo);
+            firstPhotoIsPrimary = false;
+        }
+
+        propertyRepository.save(property);
+        log.info("{} imágenes añadidas a la propiedad: ID {}", photos.size(), propertyId);
+
+        return property.getPhotos().stream()
+                .map(propertyMapper::toPhotoDto)
+                .toList();
     }
 
     @Transactional

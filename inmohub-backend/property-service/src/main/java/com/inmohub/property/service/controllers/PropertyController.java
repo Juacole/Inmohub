@@ -3,6 +3,7 @@ package com.inmohub.property.service.controllers;
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
 import com.inmohub.property.service.dtos.PropertyPatchDto;
+import com.inmohub.property.service.dtos.PropertyPhotoDto;
 import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.services.PropertyService;
@@ -328,8 +329,8 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.searchProperties(criteria, pageable));
     }
 
-    @PatchMapping("/update/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'AGENT')")
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT') or @propertyService.isOwner(#id, authentication.name)")
     @Operation(
             summary = "Actualizar propiedad parcialmente",
             description = "Actualiza los datos de un inmueble existente. Solo los campos proporcionados en el body serán modificados. " +
@@ -399,6 +400,64 @@ public class PropertyController {
             )
             PropertyPatchDto dto) {
         return ResponseEntity.ok(propertyService.patchProperty(id, dto));
+    }
+
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT') or @propertyService.isOwner(#id, authentication.name)")
+    @Operation(
+            summary = "Añadir imágenes a una propiedad",
+            description = "Sube y anexa nuevas imágenes a un inmueble en Firebase Storage. " +
+                    "Si la propiedad no tiene fotos previas, la primera imagen enviada se marca como foto principal. " +
+                    "Solo el propietario original, ADMIN o AGENT pueden añadir imágenes. " +
+                    "Formatos permitidos: JPG, JPEG, PNG (máximo 5MB por archivo).",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Imágenes añadidas correctamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PropertyPhotoDto.class)),
+                                    examples = @ExampleObject(
+                                            name = "Fotos actualizadas",
+                                            value = "[{\"id\":\"770e8400-e29b-41d4-a716-446655440000\",\"photoUrl\":\"https://firebasestorage.googleapis.com/.../img1.jpg\",\"isPrimary\":true},{\"id\":\"880e8400-e29b-41d4-a716-446655440000\",\"photoUrl\":\"https://firebasestorage.googleapis.com/.../img2.jpg\",\"isPrimary\":false}]"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "No autenticado. Token JWT no proporcionado o inválido.",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "No autorizado. Solo el propietario original, ADMIN o AGENT pueden modificar.",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Propiedad no encontrada con el ID especificado.",
+                            content = @Content(mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            value = "{\"error\":\"Propiedad no encontrada con ID: 550e8400-e29b-41d4-a716-446655440000\"}"
+                                    ))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Error interno del servidor al procesar las imágenes.",
+                            content = @Content
+                    )
+            }
+    )
+    public ResponseEntity<List<PropertyPhotoDto>> addImages(
+            @Parameter(description = "Identificador único (UUID) de la propiedad", example = "550e8400-e29b-41d4-a716-446655440000")
+            @PathVariable UUID id,
+            @Parameter(description = "Archivos de imagen a subir (formatos permitidos: JPG, JPEG, PNG). Máximo 5MB por archivo.")
+            @RequestPart("photos") List<MultipartFile> photos
+    ) throws IOException {
+        return ResponseEntity.ok(propertyService.addImages(id, photos));
     }
 
     @DeleteMapping("/delete-by-id/{id}")

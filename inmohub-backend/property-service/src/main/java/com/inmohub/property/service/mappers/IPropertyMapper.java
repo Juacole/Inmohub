@@ -2,6 +2,7 @@ package com.inmohub.property.service.mappers;
 
 import com.inmohub.property.service.dtos.PropertyCreateDto;
 import com.inmohub.property.service.dtos.PropertyDto;
+import com.inmohub.property.service.dtos.PropertyPhotoDto;
 import com.inmohub.property.service.dtos.PropertySummaryDto;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.PropertyPhoto;
@@ -18,6 +19,8 @@ import java.util.List;
 public interface IPropertyMapper {
 
     PropertyDto toDto(Property property);
+
+    PropertyPhotoDto toPhotoDto(PropertyPhoto photo);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
