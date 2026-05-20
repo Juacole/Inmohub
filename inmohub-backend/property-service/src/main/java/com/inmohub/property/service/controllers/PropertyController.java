@@ -329,7 +329,7 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.searchProperties(criteria, pageable));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'AGENT') or @propertyService.isOwner(#id, authentication.name)")
     @Operation(
             summary = "Actualizar propiedad parcialmente",
