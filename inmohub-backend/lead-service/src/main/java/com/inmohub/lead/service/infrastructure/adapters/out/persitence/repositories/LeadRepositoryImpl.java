@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class LeadRepositoryImpl implements ILeadRepository {
     private final LeadAssignmentMapper assignmentMapper;
 
     @Override
+    @Transactional
     public Lead saveLead(Lead lead) {
         return leadMapper.toDomainEntity(
                 leadRepository.save(
@@ -39,11 +41,13 @@ public class LeadRepositoryImpl implements ILeadRepository {
     }
 
     @Override
+    @Transactional
     public Lead findById(UUID id) {
         return leadRepository.findById(id).map(leadMapper::toDomainEntity).orElse(null);
     }
 
     @Override
+    @Transactional
     public List<LeadAssignment> findAssignmentsByLeadId(UUID leadId) {
         return assignmentRepository.findByLeadId(leadId).stream()
                 .map(assignmentMapper::toDomainEntity)
@@ -51,16 +55,19 @@ public class LeadRepositoryImpl implements ILeadRepository {
     }
 
     @Override
+    @Transactional
     public void saveAssignment(LeadAssignment assignment) {
         assignmentRepository.save(assignmentMapper.toJpaEntity(assignment));
     }
 
     @Override
+    @Transactional
     public void saveAuditLog(LeadAuditLog auditLog) {
         eventRepository.save(eventMapper.toJpaEntity(auditLog));
     }
 
     @Override
+    @Transactional
     public PaginatedResult<Lead> findAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Lead> leadsPage = leadRepository.findAll(pageRequest).map(leadMapper::toDomainEntity);
@@ -74,6 +81,7 @@ public class LeadRepositoryImpl implements ILeadRepository {
     }
 
     @Override
+    @Transactional
     public PaginatedResult<Lead> findByPropertyId(UUID propertyId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Lead> leadsPage = leadRepository.findByPropertyId(propertyId, pageRequest)
@@ -88,11 +96,13 @@ public class LeadRepositoryImpl implements ILeadRepository {
     }
 
     @Override
+    @Transactional
     public void deleteByPropertyId(UUID propertyId) {
         leadRepository.deleteByPropertyId(propertyId);
     }
 
     @Override
+    @Transactional
     public PaginatedResult<Lead> findByAgentId(UUID agentId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<LeadAssignmentJpaEntity> assignments = assignmentRepository.findByAgentId(agentId, pageRequest);
