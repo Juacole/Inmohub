@@ -9,6 +9,7 @@ import com.inmohub.lead.service.application.usecases.*;
 import com.inmohub.lead.service.domain.abstractions.Error;
 import com.inmohub.lead.service.domain.abstractions.Result;
 import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
+import com.inmohub.lead.service.domain.abstractions.Unit;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -300,7 +301,7 @@ public class LeadController {
                     content = @Content
             )
     })
-    public Result<Void, Error> deleteLeadsByProperty(
+    public Result<Unit, Error> deleteLeadsByProperty(
             @PathVariable UUID propertyId
     ) {
         return deleteLeadsByPropertyIdUseCase.execute(propertyId);
