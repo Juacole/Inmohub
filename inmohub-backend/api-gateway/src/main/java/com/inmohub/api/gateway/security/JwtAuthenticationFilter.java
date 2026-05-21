@@ -20,9 +20,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private final JwtUtils jwtUtils;
 
     private final List<String> openApiEndpoints = List.of(
-            "api/v1/users/login",
-            "api/v1/users/register",
-            "api/v1/users/refresh",
+            "api/v1/auth/login",
+            "api/v1/auth/register",
+            "api/v1/auth/refresh",
             "/eureka"
     );
 

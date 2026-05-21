@@ -385,7 +385,8 @@ public class AuthController {
                             }
                     )
             )
-            @org.springframework.web.bind.annotation.RequestBody UpdateUserProfileRequest request) {
+            @org.springframework.web.bind.annotation.RequestBody UpdateUserProfileRequest request
+    ) {
         UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
         return ResponseEntity.ok(userService.updateProfile(userId, request));
     }
