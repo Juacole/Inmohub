@@ -50,6 +50,7 @@ public class AuthService {
      * @param createDTO Datos de entrada validados.
      * @return UserDTO Datos del usuario ya persistido.
      */
+    @Transactional
     public UserDto createUser(UserCreateDto createDTO) {
         User user = mapper.toEntity(createDTO);
 
@@ -127,6 +128,7 @@ public class AuthService {
      * @param id UUID del usuario a eliminar.
      * @return true si se eliminó, false si no existía.
      */
+    @Transactional
     public boolean deleteById(UUID id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
@@ -145,6 +147,7 @@ public class AuthService {
      * @return UserDto con los datos actualizados.
      * @throws ResourceNotFoundException si el usuario no existe.
      */
+    @Transactional
     public UserDto updateProfile(UUID userId, UpdateUserProfileRequest request) {
         User user = repository.findById(userId)
                 .orElseThrow(
