@@ -18,7 +18,7 @@ public class KafkaPropertyDeletedListener {
     private final DeleteLeadsByPropertyIdUseCase deleteLeadsByPropertyIdUseCase;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "property.lifecycle.events", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "property.lifecycle.events", groupId = "${spring.kafka.listener.property-lifecycle.group-id}")
     public void onPropertyDeleted(String message) {
         log.info("Evento recibido en topic property.lifecycle.events");
 

@@ -18,7 +18,7 @@ public class KafkaUserDeletedListener {
     private final PropertyService propertyService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "user.lifecycle.events", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "user.lifecycle.events", groupId = "${spring.kafka.listener.user-lifecycle.group-id}")
     public void onUserDeleted(String message) {
         log.info("Evento recibido en topic user.lifecycle.events");
 
