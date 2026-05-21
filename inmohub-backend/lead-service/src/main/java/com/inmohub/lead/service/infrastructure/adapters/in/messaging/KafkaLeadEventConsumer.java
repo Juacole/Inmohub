@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class LeadEventConsumer {
+public class KafkaLeadEventConsumer {
 
     private static final String EVENT_FSBO_BULK = "FSBO_OWNER_BULK_UPLOAD";
     private static final String EVENT_INDIVIDUAL_PROPERTY = "INDIVIDUAL_PROPERTY_CREATED";

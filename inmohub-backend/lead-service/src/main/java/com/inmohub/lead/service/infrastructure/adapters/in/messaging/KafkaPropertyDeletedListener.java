@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class PropertyDeletedListener {
+public class KafkaPropertyDeletedListener {
 
     private static final String EVENT_PROPERTY_DELETED = "PROPERTY_DELETED";
     private final DeleteLeadsByPropertyIdUseCase deleteLeadsByPropertyIdUseCase;
