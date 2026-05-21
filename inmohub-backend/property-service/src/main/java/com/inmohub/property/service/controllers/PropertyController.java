@@ -398,7 +398,7 @@ public class PropertyController {
                             )
                     )
             )
-            PropertyPatchDto dto
+            @org.springframework.web.bind.annotation.RequestBody PropertyPatchDto dto
     ) {
         return ResponseEntity.ok(propertyService.patchProperty(id, dto));
     }
