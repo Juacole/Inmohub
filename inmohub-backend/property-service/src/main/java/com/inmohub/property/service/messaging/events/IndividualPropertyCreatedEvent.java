@@ -1,4 +1,4 @@
-package com.inmohub.property.service.messaging.dtos;
+package com.inmohub.property.service.messaging.events;
 
 import java.util.UUID;
 

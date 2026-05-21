@@ -3,7 +3,7 @@ package com.inmohub.property.service.messaging;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inmohub.property.service.dtos.UserResponseDto;
-import com.inmohub.property.service.messaging.dtos.IndividualPropertyCreatedEvent;
+import com.inmohub.property.service.messaging.events.IndividualPropertyCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -1,7 +1,7 @@
 package com.inmohub.property.service.messaging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.inmohub.property.service.messaging.dtos.BulkPropertyEventDto;
+import com.inmohub.property.service.messaging.events.BulkPropertyEvent;
 import com.inmohub.property.service.services.PropertyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class KafkaPropertyEventConsumer {
         log.info("Evento recibido en topic property.bulk.create");
 
         try {
-            BulkPropertyEventDto bulkEvent = objectMapper.readValue(message, BulkPropertyEventDto.class);
+            BulkPropertyEvent bulkEvent = objectMapper.readValue(message, BulkPropertyEvent.class);
             propertyService.processBulkProperties(bulkEvent);
         } catch (JsonProcessingException e) {
             log.error("Error crítico procesando el lote de propiedades desde Kafka: {}", e.getMessage(), e);
