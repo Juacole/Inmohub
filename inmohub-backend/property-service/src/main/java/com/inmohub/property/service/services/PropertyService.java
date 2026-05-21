@@ -12,7 +12,9 @@ import com.inmohub.property.service.exceptions.UserNotActiveException;
 import com.inmohub.property.service.mappers.IPropertyMapper;
 import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.messaging.KafkaLeadEventPublisher;
+import com.inmohub.property.service.messaging.KafkaPropertyEventPublisher;
 import com.inmohub.property.service.messaging.events.BulkPropertyEvent;
+import com.inmohub.property.service.messaging.events.PropertyDeletedEvent;
 import com.inmohub.property.service.specifications.PropertySpecifications;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.PropertyFeature;
@@ -50,6 +52,7 @@ public class PropertyService {
     private final AuthClient client;
     private final FirebaseStorageService firebaseService;
     private final KafkaLeadEventPublisher kafkaLeadEventPublisher;
+    private final KafkaPropertyEventPublisher propertyEventPublisher;
 
     /**
      * Orquesta la creación y persistencia de un nuevo inmueble, integrando validación delegada,
@@ -214,7 +217,10 @@ public class PropertyService {
     public void deleteByOwnerId(UUID ownerId) {
         List<Property> properties = propertyRepository.findByOwnerId(ownerId);
 
-        propertyRepository.deleteAll(properties);
+        for (Property property : properties) {
+            propertyEventPublisher.publishPropertyDeleted(PropertyDeletedEvent.of(property.getId()));
+            propertyRepository.delete(property);
+        }
 
         log.info("Eliminadas {} propiedades del ownerId={}", properties.size(), ownerId);
     }

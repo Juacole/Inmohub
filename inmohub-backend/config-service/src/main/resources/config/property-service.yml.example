@@ -21,6 +21,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 50MB
   kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       bootstrap-servers: localhost:9092
       group-id: property-group-v2
@@ -59,6 +63,10 @@ spring:
     # Uso del nombre del servicio property-db definido en docker-compose (DNS interno de Docker)
     url: jdbc:postgresql://property-db:5432/property_db
   kafka:
+    producer:
+      bootstrap-servers: broker:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
       bootstrap-servers: broker:29092
       group-id: property-group-v2
