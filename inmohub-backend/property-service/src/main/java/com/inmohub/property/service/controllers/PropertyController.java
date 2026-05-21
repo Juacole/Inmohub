@@ -398,7 +398,8 @@ public class PropertyController {
                             )
                     )
             )
-            PropertyPatchDto dto) {
+            PropertyPatchDto dto
+    ) {
         return ResponseEntity.ok(propertyService.patchProperty(id, dto));
     }
 
@@ -452,12 +453,63 @@ public class PropertyController {
             }
     )
     public ResponseEntity<List<PropertyPhotoDto>> addImages(
-            @Parameter(description = "Identificador único (UUID) de la propiedad", example = "550e8400-e29b-41d4-a716-446655440000")
+            @Parameter(
+                    description = "Identificador único (UUID) de la propiedad",
+                    example = "550e8400-e29b-41d4-a716-446655440000"
+            )
             @PathVariable UUID id,
-            @Parameter(description = "Archivos de imagen a subir (formatos permitidos: JPG, JPEG, PNG). Máximo 5MB por archivo.")
+            @Parameter(
+                    description = "Archivos de imagen a subir (formatos permitidos: JPG, JPEG, PNG). Máximo 5MB por archivo."
+            )
             @RequestPart("photos") List<MultipartFile> photos
     ) throws IOException {
         return ResponseEntity.ok(propertyService.addImages(id, photos));
+    }
+
+    @DeleteMapping("/delete-by-owner/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT') or @propertyService.isOwner(#id, authentication.name)")
+    @Operation(
+            summary = "Eliminar propiedades de un propietario",
+            description = "Elimina físicamente todas las propiedades asociadas a un propietario específico. " +
+                    "Solo el propietario con el mismo ownerId, ADMIN o AGENT pueden eliminar sus propiedades. " +
+                    "Esta operación es irreversible y también elimina los leads asociados."
+    )
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Propiedades eliminadas correctamente",
+                        content = @Content(mediaType = "application/json",
+                                examples = @ExampleObject(
+                                        value = "{\"message\":\"Propiedades del propietario eliminadas exitosamente\"}"
+                                ))
+                ),
+                @ApiResponse(
+                        responseCode = "401",
+                        description = "No autenticado. Token JWT no proporcionado o inválido.",
+                        content = @Content
+                ),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "No autorizado. El usuario no tiene permisos para eliminar estas propiedades.",
+                        content = @Content
+                ),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Error interno del servidor.",
+                        content = @Content
+                )
+            }
+    )
+    public ResponseEntity<Void> deleteByOwnerId(
+            @Parameter(
+                    description = "Identificador único (UUID) del propietario cuyas propiedades serán eliminadas",
+                    example = "550e8400-e29b-41d4-a716-446655440000"
+            )
+            @PathVariable UUID id
+    ) {
+        propertyService.deleteByOwnerId(id);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete-by-id/{id}")
@@ -504,8 +556,12 @@ public class PropertyController {
             }
     )
     public ResponseEntity<Void> deleteById(
-            @Parameter(description = "Identificador único (UUID) de la propiedad a eliminar", example = "550e8400-e29b-41d4-a716-446655440000")
-            @PathVariable UUID id) {
+            @Parameter(
+                    description = "Identificador único (UUID) de la propiedad a eliminar",
+                    example = "550e8400-e29b-41d4-a716-446655440000"
+            )
+            @PathVariable UUID id
+    ) {
         boolean deleted = propertyService.deleteById(id);
 
         if (deleted) {

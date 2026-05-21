@@ -12,7 +12,7 @@ import com.inmohub.property.service.exceptions.UserNotActiveException;
 import com.inmohub.property.service.mappers.IPropertyMapper;
 import com.inmohub.property.service.dtos.PropertySearchCriteria;
 import com.inmohub.property.service.messaging.KafkaLeadEventPublisher;
-import com.inmohub.property.service.messaging.dtos.BulkPropertyEventDto;
+import com.inmohub.property.service.messaging.events.BulkPropertyEvent;
 import com.inmohub.property.service.specifications.PropertySpecifications;
 import com.inmohub.property.service.models.Property;
 import com.inmohub.property.service.models.PropertyFeature;
@@ -210,6 +210,15 @@ public class PropertyService {
         return false;
     }
 
+    @Transactional
+    public void deleteByOwnerId(UUID ownerId) {
+        List<Property> properties = propertyRepository.findByOwnerId(ownerId);
+
+        propertyRepository.deleteAll(properties);
+
+        log.info("Eliminadas {} propiedades del ownerId={}", properties.size(), ownerId);
+    }
+
     @Transactional(readOnly = true)
     public boolean isOwner(UUID propertyId, String userId) {
         return propertyRepository.findById(propertyId)
@@ -290,7 +299,7 @@ public class PropertyService {
     }
 
     @Transactional
-    public void processBulkProperties(BulkPropertyEventDto eventDto) {
+    public void processBulkProperties(BulkPropertyEvent eventDto) {
         log.info("Iniciando procesamiento de lote de propiedades para el owner: {}", eventDto.ownerId());
 
         if (eventDto.properties() == null || eventDto.properties().isEmpty()) {
