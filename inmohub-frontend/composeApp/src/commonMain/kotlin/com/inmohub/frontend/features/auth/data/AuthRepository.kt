@@ -18,7 +18,7 @@ object AuthRepository {
 
     suspend fun register(request: RegisterRequest): Boolean {
         return try {
-            val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/users/register") {
+            val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/auth/register") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -31,7 +31,7 @@ object AuthRepository {
 
     suspend fun login(email: String, password: String): LoginResponse? {
         return try {
-            val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/users/login") {
+            val response = NetworkClient.client.post("${NetworkClient.BASE_URL}/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginRequest(email, password))
             }
@@ -52,7 +52,7 @@ object AuthRepository {
 
     suspend fun getUsersByRole(role: String): List<UserSummaryResponse> {
         return try {
-            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/users/role/$role")
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/auth/role/$role")
             if (response.status.value == 200) {
                 response.body()
             } else {
@@ -66,7 +66,7 @@ object AuthRepository {
 
     suspend fun getUserById(userId: String): User? {
         return try {
-            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/users/search-by-id/$userId")
+            val response = NetworkClient.client.get("${NetworkClient.BASE_URL}/auth/search-by-id/$userId")
             if (response.status.value == 200) {
                 response.body()
             } else {
