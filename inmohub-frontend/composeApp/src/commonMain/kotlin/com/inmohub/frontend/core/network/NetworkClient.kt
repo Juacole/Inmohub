@@ -55,7 +55,7 @@ object NetworkClient { // singleton
                             }
 
                             // Se lanza petición post para refresh token
-                            val response = refreshClient.post("$BASE_URL/users/refresh") {
+                            val response = refreshClient.post("$BASE_URL/auth/refresh") {
                                 contentType(ContentType.Application.Json)
                                 setBody(RefreshTokenRequest(refreshToken = currentRefreshToken))
                             }
