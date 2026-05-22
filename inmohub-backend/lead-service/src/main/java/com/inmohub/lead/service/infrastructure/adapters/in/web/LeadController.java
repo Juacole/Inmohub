@@ -179,7 +179,7 @@ public class LeadController {
 
     @GetMapping("/property/{propertyId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT', 'OWNER')")
     @Operation(
             summary = "Obtener leads por ID de propiedad",
             description = "Devuelve una lista paginada de todos los interesados en una propiedad específica."
