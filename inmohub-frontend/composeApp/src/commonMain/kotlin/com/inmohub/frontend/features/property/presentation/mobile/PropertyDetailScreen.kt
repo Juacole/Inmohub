@@ -3,8 +3,7 @@ package com.inmohub.frontend.features.property.presentation.mobile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,9 +29,12 @@ import com.inmohub.frontend.core.themes.TileOrangeSecondary
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.features.lead.data.LeadRepository
 import com.inmohub.frontend.features.lead.dtos.LeadSummaryDto
+import com.inmohub.frontend.features.lead.dtos.LeadDetailDto
+import com.inmohub.frontend.features.lead.presentation.desktop.components.LeadDetailDialog
 import com.inmohub.frontend.features.lead.requests.CreateLeadRequest
 import com.inmohub.frontend.core.utils.JwtUtils
 import com.inmohub.frontend.features.property.presentation.mobile.components.LeadInterestCard
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 data class PropertyDetailScreen(val propertyId: String) : Screen {
@@ -53,12 +55,13 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
         var leadSuccess by remember { mutableStateOf(false) }
         var leadError by remember { mutableStateOf<String?>(null) }
 
-        val hasSession by NetworkClient.sessionManager.isSessionActive.collectAsState(initial = false)
+        val hasSession by (NetworkClient.sessionManager?.isSessionActive ?: flowOf(false)).collectAsState(initial = false)
 
         var userRole by remember { mutableStateOf<String?>(null) }
         var userId by remember { mutableStateOf<String?>(null) }
         var leadsForProperty by remember { mutableStateOf<List<LeadSummaryDto>>(emptyList()) }
         var isLoadingLeads by remember { mutableStateOf(false) }
+        var selectedLeadDetail by remember { mutableStateOf<LeadDetailDto?>(null) }
 
         LaunchedEffect(propertyId) {
             coroutineScope.launch {
@@ -69,7 +72,7 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
         }
 
         LaunchedEffect(Unit) {
-            val token = NetworkClient.sessionManager.getAccessToken()
+            val token = NetworkClient.sessionManager?.getAccessToken()
             if (token != null) {
                 userId = JwtUtils.getUserId(token)
                 userRole = JwtUtils.getUserRoleFromToken(token)
@@ -112,33 +115,34 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                 }
             } else if (property != null) {
                 val currentProperty = property!!
-                LazyColumn( // Carrousel de fotos
+                Column(
                     modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color(0xFFF5F5F5))
                 ) {
-                    item {
-                        if (currentProperty.photos.isNotEmpty()) {
-                            val state = rememberPagerState(pageCount = { currentProperty.photos.size })
-                            HorizontalPager(
-                                state = state,
-                                modifier = Modifier.fillMaxWidth().height(250.dp)
-                            ) { page ->
+                    if (currentProperty.photos.isNotEmpty()) {
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth().height(250.dp)
+                        ) {
+                            items(currentProperty.photos.size) { page ->
                                 AsyncImage(
                                     model = currentProperty.photos[page].photoUrl,
                                     contentDescription = "Imagen $page",
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
+                                    modifier = Modifier.fillParentMaxWidth().fillParentMaxHeight()
                                 )
                             }
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().height(250.dp).background(Color.LightGray),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("Sin imágenes", color = Color.DarkGray)
-                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(250.dp).background(Color.LightGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Sin imágenes", color = Color.DarkGray)
                         }
                     }
 
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     // Info principal
                     item {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -203,7 +207,8 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                         }
                     }
 
-                    // Formulario dinámico para creación de leads
+                    // Formulario dinámico para creación de leads (solo CLIENT/OWNER o sin sesión)
+                    if (userRole == null || userRole == "CLIENT" || userRole == "OWNER") {
                     item {
                         Card(
                             modifier = Modifier.fillMaxWidth().padding(16.dp).padding(bottom = 32.dp),
@@ -330,20 +335,47 @@ data class PropertyDetailScreen(val propertyId: String) : Screen {
                                         Spacer(modifier = Modifier.height(12.dp))
 
                                         leadsForProperty.forEach { lead ->
-                                            LeadInterestCard(lead = lead)
+                                            LeadInterestCard(
+                                                lead = lead,
+                                                onClick = {
+                                                    selectedLeadDetail = LeadDetailDto(
+                                                        id = lead.id,
+                                                        name = lead.name,
+                                                        email = lead.email,
+                                                        phone = lead.phone,
+                                                        status = lead.status,
+                                                        source = lead.source ?: "",
+                                                        propertyId = lead.propertyId,
+                                                        senderParticipantId = lead.senderParticipantId,
+                                                        createdAt = lead.createdAt
+                                                    )
+                                                }
+                                            )
                                             Spacer(modifier = Modifier.height(8.dp))
-                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    }
+                    }
+                }
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
                     Text("Error al cargar la propiedad.", color = Color.Red)
                 }
             }
+        }
+
+        selectedLeadDetail?.let { detail ->
+            LeadDetailDialog(
+                lead = detail,
+                agentId = userId ?: "",
+                onDismiss = { selectedLeadDetail = null },
+                onAssignSuccess = { selectedLeadDetail = null },
+                onPropertyClick = { navigator.push(PropertyDetailScreen(detail.propertyId)) }
+            )
         }
     }
 }

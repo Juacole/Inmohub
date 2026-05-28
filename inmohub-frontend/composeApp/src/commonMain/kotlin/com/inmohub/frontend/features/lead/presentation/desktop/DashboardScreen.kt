@@ -49,12 +49,13 @@ import com.inmohub.frontend.features.auth.data.AuthRepository
 import com.inmohub.frontend.features.property.data.PropertyRepository
 import com.inmohub.frontend.features.auth.responses.UserSummaryResponse
 import com.inmohub.frontend.features.auth.presentation.LoginScreen
+import com.inmohub.frontend.features.auth.presentation.shared.ProfileScreen
+import com.inmohub.frontend.features.property.presentation.mobile.PropertyDetailScreen
 import com.inmohub.frontend.features.property.dtos.PropertySummaryDto
 import com.inmohub.frontend.features.property.presentation.shared.PropertyCard
 import com.inmohub.frontend.features.lead.presentation.desktop.components.LeadsBagTab
 import com.inmohub.frontend.features.lead.presentation.desktop.components.MyLeadsTab
 import com.inmohub.frontend.features.property.dtos.PropertyDto
-import com.inmohub.frontend.features.property.presentation.mobile.PropertyDetailScreen
 
 class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
 
@@ -93,6 +94,13 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
                             }
                         },
                         actions = {
+                            TextButton(onClick = { navigator.push(ProfileScreen()) }) {
+                                Text(
+                                    "Perfil",
+                                    color = NavyBluePrimary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                             TextButton(onClick = { navigator.replaceAll(LoginScreen()) }) {
                                 Text(
                                     "Cerrar Sesión",
@@ -142,8 +150,14 @@ class DashboardScreen(val agentUsername: String, val agentId: String) : Screen {
                         0 -> UserList(clients, "Clientes Activos", Color(0xFFE3F2FD))
                         1 -> UserList(owners, "Propietarios Registrados", Color(0xFFFFF3E0))
                         2 -> PropertyList(properties, navigator)
-                        3 -> LeadsBagTab(agentId = agentId)
-                        4 -> MyLeadsTab(agentId = agentId)
+                        3 -> LeadsBagTab(
+                            agentId = agentId,
+                            onPropertyClick = { propertyId -> navigator.push(PropertyDetailScreen(propertyId)) }
+                        )
+                        4 -> MyLeadsTab(
+                            agentId = agentId,
+                            onPropertyClick = { propertyId -> navigator.push(PropertyDetailScreen(propertyId)) }
+                        )
                     }
                 }
             }

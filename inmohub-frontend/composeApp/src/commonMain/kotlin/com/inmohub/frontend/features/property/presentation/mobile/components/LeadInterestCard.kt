@@ -1,6 +1,7 @@
 package com.inmohub.frontend.features.property.presentation.mobile.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,10 +30,11 @@ import com.inmohub.frontend.features.lead.dtos.LeadSummaryDto
 @Composable
 fun LeadInterestCard(
     lead: LeadSummaryDto,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
         shape = RoundedCornerShape(8.dp)
     ) {

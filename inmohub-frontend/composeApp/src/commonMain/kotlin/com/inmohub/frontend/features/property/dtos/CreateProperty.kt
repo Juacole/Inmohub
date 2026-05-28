@@ -10,6 +10,8 @@ data class CreateProperty(
     @SerialName("price") val precio: Double,
     @SerialName("areaM2") val area: Double,
     @SerialName("address") val direccion: String,
-    @SerialName("ownerId") val idPropietario: String
+    @SerialName("city") val ciudad: String = "",
+    @SerialName("state") val provincia: String = "Sin especificar",
+    @SerialName("country") val pais: String = "España",
+    @SerialName("features") val caracteristicas: List<PropertyFeatureDto> = emptyList()
 )
-

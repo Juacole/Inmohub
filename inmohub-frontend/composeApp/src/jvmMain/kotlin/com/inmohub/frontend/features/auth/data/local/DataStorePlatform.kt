@@ -6,15 +6,20 @@ import androidx.datastore.preferences.core.Preferences
 import okio.Path.Companion.toPath
 import java.io.File
 
+private var _dataStore: DataStore<Preferences>? = null
+
 internal fun createDataStore(producePath: () -> String) : DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(
         produceFile = { producePath().toPath() }
     )
 
 actual fun createDataStore(): DataStore<Preferences> {
-    return createDataStore {
-        val appDir = File(System.getProperty("user.home"), ".inmohub")
-        if(!appDir.exists()) appDir.mkdir()
-        File(appDir, "session.preferences_pb").absolutePath
+    if (_dataStore == null) {
+        _dataStore = createDataStore {
+            val appDir = File(System.getProperty("user.home"), ".inmohub")
+            if(!appDir.exists()) appDir.mkdir()
+            File(appDir, "session.preferences_pb").absolutePath
+        }
     }
+    return _dataStore!!
 }

@@ -40,8 +40,9 @@ fun App() {
     val dataStore = remember { createDataStore() }
     val sessionManager = remember { SessionManager(dataStore) }
 
-    // Ejecución de bloque asincrono una sola vez al iniciar aplicación
-    LaunchedEffect(Unit) {
+    // Inicializacion sincrona del sessionManager para garantizar que NetworkClient
+    // tenga acceso a los tokens antes de cualquier peticion HTTP.
+    SideEffect {
         NetworkClient.sessionManager = sessionManager
     }
 
@@ -54,6 +55,9 @@ fun App() {
         } else {
             val token = sessionManager.getAccessToken()
             if (token == null) {
+                initialScreen = HomeScreen()
+            } else if (JwtUtils.isTokenExpired(token)) {
+                sessionManager.clearSession()
                 initialScreen = HomeScreen()
             } else {
                 val role = JwtUtils.getUserRoleFromToken(token)

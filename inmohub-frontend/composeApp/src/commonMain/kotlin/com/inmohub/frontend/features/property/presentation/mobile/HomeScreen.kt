@@ -23,6 +23,8 @@ import com.inmohub.frontend.features.auth.presentation.LoginScreen
 import com.inmohub.frontend.core.network.NetworkClient
 import com.inmohub.frontend.core.themes.NavyBluePrimary
 import com.inmohub.frontend.core.themes.TileOrangeSecondary
+import com.inmohub.frontend.features.auth.presentation.shared.ProfileScreen
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 class HomeScreen : Screen {
@@ -35,7 +37,7 @@ class HomeScreen : Screen {
 
         // Session Manager desde NetworkClient (singleton)
         val sessionManager = NetworkClient.sessionManager
-        val hasSession by sessionManager.isSessionActive.collectAsState(initial = false)
+        val hasSession by (sessionManager?.isSessionActive ?: flowOf(false)).collectAsState(initial = false)
 
         var properties by remember { mutableStateOf<List<PropertySummaryDto>>(emptyList()) }
         var isLoading by remember { mutableStateOf(true) }
@@ -120,9 +122,12 @@ class HomeScreen : Screen {
                             Text("Filtros", color = NavyBluePrimary, fontWeight = FontWeight.Bold)
                         }
                         if (hasSession) {
+                            TextButton(onClick = { navigator.push(ProfileScreen()) }) {
+                                Text("Perfil", color = NavyBluePrimary, fontWeight = FontWeight.Bold)
+                            }
                             TextButton(onClick = {
                                 coroutineScope.launch {
-                                    sessionManager.clearSession()
+                                    sessionManager?.clearSession()
                                     navigator.popUntilRoot()
                                 }
                             }) {
@@ -228,14 +233,13 @@ class HomeScreen : Screen {
 
         if (showFilterSheet) {
             FilterBottomSheet(
-                onDismiss = { showFilterSheet = false },
+                onDismiss = { },
                 onApplyFilters = { city, minPrice, maxPrice, status ->
                     currentCity = city
                     currentMinPrice = minPrice
                     currentMaxPrice = maxPrice
                     currentStatus = status
                     isFiltered = city != null || minPrice != null || maxPrice != null || status != null
-                    showFilterSheet = false
 
                     // Al aplicar un filtro se reinicia la lista a la primera pagina
                     loadProperties()

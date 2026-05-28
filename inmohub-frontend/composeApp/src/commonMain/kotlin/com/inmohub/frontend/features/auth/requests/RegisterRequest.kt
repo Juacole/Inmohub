@@ -10,5 +10,5 @@ data class RegisterRequest(
     val firstName: String,
     val lastName: String,
     val phone: String,
-    val role: String
+    val roles: List<String>
 )

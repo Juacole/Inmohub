@@ -36,7 +36,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyLeadsTab(
     agentId: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPropertyClick: (String) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -50,37 +51,36 @@ fun MyLeadsTab(
 
     var selectedLead by remember { mutableStateOf<LeadDetailDto?>(null) }
 
-    fun loadLeads(page: Int, append: Boolean = false) {
-        scope.launch {
-            if (append) {
-                isLoadingMore = true
-            } else {
-                isLoading = true
-            }
-            error = null
-
-            val result: PagedListResponse<LeadSummaryDto>? = LeadRepository.getLeadsByAgentId(
-                agentId = agentId,
-                page = page,
-                size = 20
-            )
-
-            if (result != null) {
-                val newLeads = result.content
-                if (append) {
-                    leads = leads + newLeads
-                } else {
-                    leads = newLeads
-                }
-                hasMore = newLeads.isNotEmpty() && page < result.totalPages - 1
-                currentPage = page
-            } else {
-                error = "Error al cargar tus leads"
-            }
-
-            isLoading = false
-            isLoadingMore = false
+    suspend fun loadLeads(page: Int, append: Boolean = false) {
+        if (append) {
+            isLoadingMore = true
+        } else {
+            isLoading = true
         }
+        error = null
+
+        val result: PagedListResponse<LeadSummaryDto>? = LeadRepository.getLeadsByAgentId(
+            agentId = agentId,
+            page = page,
+            size = 20
+        )
+
+        if (result != null) {
+            val newLeads = result.content
+            if (append) {
+                leads = leads + newLeads
+            } else {
+                leads = newLeads
+            }
+            hasMore = newLeads.isNotEmpty() && page < result.totalPages - 1
+            currentPage = page
+        } else {
+            error = "Error al cargar tus leads"
+            hasMore = false
+        }
+
+        isLoading = false
+        isLoadingMore = false
     }
 
     LaunchedEffect(Unit) {
@@ -93,7 +93,7 @@ fun MyLeadsTab(
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
 
-            lastVisibleItem >= totalItems - 6 && !isLoadingMore && hasMore && !isLoading
+            totalItems > 0 && lastVisibleItem >= totalItems - 6 && !isLoadingMore && hasMore && !isLoading && error == null
         }.collect { shouldLoadMore ->
             if (shouldLoadMore) {
                 loadLeads(currentPage + 1, append = true)
@@ -176,6 +176,7 @@ fun MyLeadsTab(
                                 source = lead.source ?: "",
                                 propertyId = lead.propertyId,
                                 senderParticipantId = lead.senderParticipantId,
+                                agentId = agentId,
                                 createdAt = lead.createdAt
                             )
                         }
@@ -203,9 +204,10 @@ fun MyLeadsTab(
                 agentId = agentId,
                 onDismiss = { selectedLead = null },
                 onAssignSuccess = { selectedLead = null },
-                onStatusChangeSuccess = { newStatus ->
-                    loadLeads(0)
-                }
+            onStatusChangeSuccess = { newStatus ->
+                scope.launch { loadLeads(0) }
+            },
+                onPropertyClick = { onPropertyClick(lead.propertyId) }
             )
         }
     }

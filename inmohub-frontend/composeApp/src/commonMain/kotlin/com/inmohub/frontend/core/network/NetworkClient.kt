@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 
 object NetworkClient { // singleton
     val BASE_URL = getBaseUrl()
-    lateinit var sessionManager: SessionManager
+    var sessionManager: SessionManager? = null
 
     val client by lazy {
         HttpClient {
@@ -32,8 +32,8 @@ object NetworkClient { // singleton
             install(Auth) {
                 bearer {
                     loadTokens { // Inyecta el token en cada petición
-                        val accessToken = sessionManager.getAccessToken()
-                        val refreshToken = sessionManager.getRefreshToken()
+                        val accessToken = sessionManager?.getAccessToken()
+                        val refreshToken = sessionManager?.getRefreshToken()
                         if(accessToken != null && refreshToken != null) {
                             BearerTokens(accessToken = accessToken, refreshToken = refreshToken) // Inyecta tokens en el header de la request
                         } else {
@@ -42,7 +42,7 @@ object NetworkClient { // singleton
                     }
 
                     refreshTokens { // Cuando el access token expire se realizara una llamada http al servidor para refrescar el token
-                        val currentRefreshToken = sessionManager.getRefreshToken() // Recuperamos el refresh token
+                        val currentRefreshToken = sessionManager?.getRefreshToken() // Recuperamos el refresh token
 
                         try {
                             val refreshClient = HttpClient { // Creación en segundo plano de cliente http temporal para refrescar token
@@ -62,14 +62,14 @@ object NetworkClient { // singleton
 
                             if(response.status.value == 200) {
                                 val tokens = response.body<LoginResponse>()
-                                sessionManager.saveTokens(tokens.accessToken, tokens.refreshToken)
-                                BearerTokens(tokens.accessToken, tokens.accessToken)
+                                sessionManager?.saveTokens(tokens.accessToken, tokens.refreshToken)
+                                BearerTokens(tokens.accessToken, tokens.refreshToken)
                             } else {
-                                sessionManager.clearSession()
+                                sessionManager?.clearSession()
                                 null
                             }
                         } catch (ex: Exception) {
-                            sessionManager.clearSession()
+                            sessionManager?.clearSession()
                             null
                         }
                     }

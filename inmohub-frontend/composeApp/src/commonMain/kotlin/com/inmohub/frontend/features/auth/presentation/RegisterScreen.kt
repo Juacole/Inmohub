@@ -189,7 +189,7 @@ class RegisterScreen : Screen {
                                 firstName = firstName,
                                 lastName = lastName,
                                 phone = phone,
-                                role = finalRole
+                                roles = listOf(finalRole)
                             )
 
                             val success = AuthRepository.register(request)

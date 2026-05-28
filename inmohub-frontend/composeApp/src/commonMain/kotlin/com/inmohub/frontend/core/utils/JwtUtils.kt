@@ -52,4 +52,15 @@ object JwtUtils {
             null
         }
     }
+
+    fun isTokenExpired(token: String): Boolean {
+        val jsonObject = getJsonPayload(token) ?: return true
+        return try {
+            val exp = jsonObject["exp"]?.jsonPrimitive?.content?.toLongOrNull()
+            if (exp == null) true
+            else exp < System.currentTimeMillis() / 1000
+        } catch (ex: Exception) {
+            true
+        }
+    }
 }

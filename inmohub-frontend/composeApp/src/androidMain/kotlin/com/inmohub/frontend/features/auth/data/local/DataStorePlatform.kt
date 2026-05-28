@@ -8,13 +8,18 @@ import okio.Path.Companion.toPath
 
 lateinit var applicationContext: Context
 
+private var _dataStore: DataStore<Preferences>? = null
+
 internal fun createDataStore(producePath: () -> String) : DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(
         produceFile = { producePath().toPath() }
     )
 
 actual fun createDataStore(): DataStore<Preferences> {
-    return createDataStore {
-        applicationContext.filesDir.resolve("inmohub_session.preferences_pb").absolutePath
+    if (_dataStore == null) {
+        _dataStore = createDataStore {
+            applicationContext.filesDir.resolve("inmohub_session.preferences_pb").absolutePath
+        }
     }
+    return _dataStore!!
 }

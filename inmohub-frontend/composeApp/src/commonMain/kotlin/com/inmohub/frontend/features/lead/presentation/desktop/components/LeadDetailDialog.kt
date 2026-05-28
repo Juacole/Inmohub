@@ -1,6 +1,7 @@
 package com.inmohub.frontend.features.lead.presentation.desktop.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,8 @@ fun LeadDetailDialog(
     agentId: String,
     onDismiss: () -> Unit,
     onAssignSuccess: () -> Unit,
-    onStatusChangeSuccess: (String) -> Unit = {}
+    onStatusChangeSuccess: (String) -> Unit = {},
+    onPropertyClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
 
@@ -99,24 +101,26 @@ fun LeadDetailDialog(
                         fontWeight = FontWeight.Bold,
                         color = NavyBluePrimary
                     )
-                    StatusDropdown(
-                        currentStatus = currentStatus,
-                        onStatusChange = { newStatus ->
-                            scope.launch {
-                                isChangingStatus = true
-                                statusChangeError = null
-                                val success = LeadRepository.changeLeadStatus(lead.id, newStatus)
-                                isChangingStatus = false
-                                if (success) {
-                                    currentStatus = newStatus
-                                    onStatusChangeSuccess(newStatus)
-                                } else {
-                                    statusChangeError = "Error al cambiar el estado del lead"
+                    if (lead.agentId != null) {
+                        StatusDropdown(
+                            currentStatus = currentStatus,
+                            onStatusChange = { newStatus ->
+                                scope.launch {
+                                    isChangingStatus = true
+                                    statusChangeError = null
+                                    val success = LeadRepository.changeLeadStatus(lead.id, newStatus)
+                                    isChangingStatus = false
+                                    if (success) {
+                                        currentStatus = newStatus
+                                        onStatusChangeSuccess(newStatus)
+                                    } else {
+                                        statusChangeError = "Error al cambiar el estado del lead"
+                                    }
                                 }
-                            }
-                        },
-                        isLoading = isChangingStatus
-                    )
+                            },
+                            isLoading = isChangingStatus
+                        )
+                    }
                 }
 
                 if (statusChangeError != null) {
@@ -185,7 +189,7 @@ fun LeadDetailDialog(
                                 CircularProgressIndicator(color = NavyBluePrimary)
                             }
                         } else if (property != null) {
-                            PropertyPreviewCard(property = property!!)
+                            PropertyPreviewCard(property = property!!, onClick = onPropertyClick)
                         } else {
                             Box(
                                 modifier = Modifier
@@ -273,9 +277,9 @@ fun InfoRow(label: String, value: String) {
 }
 
 @Composable
-fun PropertyPreviewCard(property: PropertyDto) {
+fun PropertyPreviewCard(property: PropertyDto, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
         shape = RoundedCornerShape(8.dp)
     ) {
