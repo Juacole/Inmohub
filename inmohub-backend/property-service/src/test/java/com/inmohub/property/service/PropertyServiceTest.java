@@ -1,18 +1,14 @@
 package com.inmohub.property.service;
 
-import com.inmohub.property.service.clients.AuthClient;
-import com.inmohub.property.service.dtos.PropertyCreateDto;
-import com.inmohub.property.service.dtos.PropertyDto;
-import com.inmohub.property.service.dtos.UserResponseDto;
+import com.inmohub.property.service.dtos.*;
 import com.inmohub.property.service.exceptions.ResourceNotFoundException;
-import com.inmohub.property.service.exceptions.UserNotActiveException;
 import com.inmohub.property.service.mappers.IPropertyMapper;
+import com.inmohub.property.service.messaging.KafkaPropertyEventPublisher;
 import com.inmohub.property.service.models.Property;
+import com.inmohub.property.service.models.PropertyFeature;
 import com.inmohub.property.service.models.enums.PropertyStatus;
 import com.inmohub.property.service.repositories.IPropertyRepository;
 import com.inmohub.property.service.services.PropertyService;
-import feign.FeignException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,14 +18,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Tests adicionales para {@link PropertyService}.
+ * Complementa los tests basicos con cobertura de consulta de propiedades
+ * (findByOwnerId, getAll, isOwner), actualizacion parcial (patchProperty),
+ * eliminacion por owner y manejo de features.
+ *
+ */
 @ExtendWith(MockitoExtension.class)
+@DisplayName("PropertyService - Tests adicionales")
 class PropertyServiceTest {
 
     @Mock
@@ -39,112 +42,178 @@ class PropertyServiceTest {
     private IPropertyMapper mapper;
 
     @Mock
-    private AuthClient authClient;
+    private KafkaPropertyEventPublisher propertyEventPublisher;
 
     @InjectMocks
     private PropertyService propertyService;
 
-    private PropertyCreateDto createDTO;
-    private Property mockEntity;
-    private PropertyDto mockDTO;
-    private UUID ownerId;
-    private UUID propertyId;
-
-//    @BeforeEach
-//    void setUp() {
-//        ownerId = UUID.randomUUID();
-//        propertyId = UUID.randomUUID();
-//
-//        createDTO = new PropertyCreateDto(
-//                "Chalet en Madrid", "Amplio chalet con piscina",
-//                new BigDecimal("450000.00"), 250.5, "Calle Mayor 123", ownerId
-//        );
-//
-//        mockEntity = new Property();
-//        mockEntity.setId(propertyId);
-//        mockEntity.setTitle("Chalet en Madrid");
-//        mockEntity.setOwnerId(ownerId);
-//        mockEntity.setStatus(PropertyStatus.AVAILABLE);
-//
-//        mockDTO = new PropertyDto(
-//                propertyId, "Chalet en Madrid", "Amplio chalet con piscina",
-//                new BigDecimal("450000.00"), 250.5, "Calle Mayor 123",
-//                PropertyStatus.AVAILABLE, ownerId, LocalDateTime.now(), LocalDateTime.now()
-//        );
-//    }
-
-//    @Test
-//    @DisplayName("Creación exitosa con usuario ACTIVE")
-//    void createProperty_Success_WhenUserIsActive() {
-//        UserResponseDto activeUser = new UserResponseDto(ownerId, "pepe@gmail.com", "AGENT", "ACTIVE");
-//
-//        when(authClient.getUserById(ownerId)).thenReturn(activeUser);
-//        when(mapper.toEntity(createDTO)).thenReturn(mockEntity);
-//        when(repository.save(any(Property.class))).thenReturn(mockEntity);
-//        when(mapper.toDto(mockEntity)).thenReturn(mockDTO);
-//
-//        PropertyDto result = propertyService.createProperty(createDTO);
-//
-//        assertNotNull(result);
-//        assertEquals(PropertyStatus.AVAILABLE, result.status());
-//        verify(authClient, times(1)).getUserById(ownerId);
-//        verify(repository, times(1)).save(mockEntity);
-//    }
-
-//    @Test
-//    @DisplayName("Camino 2: Falla la creación porque el usuario no es ACTIVE")
-//    void createProperty_ThrowsException_WhenUserIsNotActive() {
-//        UserResponseDto inactiveUser = new UserResponseDto(ownerId, "pepe@gmail.com", "AGENT", "BLOCKED");
-//        when(authClient.getUserById(ownerId)).thenReturn(inactiveUser);
-//
-//        UserNotActiveException exception = assertThrows(UserNotActiveException.class, () -> {
-//            propertyService.createProperty(createDTO);
-//        });
-//
-//        assertEquals("El propietario no está activo y no puede publicar propiedades.", exception.getMessage());
-//        verify(authClient, times(1)).getUserById(ownerId);
-//        verify(repository, never()).save(any());
-//    }
-
-//    @Test
-//    @DisplayName("Camino 1: Permite creación con advertencia si el usuario no se encuentra (404)")
-//    void createProperty_SavesWithWarning_WhenUserNotFound() {
-//        FeignException.FeignClientException.NotFound notFoundException =
-//                mock(FeignException.FeignClientException.NotFound.class);
-//
-//        when(authClient.getUserById(ownerId)).thenThrow(notFoundException);
-//        when(mapper.toEntity(createDTO)).thenReturn(mockEntity);
-//        when(repository.save(any(Property.class))).thenReturn(mockEntity);
-//        when(mapper.toDto(mockEntity)).thenReturn(mockDTO);
-//
-//        PropertyDto result = propertyService.createProperty(createDTO);
-//
-//        assertNotNull(result);
-//        verify(repository, times(1)).save(mockEntity);
-//    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final UUID propertyId = UUID.randomUUID();
 
     @Test
-    @DisplayName("Buscar propiedad por ID lanza ResourceNotFoundException si no existe")
-    void getPropertyById_NotFound_ThrowsException() {
-        when(repository.findById(propertyId)).thenReturn(Optional.empty());
+    @DisplayName("findByOwnerId debe retornar propiedades del propietario")
+    void buscarPorOwnerId() {
+        Property property = new Property();
+        property.setId(propertyId);
+        property.setOwnerId(ownerId);
+        PropertyDto dto = new PropertyDto(propertyId, "Chalet", "Desc", new BigDecimal("100"),
+                100.0, "Calle", "Madrid", PropertyStatus.AVAILABLE, ownerId,
+                List.of(), List.of(), LocalDateTime.now(), LocalDateTime.now());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            propertyService.getPropertyById(propertyId);
-        });
+        when(repository.findByOwnerId(ownerId)).thenReturn(List.of(property));
+        when(mapper.toDto(property)).thenReturn(dto);
 
-        assertEquals("Propiedad no encontrada.", exception.getMessage());
-        verify(repository, times(1)).findById(propertyId);
+        List<PropertyDto> result = propertyService.findByOwnerId(ownerId);
+
+        assertEquals(1, result.size());
+        assertEquals(propertyId, result.get(0).id());
+        verify(repository, times(1)).findByOwnerId(ownerId);
     }
 
     @Test
-    @DisplayName("Eliminar por ID devuelve false si el recurso no existe")
-    void deleteById_ReturnsFalse_WhenNotExists() {
-        when(repository.existsById(propertyId)).thenReturn(false);
+    @DisplayName("getAllProperties debe retornar todas las propiedades")
+    void obtenerTodasLasPropiedades() {
+        Property property = new Property();
+        property.setId(propertyId);
+        PropertyDto dto = new PropertyDto(propertyId, "Chalet", "Desc", new BigDecimal("100"),
+                100.0, "Calle", "Madrid", PropertyStatus.AVAILABLE, ownerId,
+                List.of(), List.of(), LocalDateTime.now(), LocalDateTime.now());
+
+        when(repository.findAll()).thenReturn(List.of(property));
+        when(mapper.toDto(property)).thenReturn(dto);
+
+        List<PropertyDto> result = propertyService.getAllProperties();
+
+        assertEquals(1, result.size());
+        verify(repository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("deleteById debe retornar true si la propiedad existe")
+    void eliminarPropiedadExistente() {
+        when(repository.existsById(propertyId)).thenReturn(true);
 
         boolean result = propertyService.deleteById(propertyId);
 
+        assertTrue(result);
+        verify(repository, times(1)).deleteById(propertyId);
+    }
+
+    @Test
+    @DisplayName("isOwner debe retornar true si el usuario es el propietario")
+    void esPropietarioTrue() {
+        Property property = new Property();
+        property.setOwnerId(ownerId);
+        when(repository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        boolean result = propertyService.isOwner(propertyId, ownerId.toString());
+
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("isOwner debe retornar false si el usuario no es el propietario")
+    void noEsPropietarioFalse() {
+        UUID otroOwner = UUID.randomUUID();
+        Property property = new Property();
+        property.setOwnerId(ownerId);
+        when(repository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        boolean result = propertyService.isOwner(propertyId, otroOwner.toString());
+
         assertFalse(result);
-        verify(repository, times(1)).existsById(propertyId);
-        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("isOwner debe retornar false si la propiedad no existe")
+    void esPropietarioPropiedadNoExiste() {
+        when(repository.findById(propertyId)).thenReturn(Optional.empty());
+
+        boolean result = propertyService.isOwner(propertyId, ownerId.toString());
+
+        assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("patchProperty debe actualizar campos no nulos")
+    void actualizarPropiedadParcialmente() {
+        Property property = new Property();
+        property.setId(propertyId);
+        property.setTitle("Original");
+        property.setDescription("Desc original");
+        property.setPrice(new BigDecimal("100"));
+
+        PropertyPatchDto patchDto = new PropertyPatchDto("Nuevo titulo", null, new BigDecimal("200"),
+                null, null, null, null, null, null, null);
+
+        PropertyDto dto = new PropertyDto(propertyId, "Nuevo titulo", "Desc original", new BigDecimal("200"),
+                100.0, "Calle", "Madrid", PropertyStatus.AVAILABLE, ownerId,
+                List.of(), List.of(), LocalDateTime.now(), LocalDateTime.now());
+
+        when(repository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(repository.save(any(Property.class))).thenReturn(property);
+        when(mapper.toDto(any(Property.class))).thenReturn(dto);
+
+        PropertyDto result = propertyService.patchProperty(propertyId, patchDto);
+
+        assertNotNull(result);
+        assertEquals("Nuevo titulo", result.title());
+        assertEquals(new BigDecimal("200"), result.price());
+        verify(repository, times(1)).save(property);
+    }
+
+    @Test
+    @DisplayName("patchProperty debe lanzar excepcion si la propiedad no existe")
+    void actualizarPropiedadInexistente() {
+        PropertyPatchDto patchDto = new PropertyPatchDto("Nuevo", null, null,
+                null, null, null, null, null, null, null);
+
+        when(repository.findById(propertyId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            propertyService.patchProperty(propertyId, patchDto);
+        });
+    }
+
+    @Test
+    @DisplayName("deleteByOwnerId debe eliminar propiedades y publicar eventos")
+    void eliminarPorOwnerId() {
+        Property property = new Property();
+        property.setId(propertyId);
+        property.setOwnerId(ownerId);
+
+        when(repository.findByOwnerId(ownerId)).thenReturn(List.of(property));
+
+        propertyService.deleteByOwnerId(ownerId);
+
+        verify(propertyEventPublisher, times(1)).publishPropertyDeleted(any());
+        verify(repository, times(1)).delete(property);
+    }
+
+    @Test
+    @DisplayName("patchProperty debe reemplazar features si se proporcionan")
+    void actualizarFeatures() {
+        Property property = new Property();
+        property.setId(propertyId);
+        PropertyFeature existingFeature = new PropertyFeature();
+        property.getFeatures().add(existingFeature);
+
+        PropertyFeatureDto newFeature = new PropertyFeatureDto("Piscina", "Si");
+        PropertyPatchDto patchDto = new PropertyPatchDto(null, null, null,
+                null, null, null, null, null, null, List.of(newFeature));
+
+        PropertyDto dto = new PropertyDto(propertyId, "Titulo", "Desc", new BigDecimal("100"),
+                100.0, "Calle", "Madrid", PropertyStatus.AVAILABLE, ownerId,
+                List.of(), List.of(), LocalDateTime.now(), LocalDateTime.now());
+
+        when(repository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(repository.save(property)).thenReturn(property);
+        when(mapper.toDto(property)).thenReturn(dto);
+
+        PropertyDto result = propertyService.patchProperty(propertyId, patchDto);
+
+        assertNotNull(result);
+        assertEquals(1, property.getFeatures().size());
+        assertEquals("Piscina", property.getFeatures().get(0).getFeatureName());
     }
 }

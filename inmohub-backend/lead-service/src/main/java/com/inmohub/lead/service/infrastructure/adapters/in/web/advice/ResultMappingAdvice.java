@@ -24,6 +24,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.Map;
 
+/**
+ * Advice de Spring que intercepta las respuestas del controlador.
+ * Desempaqueta objetos {@link Result}: en caso de exito retorna el valor,
+ * en caso de error mapea el error a su codigo HTTP correspondiente.
+ */
 @RestControllerAdvice
 public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
 

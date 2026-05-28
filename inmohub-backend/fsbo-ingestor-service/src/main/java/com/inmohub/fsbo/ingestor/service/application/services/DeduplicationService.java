@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Servicio de aplicacion que detecta propiedades duplicadas dentro de un lote
+ * y contra registros ya existentes en el sistema.
+ */
 public class DeduplicationService {
 
     private final IFsboRepository repository;

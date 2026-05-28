@@ -11,6 +11,11 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
+/**
+ * Configuracion de inicializacion de Firebase Admin SDK.
+ * Carga las credenciales desde el archivo de clave privada y establece la conexion
+ * con Firebase Storage para la gestion de imagenes de propiedades.
+ */
 @Configuration
 @Slf4j
 public class FirebaseConfig {

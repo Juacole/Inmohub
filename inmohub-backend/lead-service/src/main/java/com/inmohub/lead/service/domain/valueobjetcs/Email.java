@@ -2,6 +2,10 @@ package com.inmohub.lead.service.domain.valueobjetcs;
 
 import java.util.regex.Pattern;
 
+/**
+ * Value Object que representa una direccion de correo electronico.
+ * Valida que el email no este vacio y cumpla con el formato esperado.
+ */
 public record Email(String value) {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 

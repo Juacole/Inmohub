@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repositorio de acceso a datos para la entidad User.
+ * Expone operaciones de verificacion de existencia por email/username y busqueda por email y rol.
+ */
 @Repository
 public interface IUserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(String email);

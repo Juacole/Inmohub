@@ -6,6 +6,10 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad que almacena los refresh tokens emitidos a los usuarios.
+ * Permite renovar el JWT de acceso sin necesidad de volver a hacer login.
+ */
 @Entity
 @Table(name = "refresh_tokens")
 @Data

@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code lead_assignments} en la base de datos.
+ * Almacena las asignaciones de leads a agentes, incluyendo notas y fecha de asignacion.
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

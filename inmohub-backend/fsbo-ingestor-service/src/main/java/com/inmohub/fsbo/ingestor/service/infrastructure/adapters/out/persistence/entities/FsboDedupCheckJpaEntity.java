@@ -11,6 +11,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code fsbo_dedup_check} con el registro de duplicados
+ * detectados durante la ingestion FSBO.
+ */
 @Entity
 @Table(name = "fsbo_dedup_check")
 @Getter

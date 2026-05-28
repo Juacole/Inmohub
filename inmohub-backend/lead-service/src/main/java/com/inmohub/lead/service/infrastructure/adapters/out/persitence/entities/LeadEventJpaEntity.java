@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code lead_events} en la base de datos.
+ * Registra eventos del ciclo de vida del lead con su tipo, metadatos en JSON y marca de tiempo.
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

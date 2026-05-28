@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+/**
+ * Adaptador que implementa el parseo de archivos CSV usando la libreria OpenCSV.
+ * Convierte filas CSV en registros de dominio PropertyRecord.
+ */
 public class OpenCsvParserAdapter implements ICsvParser {
 
     @Override

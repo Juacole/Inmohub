@@ -14,6 +14,10 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Caso de uso para asignar un lead a un agente.
+ * Contacta el lead, guarda la asignacion y registra la auditoria del cambio.
+ */
 public class AssignLeadUseCase {
     private final ILeadRepository leadRepository;
 

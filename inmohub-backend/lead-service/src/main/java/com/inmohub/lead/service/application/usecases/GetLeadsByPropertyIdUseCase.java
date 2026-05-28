@@ -12,6 +12,10 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Caso de uso para obtener los leads asociados a una propiedad.
+ * Valida el ID de propiedad y los parametros de paginacion.
+ */
 public class GetLeadsByPropertyIdUseCase {
     private final ILeadRepository leadRepository;
 

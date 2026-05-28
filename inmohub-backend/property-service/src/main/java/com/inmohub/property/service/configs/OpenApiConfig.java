@@ -30,6 +30,10 @@ import static io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
+/**
+ * Configuracion de la documentacion OpenAPI/Swagger para el Property Service.
+ * Define los metadatos de la API, servidores disponibles y esquema de seguridad JWT Bearer.
+ */
 public class OpenApiConfig {
 
 }

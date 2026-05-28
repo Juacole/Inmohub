@@ -8,6 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ * Publicador de eventos del ciclo de vida de propiedades hacia Kafka.
+ * Emite eventos PropertyDeletedEvent al topic property.lifecycle.events
+ * cuando se elimina una propiedad, notificando a otros servicios del ecosistema.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

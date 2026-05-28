@@ -8,6 +8,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 import static io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP;
 
+/**
+ * Configuracion de OpenAPI/Swagger para el microservicio de autenticacion.
+ * Define la informacion de la API, servidores y el esquema de seguridad JWT Bearer.
+ */
 @Configuration
 @OpenAPIDefinition(
         info = @Info(

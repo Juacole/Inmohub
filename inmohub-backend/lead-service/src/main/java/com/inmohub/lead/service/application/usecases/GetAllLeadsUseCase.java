@@ -10,6 +10,10 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 
 import java.util.List;
 
+/**
+ * Caso de uso para obtener todos los leads de forma paginada.
+ * Aplica validaciones de paginacion y retorna una pagina de LeadResponse.
+ */
 public class GetAllLeadsUseCase {
     private final ILeadRepository leadRepository;
 

@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * Configuracion del interceptor HTTP para clientes Feign.
+ * Propaga automaticamente las cabeceras de autenticacion (Authorization, X-User-Id, X-User-Role)
+ * desde la peticion entrante hacia las llamadas salientes a otros microservicios.
+ */
 @Configuration
 public class FeignConfig {
 

@@ -5,6 +5,10 @@ import com.inmohub.fsbo.ingestor.service.domain.abstractions.DomainException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Agregado que representa un lote de propiedades cargado por un propietario.
+ * Contiene los detalles del propietario y la lista de registros de propiedad.
+ */
 public class FsboBatch {
     private final OwnerDetails ownerDetails;
     private final LocalDateTime uploadedAt;

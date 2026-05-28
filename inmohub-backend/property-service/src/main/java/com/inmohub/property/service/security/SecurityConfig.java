@@ -11,6 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuracion de seguridad de Spring Security para el Property Service.
+ * Establece politicas de acceso por rol, deshabilita CSRF, configura sesiones stateless
+ * e inyecta el filtro de autenticacion por cabeceras para confiar en el API Gateway.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -28,8 +33,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Rutas públicas
-                        .requestMatchers("/api/v1/properties/create").hasAnyRole("AGENT", "OWNER")
-                        .requestMatchers("/api/v1/properties/delete-by-id/**").hasAnyRole("ADMIN", "AGENT")
+                        .requestMatchers("/api/v1/properties/create").hasAnyRole("AGENT", "OWNER", "ADMIN")
+                        .requestMatchers("/api/v1/properties/delete-by-id/**").hasAnyRole("ADMIN", "AGENT", "OWNER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

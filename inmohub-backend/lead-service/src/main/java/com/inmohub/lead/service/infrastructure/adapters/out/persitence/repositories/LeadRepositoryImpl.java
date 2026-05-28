@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementacion del puerto {@link ILeadRepository} que adapta los repositorios Spring Data JPA.
+ * Traduce entre entidades de dominio y JPA utilizando los mappers correspondientes.
+ */
 @Repository
 @RequiredArgsConstructor
 public class LeadRepositoryImpl implements ILeadRepository {

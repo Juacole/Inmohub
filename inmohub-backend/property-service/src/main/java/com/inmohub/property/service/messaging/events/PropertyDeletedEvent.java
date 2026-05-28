@@ -3,6 +3,11 @@ package com.inmohub.property.service.messaging.events;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Evento de dominio emitido cuando se elimina una propiedad del sistema.
+ * Notifica a otros servicios del ecosistema sobre la baja del inmueble
+ * para mantener la consistencia de datos distribuidos.
+ */
 public record PropertyDeletedEvent(
         String eventType,
         UUID propertyId,

@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Configuracion de Spring que expone los casos de uso como beans gestionados por el contenedor.
+ * Cada caso de uso recibe el repositorio de leads como dependencia.
+ */
 @Configuration
 public class UseCaseConfig {
 

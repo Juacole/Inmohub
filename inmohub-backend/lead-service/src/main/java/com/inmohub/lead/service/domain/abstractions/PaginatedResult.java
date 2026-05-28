@@ -2,6 +2,10 @@ package com.inmohub.lead.service.domain.abstractions;
 
 import java.util.List;
 
+/**
+ * Resultado paginado generico que contiene los elementos de una pagina
+ * junto con metadatos de paginacion (pagina actual, tamano, total de elementos y paginas).
+ */
 public record PaginatedResult<T>(
         List<T> content,
         int page,

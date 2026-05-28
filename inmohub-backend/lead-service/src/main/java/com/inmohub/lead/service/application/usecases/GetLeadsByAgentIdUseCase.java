@@ -12,6 +12,10 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Caso de uso para obtener los leads asignados a un agente especifico.
+ * Valida los parametros de paginacion y el ID del agente.
+ */
 public class GetLeadsByAgentIdUseCase {
     private final ILeadRepository leadRepository;
 

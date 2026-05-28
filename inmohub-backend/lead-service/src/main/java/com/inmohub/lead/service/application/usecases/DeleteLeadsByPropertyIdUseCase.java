@@ -8,6 +8,10 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 
 import java.util.UUID;
 
+/**
+ * Caso de uso para eliminar todos los leads asociados a una propiedad.
+ * Se invoca cuando una propiedad es eliminada del sistema.
+ */
 public class DeleteLeadsByPropertyIdUseCase {
     private final ILeadRepository leadRepository;
 

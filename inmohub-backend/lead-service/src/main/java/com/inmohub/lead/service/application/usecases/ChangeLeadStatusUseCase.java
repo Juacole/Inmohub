@@ -15,6 +15,11 @@ import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Caso de uso para cambiar el estado de un lead.
+ * Verifica que el solicitante tenga permisos (agente asignado o admin)
+ * y aplica la transicion de estado solicitada.
+ */
 public class ChangeLeadStatusUseCase {
     private final ILeadRepository leadRepository;
 
@@ -33,7 +38,9 @@ public class ChangeLeadStatusUseCase {
             return Result.error(new LeadNotFound("Lead no encontrado."));
         }
 
-        if ("ROLE_AGENT".equals(requesterRole) || "ROLE_ADMIN".equals(requesterRole)) {
+        if ("ROLE_ADMIN".equals(requesterRole)) {
+            // Admin puede modificar cualquier lead
+        } else if ("ROLE_AGENT".equals(requesterRole)) {
             List<LeadAssignment> assignments = leadRepository.findAssignmentsByLeadId(leadId);
             boolean isAssigned = assignments.stream()
                     .anyMatch(a -> a.getAgentId().equals(requesterId));

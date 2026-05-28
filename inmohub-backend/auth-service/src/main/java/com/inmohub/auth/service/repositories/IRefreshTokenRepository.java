@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repositorio de acceso a datos para la entidad RefreshToken.
+ * Expone busqueda de tokens por su valor.
+ */
 @Repository
 public interface IRefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
     Optional<RefreshToken> findByToken(String token);

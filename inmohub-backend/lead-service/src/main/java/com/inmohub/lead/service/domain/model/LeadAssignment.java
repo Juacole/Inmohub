@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Representa la asignacion de un lead a un agente inmobiliario.
+ * Registra que agente gestiona cada lead y las notas de la asignacion.
+ */
 public class LeadAssignment {
     private UUID id;
     private final UUID leadId;

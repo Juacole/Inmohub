@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * Inicializador de roles por defecto en la base de datos al arrancar la aplicacion.
+ * Inserta los roles ADMIN, AGENT, OWNER y CLIENT si no existen.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class RolesInitializer {

@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 import java.util.List;
+/**
+ * DTO para deserializar nodos individuales de propiedad recibidos via mensajeria Kafka.
+ * Contiene todos los campos necesarios para crear una propiedad desde eventos de ingestion masiva.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record PropertyNodeDto(
         String propertyId,

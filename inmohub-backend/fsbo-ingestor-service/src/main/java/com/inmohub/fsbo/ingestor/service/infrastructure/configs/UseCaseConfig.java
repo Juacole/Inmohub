@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Configuracion de beans de casos de uso.
+ * Define el bean {@link IngestFsboFileUseCase} inyectando sus dependencias.
+ */
 @Configuration
 public class UseCaseConfig {
 

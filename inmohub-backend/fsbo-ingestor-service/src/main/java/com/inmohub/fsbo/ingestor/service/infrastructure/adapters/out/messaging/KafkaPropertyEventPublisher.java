@@ -12,6 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
+/**
+ * Adaptador que publica eventos de creacion masiva de propiedades en el topico Kafka {@code property.bulk.create}.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

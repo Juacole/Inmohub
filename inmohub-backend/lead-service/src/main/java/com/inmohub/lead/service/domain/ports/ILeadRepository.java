@@ -8,6 +8,11 @@ import com.inmohub.lead.service.domain.abstractions.PaginatedResult;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Puerto de repositorio para la persistencia de leads.
+ * Define las operaciones de guardado, busqueda (por ID, propiedad, agente),
+ * asignacion, auditoria y eliminacion de leads.
+ */
 public interface ILeadRepository {
     Lead saveLead(Lead lead);
     Lead findById(UUID id);

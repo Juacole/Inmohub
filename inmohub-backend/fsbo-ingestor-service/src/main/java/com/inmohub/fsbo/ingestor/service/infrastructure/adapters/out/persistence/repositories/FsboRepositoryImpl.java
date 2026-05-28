@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Implementacion del puerto {@link IFsboRepository} usando JPA.
+ * Delega en {@link FsboSubmissionJpaRepository} y {@link FsboMapper} para persistir lotes.
+ */
 @Repository
 @RequiredArgsConstructor
 public class FsboRepositoryImpl implements IFsboRepository {

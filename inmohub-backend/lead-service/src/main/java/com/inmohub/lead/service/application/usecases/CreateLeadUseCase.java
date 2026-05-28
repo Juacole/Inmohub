@@ -9,6 +9,10 @@ import com.inmohub.lead.service.domain.model.Lead;
 import com.inmohub.lead.service.domain.ports.ILeadRepository;
 import com.inmohub.lead.service.domain.valueobjetcs.Email;
 
+/**
+ * Caso de uso para la creacion de leads.
+ * Valida los datos de entrada y persiste el nuevo lead a traves del repositorio.
+ */
 public class CreateLeadUseCase {
     private final ILeadRepository leadRepository;
 

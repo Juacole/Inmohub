@@ -8,6 +8,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Modelo de dominio que representa una propiedad inmobiliaria dentro de un archivo FSBO.
+ * Incluye validaciones integradas y transicion de estados.
+ */
 public class PropertyRecord {
     private final UUID id;
     private final String title;

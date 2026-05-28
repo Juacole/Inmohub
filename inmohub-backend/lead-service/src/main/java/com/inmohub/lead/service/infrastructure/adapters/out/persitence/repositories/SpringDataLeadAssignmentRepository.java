@@ -8,6 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Repositorio Spring Data JPA para la entidad {@link LeadAssignmentJpaEntity}.
+ * Ofrece busqueda paginada por ID de agente y busqueda por ID de lead.
+ */
 public interface SpringDataLeadAssignmentRepository extends JpaRepository<LeadAssignmentJpaEntity, UUID> {
     Page<LeadAssignmentJpaEntity> findByAgentId(UUID agentId, Pageable pageable);
     List<LeadAssignmentJpaEntity> findByLeadId(UUID leadId);

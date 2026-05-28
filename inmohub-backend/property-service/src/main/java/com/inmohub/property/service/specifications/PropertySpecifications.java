@@ -9,6 +9,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase de utilidad con Specifications JPA para construir consultas dinamicas de propiedades.
+ * Implementa filtros combinables por ciudad, rango de precios y estado del inmueble,
+ * permitiendo busquedas flexibles sin necesidad de escribir queries nativas.
+ */
 public final class PropertySpecifications {
 
     private static Specification<Property> hasCity(String city) {

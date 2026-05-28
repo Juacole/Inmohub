@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * DTO que transporta la informacion publica de un usuario hacia otras capas o servicios.
+ * Excluye datos sensibles como la contrasena.
+ */
 @Schema(description = "Objeto de transferencia con la información pública del usuario")
 public record UserDto(
         @Schema(description = "Identificador único del usuario", example = "550e8400-e29b-41d4-a716-446655440000")

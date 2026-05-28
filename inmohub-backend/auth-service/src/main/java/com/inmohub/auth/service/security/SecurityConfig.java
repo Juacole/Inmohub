@@ -15,6 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuracion de seguridad de Spring Security para el microservicio.
+ * Define el SecurityFilterChain sin estado, rutas publicas, el filtro de cabeceras y el encoder de contrasenas.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

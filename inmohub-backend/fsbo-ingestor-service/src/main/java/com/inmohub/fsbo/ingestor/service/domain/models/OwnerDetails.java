@@ -4,6 +4,9 @@ import com.inmohub.fsbo.ingestor.service.domain.abstractions.DomainException;
 
 import java.util.UUID;
 
+/**
+ * Datos del propietario de un archivo FSBO: identificador, nombre, email y telefono.
+ */
 public record OwnerDetails(
         UUID ownerId,
         String fullName,

@@ -12,6 +12,10 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuracion de beans de Kafka: define el {@link KafkaTemplate} y el {@link ProducerFactory}
+ * para la publicacion de eventos a topicos Kafka.
+ */
 @Configuration
 public class KafkaConfig {
 

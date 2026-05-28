@@ -9,6 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * Servicio para la gestion de archivos en Firebase Cloud Storage.
+ * Se encarga de subir las imagenes de las propiedades y devolver la URL publica de acceso.
+ */
 @Service
 public class FirebaseStorageService {
 

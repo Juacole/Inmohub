@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Registro de auditoria que documenta los cambios de estado de un lead.
+ * Almacena el estado anterior, el nuevo estado y quien realizo el cambio.
+ */
 public class LeadAuditLog {
     private final UUID id;
     private final UUID leadId;

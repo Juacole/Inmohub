@@ -15,6 +15,10 @@ import org.mapstruct.MappingTarget;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Mapper de MapStruct para la conversion entre DTOs y entidades del dominio Property.
+ * Maneja el mapeo de propiedades, fotos y caracteristicas, incluyendo la logica de foto principal.
+ */
 @Mapper(componentModel = "spring", imports = PropertyStatus.class)
 public interface IPropertyMapper {
 

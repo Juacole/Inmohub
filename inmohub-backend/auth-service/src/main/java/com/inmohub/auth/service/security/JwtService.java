@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * Servicio de generacion de tokens JWT.
+ * Crea tokens de acceso firmados con HS256 que incluyen el email, userId y roles del usuario.
+ */
 @Service
 public class JwtService {
 

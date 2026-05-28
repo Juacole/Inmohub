@@ -11,6 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Repositorio JPA para la entidad Property.
+ * Expone operaciones de busqueda por propietario, paginacion con carga eager de fotos,
+ * y soporte para filtros dinamicos mediante Specifications.
+ */
 @Repository
 public interface IPropertyRepository extends JpaRepository<Property, UUID>, JpaSpecificationExecutor<Property> {
 

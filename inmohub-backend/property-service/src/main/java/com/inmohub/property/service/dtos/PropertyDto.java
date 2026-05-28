@@ -7,6 +7,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * DTO de respuesta con la informacion completa de una propiedad inmobiliaria.
+ * Incluye metadatos, estado, fotos, caracteristicas y fechas de auditoria.
+ */
 @Schema(description = "DTO de respuesta con la información completa de una propiedad")
 public record PropertyDto(
         @Schema(description = "Identificador único de la propiedad (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")

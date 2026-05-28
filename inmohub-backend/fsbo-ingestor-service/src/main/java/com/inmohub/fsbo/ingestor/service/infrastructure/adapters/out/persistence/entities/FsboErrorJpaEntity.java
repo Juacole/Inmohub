@@ -11,6 +11,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code fsbo_errors} con los errores de procesamiento
+ * asociados a un envio FSBO.
+ */
 @Entity
 @Table(name = "fsbo_errors")
 @Getter

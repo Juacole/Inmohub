@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Adaptador que publica eventos de lead de propietario en el topico Kafka {@code lead.events}.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

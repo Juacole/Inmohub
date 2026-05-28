@@ -4,6 +4,10 @@ import com.inmohub.lead.service.domain.model.LeadAssignment;
 import com.inmohub.lead.service.infrastructure.adapters.out.persitence.entities.LeadAssignmentJpaEntity;
 import org.mapstruct.Mapper;
 
+/**
+ * Mapper que convierte entre la entidad de dominio {@link LeadAssignment}
+ * y la entidad JPA {@link LeadAssignmentJpaEntity}.
+ */
 @Mapper(componentModel = "spring")
 public interface LeadAssignmentMapper {
     LeadAssignmentJpaEntity toJpaEntity(LeadAssignment leadAssignment);

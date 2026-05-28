@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * DTO ligero para el catalogo de propiedades optimizado para listados en frontend.
+ * Solo incluye los campos esenciales: id, titulo, precio, ciudad, estado y foto principal.
+ */
 @Schema(description = "DTO ligero para el catálogo de propiedades optimizado para el frontend")
 public final class PropertySummaryDto {
     @Schema(description = "Identificador único de la propiedad (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")

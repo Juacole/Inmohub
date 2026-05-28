@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code fsbo_submissions} con los datos de cada
+ * propiedad enviada por un propietario FSBO.
+ */
 @Entity
 @Table(name = "fsbo_submissions")
 @Getter

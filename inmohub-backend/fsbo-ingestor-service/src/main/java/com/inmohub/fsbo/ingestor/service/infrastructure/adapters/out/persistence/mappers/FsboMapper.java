@@ -7,6 +7,10 @@ import com.inmohub.fsbo.ingestor.service.infrastructure.adapters.out.persistence
 import com.inmohub.fsbo.ingestor.service.infrastructure.adapters.out.persistence.entities.FsboSubmissionJpaEntity;
 import org.mapstruct.*;
 
+/**
+ * Mapper MapStruct que convierte registros de dominio {@link PropertyRecord} y {@link OwnerDetails}
+ * en entidades JPA {@link FsboSubmissionJpaEntity}, incluyendo el manejo de errores y duplicados.
+ */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface FsboMapper {
 

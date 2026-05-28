@@ -12,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Consumidor Kafka que escucha el topico {@code lead.events}.
+ * Procesa eventos de creacion de propiedades FSBO e individuales para generar leads automaticamente.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

@@ -13,6 +13,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Servicio de gestion de refresh tokens.
+ * Crea, verifica la expiracion y busca tokens para renovar el JWT de acceso.
+ */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {

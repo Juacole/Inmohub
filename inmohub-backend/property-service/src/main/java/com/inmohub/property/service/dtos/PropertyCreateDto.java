@@ -7,6 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * DTO para la creacion de una nueva propiedad inmobiliaria.
+ * Agrupa los datos basicos del inmueble y sus caracteristicas opcionales enviados por el cliente.
+ */
 @Schema(description = "DTO para la creación de una nueva propiedad inmobiliaria")
 public record PropertyCreateDto(
         @Schema(

@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * Configuracion que define un interceptor Feign para propagar automaticamente
+ * las cabeceras de autenticacion (Authorization, X-User-Id, X-User-Role) en llamadas salientes.
+ */
 @Configuration
 public class FeignAuthInterceptor {
 

@@ -9,6 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Listener de Kafka que reacciona al evento de eliminacion de usuario.
+ * Cuando un usuario es eliminado del sistema, este listener borra en cascada
+ * todas las propiedades asociadas a ese propietario.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

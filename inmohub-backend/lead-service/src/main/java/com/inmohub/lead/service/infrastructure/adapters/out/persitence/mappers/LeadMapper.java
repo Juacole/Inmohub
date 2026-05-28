@@ -10,6 +10,10 @@ import org.mapstruct.ObjectFactory;
 
 import java.util.UUID;
 
+/**
+ * Mapper MapStruct/DTO manual que convierte entre la entidad de dominio {@link Lead}
+ * y la entidad JPA {@link LeadJpaEntity} para persistencia.
+ */
 @Mapper(componentModel = "spring")
 public interface LeadMapper {
 

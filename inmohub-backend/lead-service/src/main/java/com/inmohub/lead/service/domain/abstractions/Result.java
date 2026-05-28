@@ -3,6 +3,10 @@ package com.inmohub.lead.service.domain.abstractions;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Patron Result para operaciones que pueden fallar.
+ * Encapsula un valor de exito o un error, evitando excepciones para flujo de control.
+ */
 public final class Result<TValue, TError extends Error> {
     private final TValue value;
     private final TError error;

@@ -3,6 +3,10 @@ package com.inmohub.property.service.dtos;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
+/**
+ * Criterios de busqueda dinamica para filtrar propiedades en el catalogo.
+ * Soporta filtros por ciudad, rango de precios y estado del inmueble.
+ */
 @Schema(description = "Criterios de búsqueda dinámica para filtrar propiedades")
 public record PropertySearchCriteria(
         @Schema(description = "Ciudad donde se encuentra el inmueble", example = "Madrid")

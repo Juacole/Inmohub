@@ -6,6 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * DTO para la actualizacion parcial (PATCH) de una propiedad inmobiliaria.
+ * Todos los campos son opcionales; solo los valores no nulos modifican el inmueble.
+ */
 @Schema(description = "DTO para la actualización parcial de una propiedad inmobiliaria. Solo los campos proporcionados serán modificados.")
 public record PropertyPatchDto(
         @Schema(description = "Título del anuncio", example = "Chalet renovado")

@@ -8,6 +8,10 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Entidad JPA que representa las caracteristicas adicionales de una propiedad (clave-valor).
+ * Cada propiedad puede tener multiples caracteristicas asociadas.
+ */
 @Entity
 @Table(name = "property_features")
 @Getter

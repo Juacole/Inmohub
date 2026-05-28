@@ -3,6 +3,10 @@ package com.inmohub.auth.service.messaging.events;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Evento que representa la eliminacion de un usuario en el sistema.
+ * Se publica en Kafka para que otros servicios sincronicen el borrado.
+ */
 public record UserDeletedEvent(
         String eventType,
         UUID userId,

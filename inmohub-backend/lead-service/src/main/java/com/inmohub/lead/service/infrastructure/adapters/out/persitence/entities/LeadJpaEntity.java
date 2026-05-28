@@ -14,6 +14,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Entidad JPA que mapea la tabla {@code leads} en la base de datos.
+ * Almacena los datos del lead con su nombre, email, telefono, mensaje,
+ * origen, propiedad asociada, estado y marcas de auditoria.
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

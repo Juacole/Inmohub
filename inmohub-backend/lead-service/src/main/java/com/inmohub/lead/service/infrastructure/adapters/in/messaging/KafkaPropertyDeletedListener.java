@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Oyente Kafka que escucha el topico {@code property.lifecycle.events}.
+ * Reacciona al evento PROPERTY_DELETED eliminando los leads asociados a la propiedad eliminada.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

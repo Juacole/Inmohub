@@ -1,5 +1,9 @@
 package com.inmohub.lead.service.domain.abstractions;
 
+/**
+ * Clase base para errores de dominio.
+ * Encapsula un mensaje descriptivo y una excepcion opcional.
+ */
 public abstract class Error {
     protected final String message;
     protected final Exception exception;

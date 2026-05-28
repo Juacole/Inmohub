@@ -11,6 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * Publicador de eventos de leads hacia Kafka.
+ * Emite un evento IndividualPropertyCreatedEvent cuando un usuario con rol OWNER crea una propiedad,
+ * permitiendo al servicio de leads iniciar el seguimiento comercial.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j

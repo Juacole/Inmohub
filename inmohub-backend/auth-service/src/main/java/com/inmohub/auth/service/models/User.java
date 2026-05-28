@@ -14,6 +14,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Entidad que representa un usuario de la plataforma InmoHub.
+ * Contiene datos de autenticacion, perfil personal, roles asignados y tokens de refresco.
+ */
 @Entity
 @Table(name="users")
 @Data

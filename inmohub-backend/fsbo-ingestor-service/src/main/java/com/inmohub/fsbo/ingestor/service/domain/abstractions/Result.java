@@ -3,6 +3,10 @@ package com.inmohub.fsbo.ingestor.service.domain.abstractions;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Patron Result monadico para representar operaciones que pueden tener exito o fallar.
+ * Encapsula un valor de exito o un error, sin lanzar excepciones.
+ */
 public final class Result<TValue, TError> {
     private final TValue value;
     private final TError error;

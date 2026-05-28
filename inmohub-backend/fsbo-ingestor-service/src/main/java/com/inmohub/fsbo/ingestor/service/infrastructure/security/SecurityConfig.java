@@ -9,6 +9,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuracion de seguridad de Spring Security.
+ * Confia en cabeceras inyectadas por el API Gateway y protege endpoints segun roles.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {

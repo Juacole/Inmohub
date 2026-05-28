@@ -8,6 +8,10 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Entidad JPA que representa una fotografia asociada a una propiedad inmobiliaria.
+ * Almacena la URL de la imagen en Firebase Storage y su indicador de foto principal.
+ */
 @Entity
 @Table(name = "property_photos")
 @Getter

@@ -9,6 +9,10 @@ import org.mapstruct.Mapping;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Mapper que convierte la entidad de auditoria {@link LeadAuditLog}
+ * a la entidad JPA {@link LeadEventJpaEntity}, empaquetando los metadatos en formato JSON.
+ */
 @Mapper(componentModel = "spring", imports = EventType.class)
 public interface LeadEventMapper {
 

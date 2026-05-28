@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Agregado raiz que representa un lead (cliente potencial) en el sistema.
+ * Contiene los datos del contacto, la propiedad asociada y su estado actual.
+ */
 public class Lead extends AuditableEntity<UUID> {
     private final String name;
     private final Email email;

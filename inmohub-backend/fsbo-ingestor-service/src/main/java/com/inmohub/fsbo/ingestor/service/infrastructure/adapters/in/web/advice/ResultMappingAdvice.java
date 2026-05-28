@@ -16,6 +16,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import java.util.Map;
 
 @RestControllerAdvice
+/**
+ * Advice que intercepta respuestas de controladores para transformar objetos {@link Result}
+ * en respuestas HTTP estandar: 200 para exito, codigo de error en caso de fallo.
+ */
 public class ResultMappingAdvice implements ResponseBodyAdvice<Object> {
 
     // Solo se intercepta el método del controlador si este devuelve un Result

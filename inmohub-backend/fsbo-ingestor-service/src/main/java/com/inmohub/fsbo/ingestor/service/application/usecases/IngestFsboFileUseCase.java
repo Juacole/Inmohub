@@ -16,6 +16,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Caso de uso principal para la ingestion de archivos FSBO.
+ * Coordina el parseo CSV, deduplicacion, persistencia y publicacion de eventos.
+ */
 public class IngestFsboFileUseCase {
 
     private final ICsvParser csvParser;

@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
+/**
+ * Cliente Feign para comunicarse con el microservicio de autenticacion.
+ * Obtiene el perfil de usuario por ID.
+ */
 @FeignClient(name = "auth-service", configuration = FeignAuthInterceptor.class)
 public interface AuthServiceClient {
 
